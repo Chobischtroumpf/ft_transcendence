@@ -10,7 +10,7 @@ const SignIn = () =>
     const submit = async (e: SyntheticEvent) => {
         e.preventDefault();
 
-        const myWindow = window.open('http://localhost:3000/auth/42');
+        const myWindow = window.open('http://'+window.location.hostname+':3000/auth/42');
         
         const interval = setInterval(async () => {
             try {
