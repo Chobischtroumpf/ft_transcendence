@@ -27,8 +27,8 @@ services:
             dockerfile: ./dockerfile
             target: development
         volumes:
-            - .:/app/
-            - /app/node_modules        
+            - .:/backend/app/
+            - /backend/app/node_modules        
         depends_on:
             - postgres
         environment:
@@ -42,8 +42,8 @@ services:
             - nesjs-network
         restart: unless-stopped
         command: npm run start:debug    
-        # env_file: # as we're not using any env variables it isn't useful rn
-        #     - .env
+        env_file: 
+            - backend/.env
     postgres:
         container_name: postgres
         image: postgres:10.4
@@ -65,8 +65,8 @@ services:
             context: ./frontend
             dockerfile: ./dockerfile
         volumes:
-            - '.:/app'
-            - '/app/node_modules'
+            - '.:/frontend/app'
+            - '/frontend/app/node_modules'
         ports:
             - 3001:3000
         environment:

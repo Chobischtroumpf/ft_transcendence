@@ -109,6 +109,7 @@ const Profile = () =>
             <h2 className="title">Game History</h2>
             {/* {(user.gameHistory.size() > 0) ? ( */}
             {/* ) : ( */}
+            
             <p className="">{user.username} has not played any games yet.</p>
             {/* ) */}
           </div>

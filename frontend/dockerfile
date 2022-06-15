@@ -1,21 +1,24 @@
 # pull official base image
-FROM node:13.12.0-alpine
+FROM node:18.3.0-alpine
 
 # set working directory
-WORKDIR /app
+RUN mkdir /app/
+WORKDIR /app/
 
 # add `/app/node_modules/.bin` to $PATH
 ENV PATH /app/node_modules/.bin:$PATH
 
 # install app dependencies
-COPY package.json ./
-COPY package-lock.json ./
+COPY ./package.json ./
+COPY ./package-lock.json ./
 RUN npm install -g npm@8
 RUN npm install --silent
 RUN npm install react-scripts@3.4.1 -g --silent
+RUN pwd
+RUN sleep 15
 
 # add app
-COPY . ./
+COPY ./ ./
 
 # start app
 CMD ["npm", "start"]
