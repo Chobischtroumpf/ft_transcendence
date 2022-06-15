@@ -19,16 +19,16 @@
 
 version: '3.8'
 services:
-    api:
-        container_name: api
-        image: nahaddac/transcendence
+    backend:
+        container_name: backend
+        image: backend_transcendence
         build:
             context: ./backend
             dockerfile: ./dockerfile
             target: development
         volumes:
-            - .:/usr/src/app/
-            - /usr/src/app//node_modules        
+            - .:/app/
+            - /app/node_modules        
         depends_on:
             - postgres
         environment:

@@ -114,8 +114,6 @@ const Profile = () =>
           </div>
 
         </div>
-
-          {/* <ButtonHistory /> */}
           {/* <ButtonFriends /> */}
       </div>
     </Wrapper>
