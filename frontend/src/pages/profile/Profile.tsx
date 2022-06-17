@@ -7,32 +7,85 @@ import './Profile.css'
 
 const Profile = () =>
 {
-    const [user, setUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it
+  const [currentUser, setCurrentUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it
+  const [user, setUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it
+  // const [matchHistory, setMatchHistory] = useState<any[]>([]);
+    const [friends, setFriends] = useState<any[]>([]);
 
   const queryParams = new URLSearchParams(useLocation().search);
   const userId = queryParams.get("userId");
+  var ownProfile: boolean = false;
+  var showFriendRequest: boolean = false;
 
-  if (userId !== null)
-  {
-    useEffect(() => {
-      (
-        async () => {
-          const {data} = await axios.get(`user/allusers?userId=${userId}`);
-          setUser(data.data[0]);
-        }
-      )();
-    }, [userId]);
-  }
-  else {
-    useEffect(() => {
+  useEffect(() => {
     (
       async () => {
         const {data} = await axios.get(`user`);
+        setCurrentUser(data);
+      }
+    )();
+    (
+      async () => {
+        const {data} = await axios.get(`user/alluser?userId=${userId}`);
+        console.log("data :", data);
         setUser(data);
       }
     )();
-    }, []);
+    (
+      async () => {
+        const {data} = await axios.get(`user/friend`);
+        console.log("friends :", data);
+        setFriends(data);
+      }
+    )();
+    // (
+    //   async () => {
+    //     const {data} = await axios.get(`user/get/user?username=${'nlaurids'}`);
+    //     console.log(data);
+    //   }
+    // )();
+    if (userId !== null)
+    {
+      (
+        async () => {
+          const {data} = await axios.get(`user/get/user/${userId}`,);
+          setUser(data);
+        }
+      )();
+      // (
+      //   async () => {
+      //     const {data} = await axios.get(`user/friend`);
+      //     console.log(data);
+      //     setFriends(data);
+      //   }
+      // )();
+    }
+    else {
+      (
+        async () => {
+          const {data} = await axios.get(`user`);
+          setUser(data);
+        }
+      )();
+      (
+        async () => {
+          const {data} = await axios.get(`user/friend`);
+          console.log(data);
+        }
+      )();
+    }
+  }, [userId]);
+  
+  if (user.id === currentUser.id)
+    ownProfile = true;
+  else {
+    ownProfile = false;
   }
+  if (!friends.includes(currentUser.id)) {
+    // console.log("into else condition")
+    showFriendRequest = true;
+  }
+  console.log("friends : ", friends);
 
   return(
     <Wrapper>
@@ -51,6 +104,27 @@ const Profile = () =>
             {
             (user.status === "playing") && (
                   <span className="status-playing">Playing</span>) 
+            }
+            {
+              (showFriendRequest) && (
+                <button className="btn btn-primary" onClick={() => {
+                  setTimeout(() => {
+                  (
+                    async () => {
+                      const {data} = await axios.post(`user/friend/${user.id}`);
+                      console.log(`user/friend/${user.id}`);
+                    }
+                  )();
+                  }, 1000);
+                  (
+                    async () => {
+                      const {data} = await axios.get(`user/friend`);
+                      console.log(`friends :`, data);
+                    }
+                  )();
+                }
+                }>Send friend request</button>
+              )
             }
         </div>
         <div className="user-stats">
@@ -109,13 +183,28 @@ const Profile = () =>
             <h2 className="title">Game History</h2>
             {/* {(user.gameHistory.size() > 0) ? ( */}
             {/* ) : ( */}
-            
             <p className="">{user.username} has not played any games yet.</p>
             {/* ) */}
           </div>
 
         </div>
-          {/* <ButtonFriends /> */}
+        <div className="friends-list">
+          <div className="friends-list-item">
+            <h2 className="title">Friends</h2>
+            {(friends.length > 0) ? (
+              <ul>
+                {friends.map((friend:any) => (
+                  <li key={friend.id}>
+                    <a href={`/profile?userId=${friend.id}`}>{friend.username}</a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>{user.username} has no friends yet.</p>
+            )}
+        </div>
+      </div>
+        {/* <ButtonFriends /> */}
       </div>
     </Wrapper>
   );
