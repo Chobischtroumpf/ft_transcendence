@@ -14,7 +14,7 @@ const Chat = () =>
     const [User, setName] = useState('');
     const [AllMessage, setAllMessage] = useState('');
     const queryParams = new URLSearchParams(useLocation().search);
-    const userId = queryParams.get("chatId");
+    const ChatId= queryParams.get("chatId");
     
     const Send = async (e: SyntheticEvent) =>
     {
@@ -31,11 +31,12 @@ const Chat = () =>
           }
         )();
       });
-      
+      console.log(ChatId);
       return(
         <Wrapper>  
         <div>
-          <button>settings </button>
+       
+        <Link to={`/chat/chatsettings?ChatSettingsId=${ChatId}`} type="submit">settings</Link>
           <input id="inputMessage" value={message} onChange={(e) => setMessage(e.target.value)} placeholder={"message_room"}/>
           {/* <input id='send-message-input' type="texte"  onChange={() => on_change()}></input> */}
           <button onClick={() => handle_send()}>Click me</button>

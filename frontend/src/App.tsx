@@ -7,6 +7,7 @@ import Profile from './pages/profile/Profile';
 import Channels from './pages/chat/Channels';
 import Game from './pages/game/Game';
 import Chat from './pages/chat/Chat';
+import ChatSettings from './pages/chat/ChatSettings';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/signin" element={<SingIn/>}></Route>
           <Route path="/channels" element={<Channels/>}></Route>
           <Route path="/chat" element={<Chat/>}></Route>
+          <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>

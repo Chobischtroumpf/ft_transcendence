@@ -86,7 +86,7 @@ const Channels = () =>
                     <td>{channel.status}</td>
                     <td>
                       {/* <form onSubmit={join}> */}
-                        <Link to={`/chat?${channel.id}`} type="submit">Join</Link>
+                        <Link to={`/chat?chatId=${channel.id}`} type="submit">Join</Link>
                       {/* </form> */}
                     </td>
                     <td>
