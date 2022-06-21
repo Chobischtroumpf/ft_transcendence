@@ -3,6 +3,7 @@ import React, { SyntheticEvent, useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
 import { Channel, ChannelStatus } from "../../models/channel";
 import io, { Socket } from 'socket.io-client';
+import {Link} from "react-router-dom"
 
 const Channels = () =>
 {
@@ -85,7 +86,7 @@ const Channels = () =>
                     <td>{channel.status}</td>
                     <td>
                       {/* <form onSubmit={join}> */}
-                        <button type="submit">Join</button>
+                        <Link to={`/chat?${channel.id}`} type="submit">Join</Link>
                       {/* </form> */}
                     </td>
                     <td>

@@ -1,4 +1,4 @@
-export class Chat
+export class chat
 {
     constructor(
         public User: string,
