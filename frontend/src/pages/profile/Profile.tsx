@@ -1,8 +1,11 @@
 import axios from "axios";
 import React, { Component, useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
-import { User } from "../../models/user"
+import { User } from "../../models/user";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useLocation } from "react-router";
+import { Link } from "react-router-dom";
 import './Profile.css'
 
 const Profile = () =>
@@ -15,7 +18,8 @@ const Profile = () =>
   const queryParams = new URLSearchParams(useLocation().search);
   const userId = queryParams.get("userId");
   var ownProfile: boolean = false;
-  var showFriendRequest: boolean = false;
+  var showFriendRequest:boolean = false;
+
 
   useEffect(() => {
     (
@@ -38,12 +42,6 @@ const Profile = () =>
         setFriends(data);
       }
     )();
-    // (
-    //   async () => {
-    //     const {data} = await axios.get(`user/get/user?username=${'nlaurids'}`);
-    //     console.log(data);
-    //   }
-    // )();
     if (userId !== null)
     {
       (
@@ -52,13 +50,6 @@ const Profile = () =>
           setUser(data);
         }
       )();
-      // (
-      //   async () => {
-      //     const {data} = await axios.get(`user/friend`);
-      //     console.log(data);
-      //     setFriends(data);
-      //   }
-      // )();
     }
     else {
       (
@@ -106,7 +97,7 @@ const Profile = () =>
                   <span className="status-playing">Playing</span>) 
             }
             {
-              (showFriendRequest) && (
+              (showFriendRequest && !ownProfile) && (
                 <button className="btn btn-primary" onClick={() => {
                   setTimeout(() => {
                   (
@@ -119,7 +110,7 @@ const Profile = () =>
                   (
                     async () => {
                       const {data} = await axios.get(`user/friend`);
-                      console.log(`friends :`, data);
+                      // console.log(`friends :`, data);
                     }
                   )();
                 }
@@ -127,9 +118,19 @@ const Profile = () =>
               )
             }
         </div>
-        <div className="user-stats">
-            
-        </div>
+      </div>
+      <div className="settings">
+      {
+        (ownProfile) && (
+          <div className="settings-gear">
+            <Link to="/profile/settings">
+              <button className="btn btn-primary">
+                <FontAwesomeIcon icon={faGear}/>
+              </button>
+            </Link>
+            </div>
+        )
+      }
       </div>
       <div className="user-stats">
         <div className="stats">
@@ -193,7 +194,7 @@ const Profile = () =>
             <h2 className="title">Friends</h2>
             {(friends.length > 0) ? (
               <ul>
-                {friends.map((friend:any) => (
+                {friends.map((friend:User) => (
                   <li key={friend.id}>
                     <a href={`/profile?userId=${friend.id}`}>{friend.username}</a>
                   </li>
@@ -210,4 +211,4 @@ const Profile = () =>
   );
 }
 
-export default Profile;
+export default Profile
