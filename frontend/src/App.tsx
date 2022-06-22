@@ -6,7 +6,7 @@ import SingIn from './pages/SignIn';
 import Profile from './pages/profile/Profile';
 import Channels from './pages/chat/Channels';
 import Game from './pages/game/Game';
-import Settings from './pages/profile/Settings';
+import Settings from './pages/settings/Settings';
 
 function App() {
   return (
