@@ -135,8 +135,8 @@ export class ChatController
         return this.chatService.createMessageToChannel(data, user);
     }
 
-    @Get('/messages')
-    async getMessagesFromChannel(@Body('name') name: string, @User() user)
+    @Get('/messages/:name')
+    async getMessagesFromChannel(@Param('name') name: string, @User() user)
     {
         return this.chatService.getMessagesFromChannel(name, user);
     }
