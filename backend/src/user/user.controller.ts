@@ -138,6 +138,7 @@ export class UserController
     @Post('/username')
     async updateUsername(@User() user, @Body() { username })
     {
+        console.log(username);
         return this.userService.updateUsername(user, username);
     }
 

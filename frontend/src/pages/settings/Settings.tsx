@@ -42,7 +42,7 @@ const Settings = () => {
     else if (prevusername && !username)
       formData.append("username", prevusername);
     try {
-      const { data } = await axios.post("user/update", formData);
+      const { data } = await axios.post("/user/username", { username: username });
       console.log(data);
     }
     catch (e) {
