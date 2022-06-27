@@ -7,53 +7,48 @@ import './Settings.css'
 const Settings = () => {  
 
   
-  const [username, setUsername] = useState<string>();
+  var [username, setUsername] = useState<string>('');
   const [prevusername, setPrevUsername] = useState<string>();
-  const [tfa, setTfa] = useState(false);
-  const [picture, setPicture] = useState<string>();
+  var [tfa, setTfa] = useState<boolean>(false);
   const [picturefile, setPictureFile] = useState<File>();
+  var [picture, setPicture] = useState<string>('');
   
-  useEffect(() => {
-    (async () => {
-      const { data } = await axios.get("user");
-      try {
-        setPrevUsername(data.username);
-        setTfa(data.tfa);
-      } catch (e) {
-        <Navigate to={'/error500'} />
-      }
+  (async () => {
+    const { data } = await axios.get("user");
+    try {
+      setPrevUsername(data.username);
+      // setTfa(data.tfa);
+    } catch (e) {
+      <Navigate to={'/error500'} />
     }
-    )();
-  }, []);
-
-  // const handleSubmit = async(event: any) => {
-  //   event.preventDefault();
-  //   const formData = new FormData();
-  //   if (username)
-  //     formData.append("username", username);
-  //   else if (prevusername)
-  //     formData.append("username", prevusername);
-  //   formData.append("tfa", tfa.toString());
-  //   if (picturefile !== undefined) {
-  //     formData.append("picture", picturefile);
-  //   }
-
-  //   try {
-  //     const { data } = await axios.post("user/update", formData);
-  //     console.log(data);
-  //   }
-  //   catch (e) {
-  //     <Navigate to={'/error500'} />
-  //   }
-  // }
+  }
+  )();
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
-    axios.post("user/tfa/turn-on").then(() => {
-      setTfa(true);
-    
-    }
+    var formData = new FormData();
+    formData.append("tfa", tfa.toString());
+    console.log(tfa);
+    const { data } = await axios.post("user/tfa/secret", formData);
+    console.log(data);
+  }
 
+  const handleUsernameSubmit = async(event: any) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    if (username)
+      formData.append("username", username);
+    else if (prevusername && !username)
+      formData.append("username", prevusername);
+    try {
+      const { data } = await axios.post("user/update", formData);
+      console.log(data);
+    }
+    catch (e) {
+      <Navigate to={'/error500'} />
+    }
+  }
 
   const handlePictureSubmit = async(event: any) => {
     event.preventDefault();
@@ -76,10 +71,16 @@ const Settings = () => {
 
   const handlePictureChange = (event: any) => {
     setPicture(URL.createObjectURL(event.target.files[0]));
+    setPictureFile(event.target.files[0]);
   }
 
   const handleTfaChange = (event: any) => {
+    console.log("checked : " + event.target.checked);
     setTfa(event.target.checked);
+    console.log(tfa);
+    console.log(tfa);
+    console.log(tfa);
+
   }
 
   return (
@@ -99,7 +100,7 @@ const Settings = () => {
             </div>
           )}
           
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleUsernameSubmit}>
           <input
             className="username input"
             type="string"
@@ -108,7 +109,7 @@ const Settings = () => {
             value={username}
             onChange={handleChange}
           />
-          <input type="button" value="Save"/>
+          <input type="submit" value="Save"/>
         </form>
 
         <form onSubmit={handlePictureSubmit}>
@@ -119,10 +120,10 @@ const Settings = () => {
               accept="image/png, image/jpeg"
               onChange={handlePictureChange}
             />
-            <input type="button" value="Save"/>
+            <input type="submit" value="Save"/>
         </form>
 
-        <form onSubmit={handleTfaChange}>
+        <form onSubmit={handleTfaSubmit}>
           <div className="tfa input">
             <input
               className="tfa"
@@ -132,7 +133,7 @@ const Settings = () => {
               onChange={handleTfaChange}/>
               Two Factor Auth
           </div>
-          <input type="button" value="Save"/>
+          <input type="submit" value="Save"/>
         </form>
       </div>
     </Wrapper>

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class NewUserDto {
 
@@ -9,4 +9,10 @@ export class NewUserDto {
     @IsNotEmpty()
     @IsString()
     username: string;
+}
+
+export class tfaDto {
+    @IsNotEmpty()
+    @IsString()
+    tfa: boolean;
 }

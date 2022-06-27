@@ -79,7 +79,7 @@ const Game = () =>
 
     const options = async (e: SyntheticEvent) => {
         e.preventDefault();
-        const {data} = await axios.get('http://'+window.location.hostname+':3000/user/get/user?username=${invitedUser}');
+        const {data} = await axios.get('http://localhost:3000/user/get/user?username=${invitedUser}');
         if (data === '')
         {
             window.alert(`User: (${invitedUser}) doesn't exists, try again`);

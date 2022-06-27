@@ -5,7 +5,7 @@ import { User } from "../../models/user";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useLocation } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import './Profile.css'
 
 const Profile = () =>
@@ -23,23 +23,28 @@ const Profile = () =>
 
   useEffect(() => {
     (
-      async () => {
-        const {data} = await axios.get(`user`);
-        setCurrentUser(data);
-      }
-    )();
-    (
-      async () => {
-        const {data} = await axios.get(`user/alluser?userId=${userId}`);
-        console.log("data :", data);
-        setUser(data);
-      }
-    )();
+      setTimeout(() => {
+        (async () => {
+          const { data } = await axios.get("user");
+          try {
+            setCurrentUser(data);
+            setUser(data);
+          
+          } catch (e) {
+            <Navigate to={'/error500'} />
+          }
+        }
+        )();
+      }, 1000));
     (
       async () => {
         const {data} = await axios.get(`user/friend`);
-        console.log("friends :", data);
-        setFriends(data);
+        try {
+          console.log("friends :", data);
+          setFriends(data);
+        } catch (e) {
+          <Navigate to={'/error500'} />
+        }
       }
     )();
     if (userId !== null)
@@ -47,7 +52,11 @@ const Profile = () =>
       (
         async () => {
           const {data} = await axios.get(`user/get/user/${userId}`,);
-          setUser(data);
+          try {
+            setUser(data);
+          } catch (e) {
+            <Navigate to={'/error500'} />
+          }
         }
       )();
     }
@@ -55,25 +64,28 @@ const Profile = () =>
       (
         async () => {
           const {data} = await axios.get(`user`);
-          setUser(data);
+          try {
+            setUser(data);
+          } catch (e) {
+            <Navigate to={'/error500'} />
+          }
         }
       )();
-      (
-        async () => {
-          const {data} = await axios.get(`user/friend`);
-          console.log(data);
-        }
-      )();
+      // (
+      //   async () => {
+      //     const {data} = await axios.get(`user/friend`);
+      //     console.log(data);
+      //   }
+      // )();
     }
   }, [userId]);
   
-  if (user.id === currentUser.id)
+  if (!userId || user.id === currentUser.id)
     ownProfile = true;
   else {
     ownProfile = false;
   }
   if (!friends.includes(currentUser.id)) {
-    // console.log("into else condition")
     showFriendRequest = true;
   }
   console.log("friends : ", friends);

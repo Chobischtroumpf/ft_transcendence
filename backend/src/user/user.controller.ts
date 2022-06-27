@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/decorators/user.decorator';
 import { UserEntity, UserStatus } from './entities/user.entity';
+import { tfaDto } from './dto/new-user.dto';
 
 export const storage = {
     storage: diskStorage({
@@ -60,8 +61,10 @@ export class UserController
     }
 
     @Post('tfa/secret')
-    async register(@Res() response: Response, @User() user)
+    async register(@Res() response: Response, @User() user, @Body() tfa: tfaDto)
     {
+        // if (user.tfa_enabled)
+        console.log(tfa);
         const { otpauthUrl } = await this.userService.generateTfaSecret(user);
         return this.userService.pipeQrCodeStream(response, otpauthUrl);
     }
@@ -130,6 +133,12 @@ export class UserController
     async uploadFile(@UploadedFile() file, @User() user)
     {
         return this.userService.uploadFile(user, file);
+    }
+
+    @Post('/username')
+    async updateUsername(@User() user, @Body() { username })
+    {
+        return this.userService.updateUsername(user, username);
     }
 
     @Get('/picture/:imagename')

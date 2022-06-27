@@ -100,6 +100,13 @@ export class UserService
       })
     }
 
+    updateUsername(user: UserEntity, username: string)
+    {
+      console.log(username);
+      user.username = username;
+      return this.userRepository.save(user);
+    }
+
     updateStatus(user: UserEntity, status: UserStatus)
     {
       user.status = status
