@@ -1,7 +1,9 @@
-export class chat
+
+export class MessageI
 {
     constructor(
-        public User: string,
-        public name: string,
+        public id: number,
+        public content: string,
+        public author: string,
     ) {}
 }

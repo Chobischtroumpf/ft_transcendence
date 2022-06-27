@@ -3,9 +3,12 @@ import React, { Component, useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
 import { User } from "../../models/user"
 import { useLocation } from "react-router";
+import { Socket } from "socket.io-client";
 import './Profile.css'
-
-const Profile = () =>
+interface Props {
+  socket: Socket | null
+}
+const Profile = ({socket}: Props) =>
 {
     const [user, setUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it
 
