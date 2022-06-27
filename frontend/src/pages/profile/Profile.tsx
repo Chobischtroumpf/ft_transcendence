@@ -6,9 +6,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useLocation } from "react-router";
 import { Link, Navigate } from "react-router-dom";
+import { Socket } from "socket.io-client";
 import './Profile.css'
-
-const Profile = () =>
+interface Props {
+  socket: Socket | null
+}
+const Profile = ({socket}: Props) =>
 {
   const [currentUser, setCurrentUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it
   const [user, setUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it

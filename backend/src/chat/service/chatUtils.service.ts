@@ -31,6 +31,7 @@ export class ChatUtilsService
         return newUserStatus;
     }
     
+    
     async createNewChannel(name: string, status: ChannelStatus, password: string, newJoinedUserStatus: JoinedUserStatus, member: UserEntity)
     {
         const newChannel = await this.chatRepository.create({
