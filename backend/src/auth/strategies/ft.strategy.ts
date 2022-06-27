@@ -8,7 +8,7 @@ export class FtStrategy extends PassportStrategy(Strategy, '42'){
         super({
             clientID: process.env.CLIENT_ID,
             clientSecret: process.env.CLIENT_SECRET,
-            callbackURL: 'http://'+window.location.hostname+':3000/auth/42/return',
+            callbackURL: 'http://localhost:3000/auth/42/return',
         });
     }
 

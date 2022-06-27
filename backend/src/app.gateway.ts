@@ -14,7 +14,8 @@ import { ChatUtilsService } from './chat/service/chatUtils.service';
 
 // I dont have any idea if these functions work, I will check it when I can try this with frontend
 
-@WebSocketGateway({cors: { origin: 'http://'+window.location.hostname+':3000', credentials: true }})
+
+@WebSocketGateway({cors: { origin: 'http://localhost:3000', credentials: true }})
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   constructor(private authService: AuthService,

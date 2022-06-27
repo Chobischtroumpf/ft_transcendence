@@ -24,7 +24,7 @@ const Wrapper = ({children}: Props) =>
                     const {data} = await axios.get('user');
                     if (data.socketId === null)
                     {
-                        const newSocket = io('http://'+window.location.hostname+':3000', {withCredentials: true, transports: ['websocket']});
+                        const newSocket = io('http://localhost:3000', {withCredentials: true, transports: ['websocket']});
                         sockets.push(newSocket);
                     }
                 } catch (e) {
