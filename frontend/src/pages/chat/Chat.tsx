@@ -3,7 +3,6 @@
 // import Wrapper from "../../components/Wrapper";
 // import { MessageI } from "../../models/Chat";
 // import io, { Socket } from 'socket.io-client';
-// import {Link} from "react-router-dom"
 // import { useLocation } from "react-router";
 
 import axios from "axios";
@@ -13,6 +12,7 @@ import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { MessageI } from "../../models/Chat";
 import styled from "styled-components"
+import {Link} from "react-router-dom"
 
 type Props = {
   socket: Socket | null,
@@ -93,6 +93,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
               <h4><strong>#Rome-Name
                 </strong></h4>
           </Header>
+          <Link to={`/chat/chatsettings?ChatSettingsId=${ChatId}`} type="submit">settings</Link>
           <h1>{newMessage}</h1>
           <ChatInputContainer>
               <form onSubmit={newMsg}>

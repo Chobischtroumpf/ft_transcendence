@@ -42,6 +42,7 @@ import Game from './pages/game/Game';
 import Settings from './pages/settings/Settings';
 import { io, Socket } from 'socket.io-client';
 import Chat from './pages/chat/Chat';
+import ChatSettings from './pages/chat/ChatSettings';
 // import GameArea from './pages/game/GameArea';
 // import { gameUpdate } from './models/game';
 
@@ -105,6 +106,7 @@ function App() {
           <Route path="/signin" element={<SingIn />}></Route>
           <Route path="/channels" element={<Channels />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
+          <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
           {/* <Route path="/gamearea" element={<GameArea socket={socket} gameStart={gameStart} gameUpdate={gameUpdate}/>}></Route> */}
         </Routes>
       </BrowserRouter>
