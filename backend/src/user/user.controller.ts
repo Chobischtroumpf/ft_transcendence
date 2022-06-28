@@ -80,12 +80,6 @@ export class UserController
         await this.userService.turnOnTfa(user.id);
     }
 
-    @Patch('nullsocket')
-    async nullSocketId(@User() user)
-    {
-        return this.userService.updateUserSocketId(null, user);
-    }
-
     @Post('friend/:id')
     async requestFriend(@User() user, @Param('id', ParseIntPipe) id)
     {

@@ -60,14 +60,14 @@ const AddUser = (ChatId:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
-	// const [userList, setUserList] = useState([]);
+	const [userList, setUserList] = useState([]);
 
 
 	console.log(ChatId.chatId);
 	const onModalOpen = async() => {
 		try {
 			const {data} = await axios.get(`chat/getusers/${ChatId.chatId}`);
-			console.log(data);
+			setUserList(data);
 			} catch (e) {
 				console.log("here")
 			}

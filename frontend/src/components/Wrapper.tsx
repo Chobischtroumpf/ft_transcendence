@@ -22,11 +22,6 @@ const Wrapper = ({children}: Props) =>
             async () => {
                 try {
                     const {data} = await axios.get('user');
-                    if (data.socketId === null)
-                    {
-                        const newSocket = io('http://localhost:3000', {withCredentials: true, transports: ['websocket']});
-                        sockets.push(newSocket);
-                    }
                 } catch (e) {
                     setRedirect(true);
                 }

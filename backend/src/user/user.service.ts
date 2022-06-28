@@ -111,9 +111,6 @@ export class UserService
     {
       user.status = status
       this.userRepository.save(user);
-      // return this.userRepository.update(id, {
-      //   status
-      // });
     }
 
     async requestFriend(user: UserEntity, id: number)
@@ -266,11 +263,5 @@ export class UserService
       updatedUser.picture = file.filename;
       await this.userRepository.save(updatedUser);
       return updatedUser;
-    }
-
-    async updateUserSocketId(socketId: string, user: UserEntity)
-    {
-      user.socketId = socketId;
-      await this.userRepository.save(user);
     }
 }

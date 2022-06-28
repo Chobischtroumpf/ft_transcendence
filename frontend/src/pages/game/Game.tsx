@@ -1,15 +1,19 @@
-import React, { Component, SyntheticEvent, useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
-import io, { Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import background from "../../assets/pong.png";
-import { Navigate } from "react-router";
-import Profile from "../profile/Profile";
 import { User } from "../../models/user";
 import axios from "axios";
-import { sockets } from "../../components/Wrapper";
-import { GameClass } from "../../models/game";
+import { GameClass, gameNames } from "../../models/game";
+import './Game.css';
+import { Navigate } from "react-router";
 
-const Game = () =>
+type Props = {
+    socket: Socket | null,
+    games: gameNames[],
+};
+
+const Game = ({socket, games}: Props) =>
 {
     const [place, setPlace] = useState<string | null>(null);
     const [paddleSize, setPaddleSize] = useState(4);
@@ -19,51 +23,19 @@ const Game = () =>
     const [matchMaking, setMatchMaking] = useState(false);
     const [player2, setPlayer2] = useState<User | null>(null);
     const [acceptInvite, setAcceptInvite] = useState(false);
-    const [games, setGames] = useState<GameClass | null>(null);
-
-    useEffect(() => {
-        (
-          async () => {
-            for (var i = 0; i < sockets.length; i++)
-            {
-                sockets[i].on('addInviteToServer', (data) => {
-                    console.log(data);
-                });
-                sockets[i].on('acceptInviteToServer', (data) => {
-                    console.log(data);
-                });
-                sockets[i].on('leaveGameToServer', (data) => {
-                    console.log(data);
-                });
-                sockets[i].on('JoinQueueToServer', (data) => {
-                    console.log(data);
-                });
-                sockets[i].on('leaveQueueToServer', (data) => {
-                    console.log(data);
-                });
-                sockets[i].on('newSpectatorToServer', (data) => {
-                    console.log(data);
-                });
-                sockets[i].on('moveUpToServer', (data) => {
-                    console.log(data);
-                });
-                sockets[i].on('moveDownToServer', (data) => {
-                    console.log(data);
-                });
-                sockets[i].on('getGamesToServer', (data) => {
-                    console.log(data);
-                });
-            }
-          }
-        )();
-      }, []);
+    const [allGames, setAllGames] = useState<GameClass | null>(null);
+    const [name, setName] = useState('');
 
     const emit = async (event: string) =>
     {
+        console.log('emit event: ' + event);
         const response = await axios.get('user');
-        for (var i=0; i < sockets.length; i++)
-            if (sockets[0].id === response.data.socketId)
-                console.log('emit event: ' + event);
+    }
+
+    const spectatorJoin = async (e: SyntheticEvent) =>
+    {
+      e.preventDefault();
+      setPlace("queue"); // change it later, go to spectating game
     }
 
     const submit = async (e: SyntheticEvent) => {
@@ -73,13 +45,14 @@ const Game = () =>
 
     const submit_spectator = async (e: SyntheticEvent) => {
         e.preventDefault();
-        emit('getGamesToServer');
+        socket?.emit('getGamesToServer');
+        // emit('getGamesToServer');
         setPlace("matches_list");
     }
 
     const options = async (e: SyntheticEvent) => {
         e.preventDefault();
-        const {data} = await axios.get('http://localhost:3000/user/get/user?username=${invitedUser}');
+        const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${invitedUser}`);
         if (data === '')
         {
             window.alert(`User: (${invitedUser}) doesn't exists, try again`);
@@ -92,7 +65,8 @@ const Game = () =>
 
     const queue = async (e: SyntheticEvent) => {
         e.preventDefault();
-        emit('JoinQueueToServer');
+        socket?.emit('JoinQueueToServer');
+        // emit('JoinQueueToServer');
         setPlace("queue");
     }
 
@@ -119,23 +93,50 @@ const Game = () =>
         }
     }
 
+    useEffect(() => {
     if (place === "queue")
     {
         // looking for other player and game start when there is 2 or more in queue
-        
-        return(
-            <Wrapper>
-                <p>game starts wiht matchmaking system</p>
-            </Wrapper>
-        )
+
+        socket?.emit('JoinQueueToServer');
+    }
+    }, []);
+    
+    if (place === "queue")
+    {
+        return <Navigate to={'/gamearea'} />;
     }
 
     if (place === "matches_list")
     {
-        // All the games what is going on, and you can choose what game to spectate
         return(
             <Wrapper>
-                <p>list of all going games</p>
+                <div>
+                <table className="table table-striped table-sm"> 
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">name</th>
+                        <th scope="col">join</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {games.map((game: gameNames) => {
+                        return (
+                        <tr key={game.id}>
+                            <td>{game.id}</td>
+                            <td>{game.name}</td>
+                            <td>
+                            <form onSubmit={spectatorJoin}>
+                                <button onClick={e => setName(game.name)} type="submit">Join as spectator</button>
+                            </form>
+                            </td>
+                        </tr>  
+                        )
+                    })}
+                    </tbody>
+                </table>
+                </div>
             </Wrapper>
         )
     }

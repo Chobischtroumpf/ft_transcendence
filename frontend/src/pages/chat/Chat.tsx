@@ -144,61 +144,66 @@ const ChatInputContainer = styled.div`
 `;
 
 
+// import React, { SyntheticEvent, useEffect, useState } from "react";
+// import { Navigate } from "react-router";
+// import { Socket } from "socket.io-client";
+// import Wrapper from "../../components/Wrapper";
+// import { MessageI } from "../../models/message";
 
+// type Props = {
+//     socket: Socket | null,
+//     joinMsg: string,
+//     channelName: string,
+//     messages: MessageI[],
+// };
 
-
-
-
-
-// const Chat = () =>
+// const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
 // {
- 
-//     const [message, setMessage] = useState('');
-//     const [User, setName] = useState('');
-//     const [AllMessage, setAllMessage] = useState('');
-//     const queryParams = new URLSearchParams(useLocation().search);
-//     const ChatId= queryParams.get("chatId");
+//     const [newMessage, setNewMessage] = useState('');
+//     const [infoMsg, setInfoMsg] = useState(joinMsg);
+//     const [redirect, setRedirect] = useState(false);
     
-//     const Send = async (e: SyntheticEvent) =>
+//     const newMsg = async (e: SyntheticEvent) =>
 //     {
-//       e.preventDefault();
-    
-//       window.location.reload();
+//         e.preventDefault();
+//         socket?.emit('msgToServer', { name: channelName, message: newMessage });
 //     }
 
 //     useEffect(() => {
-//         (
-//           async () => {
-    
+//         if (socket === null)
+//             setRedirect(true);
+//         setInfoMsg(joinMsg);
+//         return () => {
+//             // leave channel emit here
 //           }
-//         )();
-//       });
-//       console.log(ChatId);
-//       return(
-//         <Wrapper>  
-//         <div>
-       
-//         <Link to={`/chat/chatsettings?ChatSettingsId=${ChatId}`} type="submit">settings</Link>
-//           <input id="inputMessage" value={message} onChange={(e) => setMessage(e.target.value)} placeholder={"message_room"}/>
-//           {/* <input id='send-message-input' type="texte"  onChange={() => on_change()}></input> */}
-//           <button onClick={() => handle_send()}>Click me</button>
-//             <h1>ldllldld</h1>
-//         </div>
-      
-//           </Wrapper>
-//       );
-//       function handle_send()
-//       {
+//     }, [joinMsg, socket]);
 
-//         (document.getElementById('inputMessage') as HTMLInputElement).value = "";
-        
-//         return ("lll");
-//       }
-//       function on_change() 
-//       {
-//         return (console.log());
-//       }
-  
+//     if (redirect === true)
+//     {
+//         // leave channel emit here
+//         return <Navigate to={'/channels'} />;
+//     }
+
+//     return (
+//         <Wrapper>
+//             <div>{infoMsg}</div>
+//             <form onSubmit={newMsg}>
+//                 <input placeholder="message" size={19} required onChange={e => setNewMessage(e.target.value)}/>
+//                 <button type="submit">Send</button>
+//             </form>
+//             <div>
+//             {messages.map((message: MessageI) => {
+//                 return (
+//                     <li key={message.id}>
+//                        {message.content}
+//                     </li>
+//                 )
+//             })}
+//             </div>
+            
+//         </Wrapper>
+//     );
 // }
 
 export default Chat;
+

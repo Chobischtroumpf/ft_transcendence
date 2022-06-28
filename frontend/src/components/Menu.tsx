@@ -7,12 +7,12 @@ export const Menu = () => {
             <div className="position-sticky pt-3">
               <ul className="nav flex-column">
               <li className="nav-item">
-                  <NavLink to={'/'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
+                  <NavLink to={'/game'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
                     Game
                   </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink to={'/profile'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
+                  <NavLink to={'/'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
                     Profile
                   </NavLink>
                 </li>
@@ -25,12 +25,7 @@ export const Menu = () => {
                   <NavLink to={'/channels'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
                     Channels
                   </NavLink>
-                </li> 
-                {/* <li className="nav-item">
-                  <Link to={'/game'} className="nav-link active">
-                    Game
-                  </Link>
-                </li> */}
+                </li>
               </ul>
             </div>
           </nav>

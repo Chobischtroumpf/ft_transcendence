@@ -31,9 +31,6 @@ export class UserEntity extends TimestampEntity {
     })
     username: string;
 
-    @Column({ default: null })
-    socketId: string;
-
     @Column({ default: false })
     tfaEnabled: boolean;
 

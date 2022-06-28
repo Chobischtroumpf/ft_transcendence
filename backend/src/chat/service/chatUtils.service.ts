@@ -31,7 +31,6 @@ export class ChatUtilsService
         return newUserStatus;
     }
     
-    
     async createNewChannel(name: string, status: ChannelStatus, password: string, newJoinedUserStatus: JoinedUserStatus, member: UserEntity)
     {
         const newChannel = await this.chatRepository.create({
@@ -66,7 +65,7 @@ export class ChatUtilsService
     }
 
     channelIsDirect(channel: ChannelEntity, channelName: string) {
-        if (channel !== undefined && channelName.includes("direct_with_") === true)
+        if (channel !== undefined || channelName.includes("direct_with_") === true)
             throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Channel already exists'}, HttpStatus.BAD_REQUEST);
     }
 
