@@ -26,15 +26,14 @@ const Game = ({socket, games}: Props) =>
     const [allGames, setAllGames] = useState<GameClass | null>(null);
     const [name, setName] = useState('');
 
-    const emit = async (event: string) =>
-    {
-        console.log('emit event: ' + event);
-        const response = await axios.get('user');
-    }
+    useEffect(() => {
+        setPlace(null);
+    }, []);
 
     const spectatorJoin = async (e: SyntheticEvent) =>
     {
       e.preventDefault();
+      socket?.emit('newSpectatorToServer');
       setPlace("queue"); // change it later, go to spectating game
     }
 
@@ -46,7 +45,6 @@ const Game = ({socket, games}: Props) =>
     const submit_spectator = async (e: SyntheticEvent) => {
         e.preventDefault();
         socket?.emit('getGamesToServer');
-        // emit('getGamesToServer');
         setPlace("matches_list");
     }
 
@@ -59,14 +57,12 @@ const Game = ({socket, games}: Props) =>
             setPlace(null);
             return ;
         }
-        emit('addInviteToServer');
         setPlace("game");
     }
 
     const queue = async (e: SyntheticEvent) => {
         e.preventDefault();
         socket?.emit('JoinQueueToServer');
-        // emit('JoinQueueToServer');
         setPlace("queue");
     }
 
@@ -92,15 +88,6 @@ const Game = ({socket, games}: Props) =>
             )
         }
     }
-
-    useEffect(() => {
-    if (place === "queue")
-    {
-        // looking for other player and game start when there is 2 or more in queue
-
-        socket?.emit('JoinQueueToServer');
-    }
-    }, []);
     
     if (place === "queue")
     {

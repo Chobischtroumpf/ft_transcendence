@@ -8,9 +8,10 @@ type Props = {
     socket: Socket | null,
     gameStart: string | null,
     gameUpdate: gameUpdate | null,
+    spectator: string | null,
 };
 
-const GameArea = ({socket, gameStart, gameUpdate}: Props) =>
+const GameArea = ({socket, gameStart, gameUpdate, spectator}: Props) =>
 {
     // const [ballx, setBallx] = useState(0);
     const [player1, setPlayer1] = useState<PlayerClass | null>(null);
@@ -46,43 +47,49 @@ const GameArea = ({socket, gameStart, gameUpdate}: Props) =>
             setOption(gameUpdate.options);
             setName(gameUpdate.name);
             setSounds(gameUpdate.sounds);
-            if (player1?.score === 10 || player2?.score === 10)
-                setFinished(true);
         }
     }, [gameUpdate]);
 
     if (gameStart === null)
     {
-        return(
-            <Wrapper>
-                waiting for the other player...
-            </Wrapper>
-        )
+        if (spectator === null)
+        {
+            return(
+                <Wrapper>
+                    waiting for the other player...
+                </Wrapper>
+            )
+        }
     }
 
-    if (finished === true)
+    if (sounds?.loose === true || sounds?.win === true)
     {
-        return (
+        sounds.loose === false;
+        sounds.win = false;
+        return(
             <Wrapper>
-                Game finished
+                Game finished!
             </Wrapper>
         )
     }
 
     return(
         <Wrapper>
-            {/* <div className="board">
+            <div>
+                
+            {/* </div>
+            <div className="board">
                 <div className='ball'>
                     <div className="ball_effect"></div>
                 </div>
                 <div className="paddle_1 paddle"></div>
-                <div className="paddle_2  paddle"></div>
-                <h1 className="player_1_score">0</h1>
-                <h1 className="player_2_score">0</h1>
+                <div className="paddle_2  paddle"></div> */}
+                <h1 className="player_1_score">{player1?.score}</h1>
+                <h1 className="player_2_score">{player2?.score}</h1>
                 <h1 className="message">
                     Score board
                 </h1>
-            </div> */}
+            </div>
             <div>
                 ball:
                 <br />
@@ -90,49 +97,10 @@ const GameArea = ({socket, gameStart, gameUpdate}: Props) =>
                 <br />
                 x: {ball?.x}
                 <br />
-                size: {ball?.size}
+                paddle1: {player1?.y}
                 <br />
-                player1:
-                <br />
-                user1: {player1?.user.username}
-                <br />
-                x: {player1?.x}
-                <br />
-                y: {player1?.y}
-                <br />
-                score: {player1?.score}
-                <br />
-                player2:
-                <br />
-                user2: {player2?.user.username}
-                <br />
-                x: {player2?.x}
-                <br />
-                y: {player2?.y}
-                <br />
-                score: {player2?.score}
-                <br />
-                options:
-                <br />
-                paddlesize: {option?.paddleSize}
-                <br />
-                paddlespeed: {option?.paddleSpeed}
-                <br />
-                ballSpeed: {option?.ballSpeed}
-                <br />
+                paddle2: {player2?.y}
                 gamename: {name}
-                {/* <br />
-                sounds:
-                <br />
-                hit: {sounds?.hit.valueOf()}
-                <br />
-                wall: {sounds?.wall.valueOf()}
-                <br />
-                score: {sounds?.score.valueOf()}
-                <br />
-                win: {sounds?.win.valueOf()}
-                <br />
-                loose: {sounds?.loose.valueOf()} */}
             </div>
         </Wrapper>
     );
