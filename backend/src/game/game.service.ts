@@ -8,18 +8,20 @@ export class GameService
     constructor() {}
 
     private readonly defaultCanvas: Canvas = {
-        h: 20,
-        w: 40,
+        h: 200,
+        w: 400,
     };
 
     // when player hits the ball
     setRandomBallDirection(x: number)
     {
+
         var direction: Dir;
         if (x === 1) // home player
-            direction = Math.round((Math.random() * 100) % 3) + 4;
+            direction = Math.floor(Math.random() * 3) + 4;
         if (x === 2) // away player
-            direction = Math.round((Math.random() * 100) % 3) + 1;
+            direction = Math.floor(Math.random() * 3) + 1;
+        console.log("dir: " + direction + " x: " + x);    
         return direction;
     }
 
@@ -63,7 +65,7 @@ export class GameService
     checkIfHomePlayerHitsBall(game: Game)
     {
         var size = game.players[0].paddle.h;
-        if (game.ball.x <= 3 && game.ball.x >= 2)
+        if (game.ball.x <= 20 && game.ball.x >= 10)
             while (--size >= 0)
                 if (game.players[0].y + size === game.ball.y)
                     return true;
@@ -73,8 +75,8 @@ export class GameService
     // returns true if player hits the ball, false if its a goal
     checkIfAwayPlayerHitsBall(game: Game)
     {
-        var size = game.players[0].paddle.h;
-        if (game.ball.x <= this.defaultCanvas.w - 3 && game.ball.x >= this.defaultCanvas.w - 2)
+        var size = game.players[1].paddle.h;
+        if (game.ball.x >= this.defaultCanvas.w - 20 && game.ball.x <= this.defaultCanvas.w - 10)
             while (--size >= 0)
                 if (game.players[1].y + size === game.ball.y)
                     return true;
@@ -84,24 +86,24 @@ export class GameService
     // checks if ball position hits bottom or top, or if it's a goal. If it's not a goal, ball moves
     checkBallPosition(game: Game)
     {
-        if (game.ball.x < 3)
+        if (game.ball.x < 20)
         {
             if (this.checkIfHomePlayerHitsBall(game) === true)
             {
                 game.sounds.hit = true;
                 game.ball.direction = this.setRandomBallDirection(1);
             }
-            else
+            else if (game.ball.x < 10)
                 return this.goal(2, game);
         }
-        else if (game.ball.x > this.defaultCanvas.w - 3)
+        else if (game.ball.x > this.defaultCanvas.w - 20)
         {
             if (this.checkIfAwayPlayerHitsBall(game) === true)
             {
                 game.sounds.hit = true;
                 game.ball.direction = this.setRandomBallDirection(2);
             }
-            else
+            else if (game.ball.x > this.defaultCanvas.w - 10)
                 return this.goal(1, game);
         }
         else if (game.ball.y > this.defaultCanvas.h - 1 || game.ball.y < 1)
@@ -156,6 +158,7 @@ export class GameService
 
     moveBall(ball: Ball)
     {
+        // console.log(ball.direction);
         switch (ball.direction)
         {
             case Dir.STOP:
@@ -191,7 +194,7 @@ export class GameService
     {
         const player: Player = {
             player: user,
-            x: 3,
+            x: 20,
             y: this.defaultCanvas.h / 2 - gameOptions.paddleSize / 2,
             paddle: this.initPaddle(gameOptions),
             color: 'red',
@@ -204,7 +207,7 @@ export class GameService
     {
         const player: Player = {
             player: user,
-            x: this.defaultCanvas.w - 3,
+            x: this.defaultCanvas.w - 20,
             y: this.defaultCanvas.h / 2 - gameOptions.paddleSize / 2,
             paddle: this.initPaddle(gameOptions),
             color: 'blue',
@@ -217,7 +220,7 @@ export class GameService
     {
         const paddle: Paddle = {
             h: gameOptions.paddleSize,
-            w: 1,
+            w: 10,
             speed: gameOptions.paddleSpeed
         };
         return paddle;
@@ -230,7 +233,7 @@ export class GameService
             y: this.defaultCanvas.h / 2,
             direction: Dir.STOP,
             speed: gameOptions.ballSpeed,
-            size: 1,
+            size: 5,
             color: 'green'
         };
         return ball;

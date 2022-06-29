@@ -56,6 +56,7 @@ function App() {
   const [games, setGames] = useState([]);
   const [gameStart, setGameStart] = useState<string | null>(null);
   const [gameUpdate, setGameUpdate] = useState<gameUpdate | null>(null);
+  const [spectator, setSpectator] = useState<string | null>(null);
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
@@ -81,6 +82,7 @@ function App() {
     });
     newSocket.on('newSpectatorToClient', (data) => {
       console.log(data);
+      setSpectator(data);
     });
     newSocket.on('gameStartsToClient', (data) => {
       setGameStart(data);
@@ -109,7 +111,7 @@ function App() {
           <Route path="/channels" element={<Channels />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
-          <Route path="/gamearea" element={<GameArea socket={socket} gameStart={gameStart} gameUpdate={gameUpdate}/>}></Route>
+          <Route path="/gamearea" element={<GameArea socket={socket} gameStart={gameStart} gameUpdate={gameUpdate} spectator={spectator}/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>

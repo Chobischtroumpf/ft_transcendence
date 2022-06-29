@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { BallClass, GameOptions, gameUpdate, PlayerClass, Sound } from "../../models/game";
@@ -20,16 +20,19 @@ const GameArea = ({socket, gameStart, gameUpdate, spectator}: Props) =>
     const [option, setOption] = useState<GameOptions | null>(null);
     const [name, setName] = useState('');
     const [sounds, setSounds] = useState<Sound | null>(null);
-    const [finished, setFinished] = useState(false);
+
+    const style = {
+        border: '1px solid black',
+    };
 
     window.addEventListener("keydown", function(event) {
         if (event.defaultPrevented)
             return ;  
         switch (event.key) {
-            case "ArrowDown":
+            case "ArrowUp":
                 socket?.emit('moveDownToServer');
                 break ;
-            case "ArrowUp":
+            case "ArrowDown":
                 socket?.emit('moveUpToServer');
                 break ;
             default:
@@ -76,31 +79,24 @@ const GameArea = ({socket, gameStart, gameUpdate, spectator}: Props) =>
     return(
         <Wrapper>
             <div>
-                
-            {/* </div>
-            <div className="board">
-                <div className='ball'>
-                    <div className="ball_effect"></div>
-                </div>
-                <div className="paddle_1 paddle"></div>
-                <div className="paddle_2  paddle"></div> */}
+                {name}
+                <svg
+                    id="aliens-go-home-canvas"
+                    preserveAspectRatio="xMaxYMax none"
+                    style={style}
+                    width="400px"
+                    height="200px"
+                >
+                    
+                    <rect x={10} y={player1?.y} width={10} height={40} />
+                    <rect x={380} y={player2?.y} width={10} height={40} />
+                    <circle cx={ball?.x} cy={ball?.y} r={ball?.size} />
+                </svg>
                 <h1 className="player_1_score">{player1?.score}</h1>
                 <h1 className="player_2_score">{player2?.score}</h1>
                 <h1 className="message">
                     Score board
                 </h1>
-            </div>
-            <div>
-                ball:
-                <br />
-                y: {ball?.y}
-                <br />
-                x: {ball?.x}
-                <br />
-                paddle1: {player1?.y}
-                <br />
-                paddle2: {player2?.y}
-                gamename: {name}
             </div>
         </Wrapper>
     );

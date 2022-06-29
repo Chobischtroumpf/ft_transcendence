@@ -16,8 +16,8 @@ type Props = {
 const Game = ({socket, games}: Props) =>
 {
     const [place, setPlace] = useState<string | null>(null);
-    const [paddleSize, setPaddleSize] = useState(4);
-    const [paddleSpeed, setPaddleSpeed] = useState(1);
+    const [paddleSize, setPaddleSize] = useState(40);
+    const [paddleSpeed, setPaddleSpeed] = useState(3);
     const [ballSpeed, setBallSpeed] = useState(1);
     const [invitedUser, setInvitedUser] = useState<string | null>(null);
     const [matchMaking, setMatchMaking] = useState(false);
@@ -162,7 +162,7 @@ const Game = ({socket, games}: Props) =>
                         textAlign: "center",
                         fontWeight: "bold",
                         fontFamily: "Optima, sans-serif"
-                    }} placeholder="paddleSize" required defaultValue={4} onChange={e => setPaddleSize(parseInt(e.target.value))}/>
+                    }} placeholder="paddleSize" required defaultValue={40} onChange={e => setPaddleSize(parseInt(e.target.value))}/>
                     <input style={{
                         background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
                         padding: "13px 0",
@@ -176,7 +176,7 @@ const Game = ({socket, games}: Props) =>
                         textAlign: "center",
                         fontWeight: "bold",
                         fontFamily: "Optima, sans-serif"
-                    }} placeholder="paddleSpeed" size={19} required defaultValue={1} onChange={e => setPaddleSpeed(parseInt(e.target.value))}/>
+                    }} placeholder="paddleSpeed" size={19} required defaultValue={3} onChange={e => setPaddleSpeed(parseInt(e.target.value))}/>
                     <input style={{
                         background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
                         // margin: '150px 30px',

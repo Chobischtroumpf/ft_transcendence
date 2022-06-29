@@ -25,20 +25,15 @@ const Profile = ({socket}: Props) =>
 
 
   useEffect(() => {
-    (
-      setTimeout(() => {
-        (async () => {
+      setTimeout(async() => {
           const { data } = await axios.get("user");
           try {
             setCurrentUser(data);
-            setUser(data);
-          
+            setUser(data);      
           } catch (e) {
             <Navigate to={'/error500'} />
           }
-        }
-        )();
-      }, 1000));
+      }, 40);
     (
       async () => {
         const {data} = await axios.get(`user/friend`);
@@ -52,28 +47,34 @@ const Profile = ({socket}: Props) =>
     )();
     if (userId !== null)
     {
-      (
-        async () => {
-          const {data} = await axios.get(`user/get/user/${userId}`,);
-          try {
-            setUser(data);
-          } catch (e) {
-            <Navigate to={'/error500'} />
-          }
+      setTimeout(async() => {
+        const {data} = await axios.get(`user/get/user/${userId}`,);
+        try {
+          setUser(data);
+        } catch (e) {
+          <Navigate to={'/error500'} />
         }
-      )();
+      }, 40);
     }
     else {
-      (
-        async () => {
-          const {data} = await axios.get(`user`);
+      setTimeout(async() => {
+          const { data } = await axios.get("user");
           try {
             setUser(data);
           } catch (e) {
             <Navigate to={'/error500'} />
           }
-        }
-      )();
+      }, 40);
+      // (
+      //   async () => {
+      //     const {data} = await axios.get(`user`);
+      //     try {
+      //       setUser(data);
+      //     } catch (e) {
+      //       <Navigate to={'/error500'} />
+      //     }
+      //   }
+      // )();
       // (
       //   async () => {
       //     const {data} = await axios.get(`user/friend`);

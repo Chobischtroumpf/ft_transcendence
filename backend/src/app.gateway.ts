@@ -32,8 +32,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   private _sockets = [];
   
   private readonly defaultGameOptions: GameOptions = {
-    paddleSize: 4,
-    paddleSpeed: 1,
+    paddleSize: 40,
+    paddleSpeed: 3,
     ballSpeed: 1
   };
 
@@ -376,7 +376,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       }
       this.sendGameUpdate(game);
       game.sounds = this.gameService.initSound();
-    }, 200); // change it to 16 later
+    }, 16); // change it to 16 later
   }
 
   sendGameUpdate(game: Game)
