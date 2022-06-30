@@ -165,17 +165,15 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const invitedUser = client.data.user;
-      console.log(sender2);
       const sender = await this.userService.getUserByName(sender2);
-      console.log(this.invites);
-      console.log(sender2 + ' ' + invitedUser.username);
-      const index = this.invites.indexOf({sender: sender2, invitedUser: invitedUser.username});
+      const index = this.invites.findIndex(function (Invite) {
+        return Invite.sender === sender2 && Invite.invitedUser === invitedUser.username;
+      });
       if (index === -1)
       {
         client.emit('acceptInviteToClient', 'Invite doesnt exists');
         return ;
       }
-      console.log('lol3');
       // remove invited user from invites
       this.invites.splice(index, 1);
       const player1: Player = { player: sender };
