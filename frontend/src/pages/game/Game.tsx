@@ -18,8 +18,8 @@ const Game = ({socket, games, invites}: Props) =>
 {
     const [place, setPlace] = useState<string | null>(null);
     const [paddleSize, setPaddleSize] = useState(40);
-    const [paddleSpeed, setPaddleSpeed] = useState(3);
-    const [ballSpeed, setBallSpeed] = useState(2);
+    const [paddleSpeed, setPaddleSpeed] = useState(6);
+    const [ballSpeed, setBallSpeed] = useState(3);
     const [invitedUser, setInvitedUser] = useState<string | null>(null);
     const [matchMaking, setMatchMaking] = useState(false);
     const [player2, setPlayer2] = useState<User | null>(null);
@@ -168,7 +168,7 @@ const Game = ({socket, games, invites}: Props) =>
                         textAlign: "center",
                         fontWeight: "bold",
                         fontFamily: "Optima, sans-serif"
-                    }} placeholder="paddleSpeed" size={19} required defaultValue={3} onChange={e => setPaddleSpeed(parseInt(e.target.value))}/>
+                    }} placeholder="paddleSpeed" size={19} required defaultValue={6} onChange={e => setPaddleSpeed(parseInt(e.target.value))}/>
                     <input style={{
                         background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
                         // margin: '150px 30px',
@@ -183,7 +183,7 @@ const Game = ({socket, games, invites}: Props) =>
                         textAlign: "center",
                         fontWeight: "bold",
                         fontFamily: "Optima, sans-serif"
-                    }} placeholder="ballSpeed" size={19} required defaultValue={2} onChange={e => setBallSpeed(parseInt(e.target.value))}/>
+                    }} placeholder="ballSpeed" size={19} required defaultValue={3} onChange={e => setBallSpeed(parseInt(e.target.value))}/>
                     <div>
                     <form onSubmit={options}>
                         <button style={{

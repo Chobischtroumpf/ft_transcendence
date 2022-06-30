@@ -33,7 +33,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   
   private readonly defaultGameOptions: GameOptions = {
     paddleSize: 40,
-    paddleSpeed: 3,
+    paddleSpeed: 6,
     ballSpeed: 3
   };
 

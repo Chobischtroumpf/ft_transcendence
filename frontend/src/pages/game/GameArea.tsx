@@ -51,6 +51,8 @@ const GameArea = ({socket, gameUpdate }: Props) =>
         }
     }, [gameUpdate]);
 
+    // after game is done, you need to refresh page to get gamefinished page away, need to fix that
+
     if (sounds?.loose === true || sounds?.win === true)
     {
         sounds.loose === false;
@@ -66,12 +68,12 @@ const GameArea = ({socket, gameUpdate }: Props) =>
                     id="aliens-go-home-canvas"
                     preserveAspectRatio="xMaxYMax none"
                     style={style}
-                    width="400px"
+                    width="300px"
                     height="200px"
                 >
                     
                     <rect x={10} y={player1?.y} width={10} height={40} />
-                    <rect x={380} y={player2?.y} width={10} height={40} />
+                    <rect x={280} y={player2?.y} width={10} height={40} />
                     <circle cx={ball?.x} cy={ball?.y} r={ball?.size} />
                 </svg>
                 <h1 className="player_1_score">{player1?.score}</h1>
