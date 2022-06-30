@@ -149,28 +149,33 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const invitedUser = await this.userService.getUserById_2(id);
       // add invited user to invites
       this.invites.push({
-        sender: user,
-        invitedUser
+        sender: user.username,
+        invitedUser: invitedUser.username
       });
       for (var i = 0; i < this._sockets.length; i++)
         if (this._sockets[i].data.user.username === invitedUser.username)
-          this._sockets[i].emit('addInviteToClient', `User: ${user.username} has invited you to game`);
+          this._sockets[i].emit('addInviteToClient', { username: user.username, id: user.id });
     }
     catch { throw new WsException('Something went wrong'); }
   }
 
   @SubscribeMessage('acceptInviteToServer')
-  async acceptInvite(@ConnectedSocket() client: Socket, sender: UserEntity)
+  async acceptInvite(@ConnectedSocket() client: Socket, @MessageBody() sender2: string)
   {
     try
     {
       const invitedUser = client.data.user;
-      const index = this.invites.indexOf({sender, invitedUser});
+      console.log(sender2);
+      const sender = await this.userService.getUserByName(sender2);
+      console.log(this.invites);
+      console.log(sender2 + ' ' + invitedUser.username);
+      const index = this.invites.indexOf({sender: sender2, invitedUser: invitedUser.username});
       if (index === -1)
       {
         client.emit('acceptInviteToClient', 'Invite doesnt exists');
         return ;
       }
+      console.log('lol3');
       // remove invited user from invites
       this.invites.splice(index, 1);
       const player1: Player = { player: sender };

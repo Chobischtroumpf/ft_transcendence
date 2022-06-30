@@ -4,16 +4,17 @@ import { Socket } from 'socket.io-client';
 import background from "../../assets/pong.png";
 import { User } from "../../models/user";
 import axios from "axios";
-import { GameClass, gameNames } from "../../models/game";
+import { GameClass, gameNames, Invite } from "../../models/game";
 import './Game.css';
 import { Navigate } from "react-router";
 
 type Props = {
     socket: Socket | null,
     games: gameNames[],
+    invites: any[],
 };
 
-const Game = ({socket, games}: Props) =>
+const Game = ({socket, games, invites}: Props) =>
 {
     const [place, setPlace] = useState<string | null>(null);
     const [paddleSize, setPaddleSize] = useState(40);
@@ -25,6 +26,7 @@ const Game = ({socket, games}: Props) =>
     const [acceptInvite, setAcceptInvite] = useState(false);
     const [allGames, setAllGames] = useState<GameClass | null>(null);
     const [name, setName] = useState('');
+    const [inviter, setInviter] = useState<string | null>(null);
 
     useEffect(() => {
         setPlace(null);
@@ -57,7 +59,8 @@ const Game = ({socket, games}: Props) =>
             setPlace(null);
             return ;
         }
-        setPlace("game");
+        socket?.emit('addInviteToServer', data.id);
+        setPlace("queue");
     }
 
     const queue = async (e: SyntheticEvent) => {
@@ -66,27 +69,16 @@ const Game = ({socket, games}: Props) =>
         setPlace("queue");
     }
 
-    if (place === "game")
+    const Join = async (e: SyntheticEvent) =>
     {
-        // send invite to other player
-        // game loop starts when opponent accept invite, otherwise user is waiting.
+        e.preventDefault();
+        setPlace("join");
+    }
 
-        if (acceptInvite === false)
-        {
-            return(
-                <Wrapper>
-                    <p>Waiting other user to accept invite</p>
-                </Wrapper>
-            )
-        }
-        else
-        {
-            return(
-                <Wrapper>
-                    <p>game starts</p>
-                </Wrapper>
-            )
-        }
+    if (place === "join")
+    {
+        socket?.emit('acceptInviteToServer', inviter);
+        return <Navigate to={'/gamewaitingroom'} />;
     }
     
     if (place === "queue")
@@ -221,6 +213,32 @@ const Game = ({socket, games}: Props) =>
                                 fontFamily: "Optima, sans-serif"
                         }} type="submit">Join Queue And Start Game</button>
                     </form>
+                    </div>
+                    <div>
+                        <table className="table table-striped table-sm"> 
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Player who invited</th>
+                            <th scope="col">Join to game</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {invites.map((invite: Invite) => {
+                            return (
+                            <tr key={invite.id}>
+                                <td>{invite.id}</td>
+                                <td>{invite.username}</td>
+                                <td>
+                                <form onSubmit={Join}>
+                                    <button onClick={e => setInviter(invite.username)} type="submit">Join</button>
+                                </form>
+                                </td>
+                            </tr>  
+                            )
+                        })}
+                        </tbody>
+                        </table>
                     </div>
             </div>
             </Wrapper>

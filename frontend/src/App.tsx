@@ -25,6 +25,7 @@ function App() {
   const [gameUpdate, setGameUpdate] = useState<gameUpdate | null>(null);
   const [spectator, setSpectator] = useState<string | null>(null);
   const [gameWinner, setGameWinner] = useState('');
+  const [invites, setInvites] = useState<any[]>([]);
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
@@ -40,29 +41,24 @@ function App() {
       setMessages(data);
     });
     newSocket.on('getGamesToClient', (data) => {
-      console.log('lol3');
       setGames(data);
-      console.log(data);
     });
     newSocket.on('addInviteToClient', (data) => {
-      console.log(data);
+      setInvites(invites => [...invites, data]);
     });
     newSocket.on('leaveQueueToClient', (data) => {
       console.log(data);
     });
     newSocket.on('gameEndToClient', (data) => {
       setGameWinner(data);
-      console.log(data);
     });
     newSocket.on('newSpectatorToClient', (data) => {
-      console.log(data);
       setSpectator(data.room);
     });
     newSocket.on('gameStartsToClient', (data) => {
       setGameStart(data);
     });
     newSocket.on('gameUpdateToClient', (data) => {
-      // console.log(data);
       setGameUpdate(data);
     });
     setSocket(newSocket);
@@ -76,7 +72,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/game" element={<Game socket={socket} games={games} />}></Route>
+          <Route path="/game" element={<Game socket={socket} games={games} invites={invites} />}></Route>
           <Route path="/" element={<Profile socket={socket}/>}></Route>
           <Route path="/profile" element={<Profile socket={socket}/>}></Route>
           <Route path="/profile/settings" element={<Settings/>}></Route>

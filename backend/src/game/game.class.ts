@@ -77,8 +77,8 @@ export class Canvas
 
 export class Invites
 {
-    sender: UserEntity;
-    invitedUser: UserEntity;
+    sender: string;
+    invitedUser: string;
 }
 
 export class gameNames

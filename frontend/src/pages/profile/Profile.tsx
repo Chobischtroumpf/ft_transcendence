@@ -40,7 +40,7 @@ const Profile = ({socket}: Props) =>
       async () => {
         const {data} = await axios.get(`user/friend`);
         try {
-          console.log("friends :", data);
+          // console.log("friends :", data);
           setFriends(data);
         } catch (e) {
           <Navigate to={'/error500'} />
@@ -94,7 +94,7 @@ const Profile = ({socket}: Props) =>
   if (!friends.includes(currentUser.id)) {
     showFriendRequest = true;
   }
-  console.log("friends : ", friends);
+  // console.log("friends : ", friends);
 
   return(
     <Wrapper>
