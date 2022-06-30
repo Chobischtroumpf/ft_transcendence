@@ -45,6 +45,7 @@ import Chat from './pages/chat/Chat';
 import ChatSettings from './pages/chat/ChatSettings';
 import { gameUpdate } from './models/game';
 import GameArea from './pages/game/GameArea';
+import GameFinished from './pages/game/GameFinished';
 // import GameArea from './pages/game/GameArea';
 // import { gameUpdate } from './models/game';
 
@@ -57,6 +58,7 @@ function App() {
   const [gameStart, setGameStart] = useState<string | null>(null);
   const [gameUpdate, setGameUpdate] = useState<gameUpdate | null>(null);
   const [spectator, setSpectator] = useState<string | null>(null);
+  const [gameWinner, setGameWinner] = useState('');
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
@@ -78,6 +80,10 @@ function App() {
       console.log(data);
     });
     newSocket.on('leaveQueueToClient', (data) => {
+      console.log(data);
+    });
+    newSocket.on('gameEndToClient', (data) => {
+      setGameWinner(data);
       console.log(data);
     });
     newSocket.on('newSpectatorToClient', (data) => {
@@ -108,10 +114,11 @@ function App() {
           <Route path="/profile/settings" element={<Settings/>}></Route>
           <Route path="/users" element={<Users socket={socket} />}></Route>
           <Route path="/signin" element={<SingIn />}></Route>
-          <Route path="/channels" element={<Channels />}></Route>
+          <Route path="/channels" element={<Channels socket={socket} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
           <Route path="/gamearea" element={<GameArea socket={socket} gameStart={gameStart} gameUpdate={gameUpdate} spectator={spectator}/>}></Route>
+          <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

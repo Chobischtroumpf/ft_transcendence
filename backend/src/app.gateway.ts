@@ -34,7 +34,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   private readonly defaultGameOptions: GameOptions = {
     paddleSize: 40,
     paddleSpeed: 3,
-    ballSpeed: 1
+    ballSpeed: 2
   };
 
   private logger: Logger = new Logger('AppGateway');
@@ -306,6 +306,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       method: 'POST',
       data: matchBody
     });
+    this.wss.to(game.name).emit('gameEndToClient', game.winner.player.username);
     // players leaves from gameroom and game has been deleted from game array
     this.wss.to(game.name).socketsLeave(game.name);
     const index = this.games.findIndex(e => e.id === game.id);

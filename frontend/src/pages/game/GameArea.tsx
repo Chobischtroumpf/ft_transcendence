@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { BallClass, GameOptions, gameUpdate, PlayerClass, Sound } from "../../models/game";
@@ -13,7 +14,6 @@ type Props = {
 
 const GameArea = ({socket, gameStart, gameUpdate, spectator}: Props) =>
 {
-    // const [ballx, setBallx] = useState(0);
     const [player1, setPlayer1] = useState<PlayerClass | null>(null);
     const [player2, setPlayer2] = useState<PlayerClass | null>(null);
     const [ball, setBall] = useState<BallClass | null>(null);
@@ -69,11 +69,7 @@ const GameArea = ({socket, gameStart, gameUpdate, spectator}: Props) =>
     {
         sounds.loose === false;
         sounds.win = false;
-        return(
-            <Wrapper>
-                Game finished!
-            </Wrapper>
-        )
+        return <Navigate to={'/gamefinished'} />
     }
 
     return(
