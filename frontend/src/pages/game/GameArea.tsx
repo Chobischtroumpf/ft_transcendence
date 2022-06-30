@@ -7,12 +7,10 @@ import '../game/Game.css';
 
 type Props = {
     socket: Socket | null,
-    gameStart: string | null,
     gameUpdate: gameUpdate | null,
-    spectator: string | null,
 };
 
-const GameArea = ({socket, gameStart, gameUpdate, spectator}: Props) =>
+const GameArea = ({socket, gameUpdate }: Props) =>
 {
     const [player1, setPlayer1] = useState<PlayerClass | null>(null);
     const [player2, setPlayer2] = useState<PlayerClass | null>(null);
@@ -52,18 +50,6 @@ const GameArea = ({socket, gameStart, gameUpdate, spectator}: Props) =>
             setSounds(gameUpdate.sounds);
         }
     }, [gameUpdate]);
-
-    if (gameStart === null)
-    {
-        if (spectator === null)
-        {
-            return(
-                <Wrapper>
-                    waiting for the other player...
-                </Wrapper>
-            )
-        }
-    }
 
     if (sounds?.loose === true || sounds?.win === true)
     {

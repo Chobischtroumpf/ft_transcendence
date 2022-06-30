@@ -1,36 +1,3 @@
-// import React from 'react';
-// import './App.css';
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import Users from './pages/users/Users';
-// import SingIn from './pages/SignIn';
-// import Profile from './pages/profile/Profile';
-// import Channels from './pages/chat/Channels';
-// import Game from './pages/game/Game';
-// import Chat from './pages/chat/Chat';
-// import ChatSettings from './pages/chat/ChatSettings';
-// import { MessageI } from "./models/Chat";
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <BrowserRouter>
-//         <Routes>
-//           <Route path="/game" element={<Game/>}></Route>
-//           <Route path="/" element={<Profile/>}></Route>
-//           <Route path="/users" element={<Users/>}></Route>
-//           <Route path="/signin" element={<SingIn/>}></Route>
-//           <Route path="/channels" element={<Channels/>}></Route>
-//           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
-//           <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
-//         </Routes>
-//       </BrowserRouter>
-//     </div>
-//   );
-// }
-
-// export default App;
-
-
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -46,8 +13,7 @@ import ChatSettings from './pages/chat/ChatSettings';
 import { gameUpdate } from './models/game';
 import GameArea from './pages/game/GameArea';
 import GameFinished from './pages/game/GameFinished';
-// import GameArea from './pages/game/GameArea';
-// import { gameUpdate } from './models/game';
+import GameWaitingRoom from './pages/game/GameWaitingRoom';
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -74,7 +40,9 @@ function App() {
       setMessages(data);
     });
     newSocket.on('getGamesToClient', (data) => {
+      console.log('lol3');
       setGames(data);
+      console.log(data);
     });
     newSocket.on('addInviteToClient', (data) => {
       console.log(data);
@@ -88,7 +56,7 @@ function App() {
     });
     newSocket.on('newSpectatorToClient', (data) => {
       console.log(data);
-      setSpectator(data);
+      setSpectator(data.room);
     });
     newSocket.on('gameStartsToClient', (data) => {
       setGameStart(data);
@@ -117,8 +85,9 @@ function App() {
           <Route path="/channels" element={<Channels socket={socket} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
-          <Route path="/gamearea" element={<GameArea socket={socket} gameStart={gameStart} gameUpdate={gameUpdate} spectator={spectator}/>}></Route>
+          <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} />}></Route>
           <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
+          <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator}/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>

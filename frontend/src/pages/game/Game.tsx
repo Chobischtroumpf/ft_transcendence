@@ -33,7 +33,7 @@ const Game = ({socket, games}: Props) =>
     const spectatorJoin = async (e: SyntheticEvent) =>
     {
       e.preventDefault();
-      socket?.emit('newSpectatorToServer');
+      socket?.emit('newSpectatorToServer', { room: name });
       setPlace("queue"); // change it later, go to spectating game
     }
 
@@ -91,7 +91,7 @@ const Game = ({socket, games}: Props) =>
     
     if (place === "queue")
     {
-        return <Navigate to={'/gamearea'} />;
+        return <Navigate to={'/gamewaitingroom'} />;
     }
 
     if (place === "matches_list")

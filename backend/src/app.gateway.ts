@@ -34,7 +34,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   private readonly defaultGameOptions: GameOptions = {
     paddleSize: 40,
     paddleSpeed: 3,
-    ballSpeed: 2
+    ballSpeed: 3
   };
 
   private logger: Logger = new Logger('AppGateway');
@@ -234,6 +234,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
+      console.log(room);
       // user joins to game as a spectator
       client.join(room);
       this.wss.to(room).emit('newSpectatorToClient', { username: user.username, room: room });
@@ -322,7 +323,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         if (this._sockets[i].data.user.username === player2.username)
             this._sockets[i].join(room);
     }
-    this.wss.to(room).emit('gameStartsToClient', `Game between ${player1.username} and ${player2.username} starts now`);
+    this.wss.to(room).emit('gameStartsToClient', room);
   }
 
   startGame(player1: Player, player2: Player)
