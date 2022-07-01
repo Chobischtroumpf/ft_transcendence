@@ -11,7 +11,7 @@
 // import { Socket } from "socket.io-client";
 // import Wrapper from "../../components/Wrapper";
 // import { MessageI } from "../../models/Chat";
-// import styled from "styled-components"
+
 // import {Link} from "react-router-dom"
 
 // type Props = {
@@ -107,48 +107,15 @@
 //     );
 // }
 
-// const Header = styled.div`
-
-// `;
-
-// const ChatContainer = styled.div`
-
-//   flex: 0.7;
-//   flex-frow: 1;
-//   overflow-y: scroll;
-//   margin-top: 40px;
-// `
-// const ChatInputContainer = styled.div`
-    
-//   border-radius: 20px;
-    
-//     > form {
-//       position: relative;
-//       display: flex;
-//       justify-content: center;
-//     }
-
-//     > form > input {
-//       position: fixed;
-//       bottom: 30px;
-//       width: 60%;
-//       border: 1px solid gray;
-//       border-radius: 3px;
-//       padding: 20px;
-//       outline: none; 
-//     }
-    
-//     > form > button {
-//       display: none !important ;
-//     }
-// `;
-
-
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { MessageI } from "../../models/Chat";
+import styled from "styled-components"
+import { GiSleepy } from "react-icons/gi";
+import axios from "axios";
+import { tmpdir } from "os";
 
 type Props = {
     socket: Socket | null,
@@ -162,11 +129,14 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
     const [newMessage, setNewMessage] = useState('');
     const [infoMsg, setInfoMsg] = useState(joinMsg);
     const [redirect, setRedirect] = useState(false);
-    
+ 
     const newMsg = async (e: SyntheticEvent) =>
     {
         e.preventDefault();
+        
         socket?.emit('msgToServer', { name: channelName, message: newMessage });
+        console.log(messages);
+        setNewMessage("");
     }
 
     useEffect(() => {
@@ -186,24 +156,67 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
 
     return (
         <Wrapper>
+
             <div>{infoMsg}</div>
+            <ChatContainer>
+            <ChatInputContainer>
             <form onSubmit={newMsg}>
-                <input placeholder="message" size={19} required onChange={e => setNewMessage(e.target.value)}/>
-                <button type="submit">Send</button>
+                <input placeholder="message" id="inputMessage" value={newMessage} size={19} required onChange={e => setNewMessage(e.target.value)}/>
+                <button> send </button>
             </form>
+            </ChatInputContainer>
             <div>
             {messages.map((message: MessageI) => {
                 return (
                     <li key={message.id}>
-                       {message.content}
+                        {message.content}
+                        <hr></hr>
+                        <h5>{message.author.username}</h5>
                     </li>
-                )
+                );
             })}
             </div>
-            
+            </ChatContainer>
         </Wrapper>
     );
 }
 
 export default Chat;
 
+
+const Header = styled.div`
+
+`;
+
+const ChatContainer = styled.div`
+
+  flex: 0.7;
+  flex-frow: 1;
+  overflow-y: scroll;
+  margin-top: 40px;
+  
+`
+const ChatInputContainer = styled.div`
+    
+  border-radius: 20px;
+    
+    > form {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    > form > input {
+      position: fixed;
+      bottom: 5px;
+      width: 80%;
+      border: 1px solid gray;
+      border-radius: 3px;
+      padding: 20px;
+      outline: none; 
+    }
+    
+    > form > button {
+      display: none !important ;
+    }
+`;
