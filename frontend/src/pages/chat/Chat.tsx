@@ -129,6 +129,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
     const [newMessage, setNewMessage] = useState('');
     const [infoMsg, setInfoMsg] = useState(joinMsg);
     const [redirect, setRedirect] = useState(false);
+    const [base64, setBase64] = useState();
  
     const newMsg = async (e: SyntheticEvent) =>
     {
@@ -167,13 +168,17 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
             </ChatInputContainer>
             <div>
             {messages.map((message: MessageI) => {
+                console.log(message.author.picture);
+                
                 return (
                     <li key={message.id}>
                         {message.content}
                         <hr></hr>
-                        <h5>{message.author.username}</h5>
+                        <h5><img src={message.author.picture} alt="" /> {message.author.username}</h5>
+                        
                     </li>
                 );
+                
             })}
             </div>
             </ChatContainer>
