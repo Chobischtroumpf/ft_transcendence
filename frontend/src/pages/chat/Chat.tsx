@@ -137,6 +137,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
         
         socket?.emit('msgToServer', { name: channelName, message: newMessage });
         console.log(messages);
+        window.scrollTo(0,document.body.scrollHeight);
         setNewMessage("");
     }
 
@@ -154,7 +155,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
         // leave channel emit here
         return <Navigate to={'/channels'} />;
     }
-
+    // window.scrollTo(0,document.body.scrollHeight);
     return (
         <Wrapper>
 
@@ -169,12 +170,11 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
             <div>
             {messages.map((message: MessageI) => {
                 console.log(message.author.picture);
-                
                 return (
                     <li key={message.id}>
-                        {message.content}
+                        <h4>{message.content}</h4>
                         <hr></hr>
-                        <h5><img src={message.author.picture} alt="" /> {message.author.username}</h5>
+                        <h5>{message.author.username}</h5>
                         
                     </li>
                 );
@@ -189,17 +189,12 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
 export default Chat;
 
 
-const Header = styled.div`
-
-`;
-
 const ChatContainer = styled.div`
 
   flex: 0.7;
   flex-frow: 1;
   overflow-y: scroll;
   margin-top: 40px;
-  
 `
 const ChatInputContainer = styled.div`
     
@@ -213,11 +208,11 @@ const ChatInputContainer = styled.div`
 
     > form > input {
       position: fixed;
-      bottom: 5px;
+      bottom: 4px;
       width: 80%;
       border: 1px solid gray;
-      border-radius: 3px;
-      padding: 20px;
+      border-radius: 20px;
+      padding: 10px;
       outline: none; 
     }
     
