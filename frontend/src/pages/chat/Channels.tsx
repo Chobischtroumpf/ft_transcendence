@@ -4,8 +4,13 @@ import Wrapper from "../../components/Wrapper";
 import { Channel, ChannelStatus } from "../../models/channel";
 import io, { Socket } from 'socket.io-client';
 import {Link} from "react-router-dom"
+import { Navigate } from "react-router";
 
-const Channels = () =>
+type Props = {
+  socket: Socket | null,
+};
+
+const Channels = ({socket}: Props) =>
 {
   const [channels, setChannels] = useState([]);
   const [page, setPage] = useState(1);
@@ -13,6 +18,7 @@ const Channels = () =>
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState(ChannelStatus.public);
+  const [place, setPlace] = useState(false);
 
   const submit = async (e: SyntheticEvent) =>
   {
@@ -25,6 +31,20 @@ const Channels = () =>
     else if (status === ChannelStatus.private)
       await axios.post('chat/private', { name });
     window.location.reload();
+  }
+
+  const join = async (e: SyntheticEvent) =>
+  {
+    e.preventDefault();
+    setPlace(true);
+  }
+
+  if (place === true)
+  {
+    useEffect(() => {
+      socket?.emit('joinToServer', { name });
+    });
+    return <Navigate to={`/chat?chatId=${name}`} />;
   }
 
   useEffect(() => {
@@ -85,9 +105,9 @@ const Channels = () =>
                     <td>{channel.name}</td>
                     <td>{channel.status}</td>
                     <td>
-                      {/* <form onSubmit={join}> */}
-                        <Link to={`/chat?chatId=${channel.id}`} type="submit">Join</Link>
-                      {/* </form> */}
+                      <form onSubmit={join}>
+                        <button onClick={e => setName(channel.name)} type="submit">Join</button>
+                      </form>
                     </td>
                     <td>
                       {/* <form onSubmit={join}> */}

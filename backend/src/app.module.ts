@@ -13,11 +13,14 @@ import { AppGateway } from './app.gateway';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
-        type : 'postgres',
-        url: process.env.DATABASE_URL,
-        entities: ["dist/**/*.entity{.ts,.js}"],
-        autoLoadEntities: true,
-        synchronize: true,
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
+      entities: ['dist/**/*.entity{.ts,.js}'],
+      synchronize: true
     }),
     UserModule,
     AuthModule,

@@ -11,6 +11,14 @@ export enum Dir
     DOWNRIGHT = 6
 }
 
+export class Invite
+{
+    constructor(
+        public id: number,
+        public username: string,
+    ) {}
+}
+
 export class gameUpdate
 {
     constructor(

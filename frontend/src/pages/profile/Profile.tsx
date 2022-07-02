@@ -23,6 +23,8 @@ const Profile = ({socket}: Props) =>
   var ownProfile: boolean = false;
   var showFriendRequest:boolean = false;
 
+  if (socket?.connected === false)
+  socket?.connect();
 
   useEffect(() => {
   (

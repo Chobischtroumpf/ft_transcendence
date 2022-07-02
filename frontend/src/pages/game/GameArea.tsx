@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { BallClass, GameOptions, gameUpdate, PlayerClass, Sound } from "../../models/game";
@@ -6,29 +7,30 @@ import '../game/Game.css';
 
 type Props = {
     socket: Socket | null,
-    gameStart: string | null,
     gameUpdate: gameUpdate | null,
 };
 
-const GameArea = ({socket, gameStart, gameUpdate}: Props) =>
+const GameArea = ({socket, gameUpdate }: Props) =>
 {
-    // const [ballx, setBallx] = useState(0);
     const [player1, setPlayer1] = useState<PlayerClass | null>(null);
     const [player2, setPlayer2] = useState<PlayerClass | null>(null);
     const [ball, setBall] = useState<BallClass | null>(null);
     const [option, setOption] = useState<GameOptions | null>(null);
     const [name, setName] = useState('');
     const [sounds, setSounds] = useState<Sound | null>(null);
-    const [finished, setFinished] = useState(false);
+
+    const style = {
+        border: '1px solid black',
+    };
 
     window.addEventListener("keydown", function(event) {
         if (event.defaultPrevented)
             return ;  
         switch (event.key) {
-            case "ArrowDown":
+            case "ArrowUp":
                 socket?.emit('moveDownToServer');
                 break ;
-            case "ArrowUp":
+            case "ArrowDown":
                 socket?.emit('moveUpToServer');
                 break ;
             default:
@@ -46,93 +48,39 @@ const GameArea = ({socket, gameStart, gameUpdate}: Props) =>
             setOption(gameUpdate.options);
             setName(gameUpdate.name);
             setSounds(gameUpdate.sounds);
-            if (player1?.score === 10 || player2?.score === 10)
-                setFinished(true);
         }
     }, [gameUpdate]);
 
-    if (gameStart === null)
-    {
-        return(
-            <Wrapper>
-                waiting for the other player...
-            </Wrapper>
-        )
-    }
+    // after game is done, you need to refresh page to get gamefinished page away, need to fix that
 
-    if (finished === true)
+    if (sounds?.loose === true || sounds?.win === true)
     {
-        return (
-            <Wrapper>
-                Game finished
-            </Wrapper>
-        )
+        sounds.loose === false;
+        sounds.win = false;
+        return <Navigate to={'/gamefinished'} />
     }
 
     return(
         <Wrapper>
-            {/* <div className="board">
-                <div className='ball'>
-                    <div className="ball_effect"></div>
-                </div>
-                <div className="paddle_1 paddle"></div>
-                <div className="paddle_2  paddle"></div>
-                <h1 className="player_1_score">0</h1>
-                <h1 className="player_2_score">0</h1>
+            <div>
+                {name}
+                <svg
+                    id="aliens-go-home-canvas"
+                    preserveAspectRatio="xMaxYMax none"
+                    style={style}
+                    width="300px"
+                    height="200px"
+                >
+                    
+                    <rect x={10} y={player1?.y} width={10} height={40} />
+                    <rect x={280} y={player2?.y} width={10} height={40} />
+                    <circle cx={ball?.x} cy={ball?.y} r={ball?.size} />
+                </svg>
+                <h1 className="player_1_score">{player1?.score}</h1>
+                <h1 className="player_2_score">{player2?.score}</h1>
                 <h1 className="message">
                     Score board
                 </h1>
-            </div> */}
-            <div>
-                ball:
-                <br />
-                y: {ball?.y}
-                <br />
-                x: {ball?.x}
-                <br />
-                size: {ball?.size}
-                <br />
-                player1:
-                <br />
-                user1: {player1?.user.username}
-                <br />
-                x: {player1?.x}
-                <br />
-                y: {player1?.y}
-                <br />
-                score: {player1?.score}
-                <br />
-                player2:
-                <br />
-                user2: {player2?.user.username}
-                <br />
-                x: {player2?.x}
-                <br />
-                y: {player2?.y}
-                <br />
-                score: {player2?.score}
-                <br />
-                options:
-                <br />
-                paddlesize: {option?.paddleSize}
-                <br />
-                paddlespeed: {option?.paddleSpeed}
-                <br />
-                ballSpeed: {option?.ballSpeed}
-                <br />
-                gamename: {name}
-                {/* <br />
-                sounds:
-                <br />
-                hit: {sounds?.hit.valueOf()}
-                <br />
-                wall: {sounds?.wall.valueOf()}
-                <br />
-                score: {sounds?.score.valueOf()}
-                <br />
-                win: {sounds?.win.valueOf()}
-                <br />
-                loose: {sounds?.loose.valueOf()} */}
             </div>
         </Wrapper>
     );

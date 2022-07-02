@@ -12,7 +12,6 @@ import { CreateMessageToChatDto, SetPasswordDto } from './chat/dto/chat.dto';
 import { ChatService } from './chat/service/chat.service';
 import { ChatUtilsService } from './chat/service/chatUtils.service';
 
-// I dont have any idea if these functions work, I will check it when I can try this with frontend
 
 @WebSocketGateway({cors: { origin: `http://localhost:3000`, credentials: true }})
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -33,9 +32,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   private _sockets = [];
   
   private readonly defaultGameOptions: GameOptions = {
-    paddleSize: 4,
-    paddleSpeed: 1,
-    ballSpeed: 1
+    paddleSize: 40,
+    paddleSpeed: 6,
+    ballSpeed: 3
   };
 
   private logger: Logger = new Logger('AppGateway');
@@ -65,20 +64,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const user = client.data.user;
       this.userService.updateStatus(client.data.user, UserStatus.offline);
       this.logger.log(`client disconnected: ${client.id}`);
-      this.queue.filter(player => player.id !== user.id);
+      const index2 = this.queue.findIndex(e => e.id === user.id);
+      this.queue.splice(index2, 1);
       const index = this._sockets.findIndex(e => e.id === client.id);
       this._sockets.splice(index, 1);
       client.disconnect();
     }
     catch (e) { this.error(client, e, true); }
-  }
-
-  // move this for loop inside functions later
-  find_and_emit(user: UserEntity)
-  {
-    for (var i = 0; i < this._sockets.length; i++)
-      if (this._sockets[i].data.user.username === user.username)
-        console.log(this._sockets[i]);
   }
 
   ///////// CHAT PART /////////////
@@ -157,30 +149,33 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const invitedUser = await this.userService.getUserById_2(id);
       // add invited user to invites
       this.invites.push({
-        sender: user,
-        invitedUser
+        sender: user.username,
+        invitedUser: invitedUser.username
       });
-      this.find_and_emit(invitedUser);
-      // emit this:
-      // socket.emit('addInviteToClient', `User: ${user.username} has invited you to game`);
+      for (var i = 0; i < this._sockets.length; i++)
+        if (this._sockets[i].data.user.username === invitedUser.username)
+          this._sockets[i].emit('addInviteToClient', { username: user.username, id: user.id });
     }
     catch { throw new WsException('Something went wrong'); }
   }
 
   @SubscribeMessage('acceptInviteToServer')
-  async acceptInvite(@ConnectedSocket() client: Socket, sender: UserEntity)
+  async acceptInvite(@ConnectedSocket() client: Socket, @MessageBody() sender2: string)
   {
     try
     {
       const invitedUser = client.data.user;
-      const index = this.invites.indexOf({sender, invitedUser});
+      const sender = await this.userService.getUserByName(sender2);
+      const index = this.invites.findIndex(function (Invite) {
+        return Invite.sender === sender2 && Invite.invitedUser === invitedUser.username;
+      });
       if (index === -1)
       {
         client.emit('acceptInviteToClient', 'Invite doesnt exists');
         return ;
       }
       // remove invited user from invites
-      this.invites.slice(index, 1);
+      this.invites.splice(index, 1);
       const player1: Player = { player: sender };
       const player2: Player = { player: invitedUser };
       // start the game
@@ -229,7 +224,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     {
       const user = client.data.user;
       // user leaves from queue
-      this.queue.filter(player => player.id !== user.id);
+      const index = this.queue.findIndex(e => e.id === user.id);
+      this.queue.splice(index, 1);
       this.wss.emit('leaveQueueToClient', user);
     }
     catch { throw new WsException('Something went wrong'); }
@@ -241,9 +237,10 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
+      console.log(room);
       // user joins to game as a spectator
       client.join(room);
-      this.wss.to(room).emit('newSpectatorToClient', user);
+      this.wss.to(room).emit('newSpectatorToClient', { username: user.username, room: room });
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -313,9 +310,11 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       method: 'POST',
       data: matchBody
     });
+    this.wss.to(game.name).emit('gameEndToClient', game.winner.player.username);
     // players leaves from gameroom and game has been deleted from game array
     this.wss.to(game.name).socketsLeave(game.name);
-    this.games.filter(e => e.id !== game.id);
+    const index = this.games.findIndex(e => e.id === game.id);
+    this.games.splice(index, 1);
   }
 
   addPlayersToGame(player1: UserEntity, player2: UserEntity, room: string)
@@ -327,7 +326,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         if (this._sockets[i].data.user.username === player2.username)
             this._sockets[i].join(room);
     }
-    this.wss.to(room).emit('gameStartsToClient', `Game between ${player1.username} and ${player2.username} starts now`);
+    this.wss.to(room).emit('gameStartsToClient', room);
   }
 
   startGame(player1: Player, player2: Player)
@@ -382,7 +381,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       }
       this.sendGameUpdate(game);
       game.sounds = this.gameService.initSound();
-    }, 1000); // change it to 16 later
+    }, 16); // change it to 16 later
   }
 
   sendGameUpdate(game: Game)
@@ -409,7 +408,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       name: game.name,
       sounds: game.sounds
     };
-    // console.log(game.sounds);
     this.wss.to(game.name).emit('gameUpdateToClient', gameUpdate);
   }
 
