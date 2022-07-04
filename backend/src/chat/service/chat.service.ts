@@ -24,7 +24,7 @@ export class ChatService
         const channel = await this.chatUtilService.getChannelByName(data.name);
         const userStatus = await this.chatUtilService.getJoinedUserStatus(user, channel);
         const friend = await this.userService.getUserById_2(data.targetId);
-        const friendUserStatus = await this.joinedUserStatusRepository.findOne({ user: friend, channel });
+        const friendUserStatus = await this.joinedUserStatusRepository.findOneBy({ user: friend, channel });
         await this.userService.isblocked(user, friend);
         this.userService.userIdIsSame(data.targetId, user.id);
         this.chatUtilService.checkClientIsMember(user, channel);
@@ -40,7 +40,7 @@ export class ChatService
 
     async createPublicChannel(channelName: string, user: UserEntity)
     {
-        const channel = await this.chatRepository.findOne({ name: channelName });
+        const channel = await this.chatRepository.findOneBy({ name: channelName });
         this.chatUtilService.channelIsDirect(channel, channelName);
         const newJoinedUserStatus = await this.chatUtilService.createNewJoinedUserStatus(true, true, null, null, channel, user);
         return await this.chatUtilService.createNewChannel(channelName, ChannelStatus.public, null, newJoinedUserStatus, user);
@@ -48,7 +48,7 @@ export class ChatService
 
     async createPrivateChannel(channelName: string, user: UserEntity)
     {
-        const channel = await this.chatRepository.findOne({ name: channelName });
+        const channel = await this.chatRepository.findOneBy({ name: channelName });
         this.chatUtilService.channelIsDirect(channel, channelName);
         const newJoinedUserStatus = await this.chatUtilService.createNewJoinedUserStatus(true, true, null, null, channel, user);
         return await this.chatUtilService.createNewChannel(channelName, ChannelStatus.private, null, newJoinedUserStatus, user);
@@ -56,7 +56,7 @@ export class ChatService
 
     async createProtectedChannel(channelData: SetPasswordDto, user: UserEntity)
     {
-        const channel = await this.chatRepository.findOne({ name: channelData.name});
+        const channel = await this.chatRepository.findOneBy({ name: channelData.name});
         this.chatUtilService.channelIsDirect(channel, channelData.name);
         this.chatUtilService.checkIfPassword(channelData.password);
         const newJoinedUserStatus = await this.chatUtilService.createNewJoinedUserStatus(true, true, null, null, channel, user);
@@ -120,7 +120,7 @@ export class ChatService
             throw new WsException('you dont have acceess to join here');
         if (await this.chatUtilService.clientIsMember(user, channel) === true)
             return ;
-        const userStatus = await this.joinedUserStatusRepository.findOne({ user, channel });
+        const userStatus = await this.joinedUserStatusRepository.findOneBy({ user, channel });
         if (userStatus)
         {
             if (userStatus.banned !== null)
@@ -235,7 +235,7 @@ export class ChatService
     {
         await this.userService.isblocked(user, friend);
         this.userService.userIdIsSame(user.id, friend.id);
-        if (await this.chatRepository.findOne({ name: `direct_with_${user.id}_${friend.id}` }) || await this.chatRepository.findOne({ name: `direct_with_${friend.id}_${user.id}` }))
+        if (await this.chatRepository.findOneBy({ name: `direct_with_${user.id}_${friend.id}` }) || await this.chatRepository.findOneBy({ name: `direct_with_${friend.id}_${user.id}` }))
             throw new HttpException('You already have direct channel with him', HttpStatus.FORBIDDEN);
         const joinedUserStatus = await this.joinedUserStatusRepository.create({
             user,
@@ -272,7 +272,7 @@ export class ChatService
     async getMessagesFromChannel(name: string, user: UserEntity)
     {
         const channel = await this.chatUtilService.getChannelByName(name);
-        const messagesFromChannel = await this.messageRepository.find({ channel: channel })
+        const messagesFromChannel = await this.messageRepository.findBy({ channel: channel })
         const allMessages: MessageEntity[] = [];
         for (const message of messagesFromChannel)
             allMessages.push(message);

@@ -6,6 +6,7 @@ import { NewUserDto } from './dto/new-user.dto';
 import { UserEntity, UserStatus } from './entities/user.entity';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
+import { number } from '@hapi/joi';
 
 @Injectable()
 export class UserService
@@ -40,7 +41,7 @@ export class UserService
 
     async getUserById_2(id: number): Promise<UserEntity>
     {
-        const user = await this.userRepository.findOne(id);
+        const user = await this.userRepository.findOneBy({id});
         if (!user)
             throw new NotFoundException('User with that name does not exists');
         return user;
@@ -48,7 +49,7 @@ export class UserService
 
     async getUserById(id: number): Promise<UserEntity>
     {
-        const user = await this.userRepository.findOne(id);
+        const user = await this.userRepository.findOneBy({id});
         if (!user)
             return ;
         return user;
@@ -56,7 +57,7 @@ export class UserService
 
     async getUserByName(username: string)
     {
-      return await this.userRepository.findOne({ username });
+      return await this.userRepository.findOneBy({ username });
     }
 
     async setTfaSecret(secret: string, id: number)
@@ -253,7 +254,7 @@ export class UserService
 
     async uploadFile(user: UserEntity, file)
     {
-      const updatedUser = await this.userRepository.findOne({ username: user.username });
+      const updatedUser = await this.userRepository.findOneBy({ username: user.username });
       if (updatedUser.picture && updatedUser.picture != file.filename)
       {
           const fs = require('fs');

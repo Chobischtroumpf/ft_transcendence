@@ -105,7 +105,7 @@ export class ChatUtilsService
 
     async getJoinedUserStatus(user: UserEntity, channel: ChannelEntity)
     {
-        const userStatus = await this.joinedUserStatusRepository.findOne({ user, channel });
+        const userStatus = await this.joinedUserStatusRepository.findOneBy({ user, channel });
         if (userStatus)
             return userStatus;
         throw new HttpException('You are not member of this channel', HttpStatus.FORBIDDEN);
@@ -113,7 +113,7 @@ export class ChatUtilsService
 
     async getChannelByName(channelName: string)
     {
-        const channel = await this.chatRepository.findOne({ name: channelName })
+        const channel = await this.chatRepository.findOneBy({ name: channelName })
         if (channel)
             return channel;
         throw new HttpException('Channel doesnt exists', HttpStatus.NOT_FOUND);
@@ -121,7 +121,7 @@ export class ChatUtilsService
 
     async getMessageById(id: number)
     {
-        const message = await this.messageRepository.findOne(id);
+        const message = await this.messageRepository.findOneBy({id});
         if (message)
             return message;
         return ;
@@ -129,7 +129,7 @@ export class ChatUtilsService
 
     async getChannelById(id: number)
     {
-        const channel = await this.chatRepository.findOne(id);
+        const channel = await this.chatRepository.findOneBy({id});
         if (channel)
             return channel;
         throw new HttpException('Channel doesnt exists', HttpStatus.NOT_FOUND);
@@ -177,7 +177,7 @@ export class ChatUtilsService
 
     async deleteMessagesByUser(author: UserEntity)
     {
-        const messages = await this.messageRepository.find({ author });
+        const messages = await this.messageRepository.findBy({ author });
         if (!messages)
             return ;
         for (const message of messages)
@@ -187,7 +187,7 @@ export class ChatUtilsService
 
     async deleteMessagesByChannel(channel: ChannelEntity)
     {
-        const messages = await this.messageRepository.find({ channel });
+        const messages = await this.messageRepository.findBy({ channel });
         if (!messages)
             return ;
         for (const message of messages)
@@ -197,7 +197,7 @@ export class ChatUtilsService
 
     async deleteJoinedUsersStatusByChannel(channel: ChannelEntity)
     {
-        const joinedUsersStatus = await this.joinedUserStatusRepository.find({ channel });
+        const joinedUsersStatus = await this.joinedUserStatusRepository.findBy({ channel });
         if (!joinedUsersStatus)
             return ;
         for (const joinedUserStatus of joinedUsersStatus)
@@ -207,7 +207,7 @@ export class ChatUtilsService
 
     async deleteJoinedUsersStatusByUser(user: UserEntity)
     {
-        const joinedUsersStatus = await this.joinedUserStatusRepository.find({ user });
+        const joinedUsersStatus = await this.joinedUserStatusRepository.findBy({ user });
         if (!joinedUsersStatus)
             return ;
         for (const joinedUserStatus of joinedUsersStatus)
