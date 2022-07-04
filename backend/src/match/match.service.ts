@@ -73,12 +73,12 @@ export class MatchService
 
     async getHomeMatches(id: number): Promise<MatchEntity[]>
     {
-        return await this.matchRepository.find({ where: { homePlayer: id } });
+        return await this.matchRepository.find({ where: { id } });
     }
 
     async getAwayMatches(id: number): Promise<MatchEntity[]>
     {
-        return await this.matchRepository.find({ where: { awayPlayer: id } });
+        return await this.matchRepository.find({ where: { id } });
     }
 
     async getMatches(id: number): Promise<MatchEntity[]>
