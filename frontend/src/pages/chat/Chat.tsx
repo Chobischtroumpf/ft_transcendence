@@ -67,12 +67,9 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
                     <li key={message.id}>
                         <h5>{message.author.username}</h5>
                         <h4>{message.content}</h4>
-                        <hr></hr>
-                        
-                        
+                        <hr></hr>      
                     </li>
                 );
-                
             })}
             </div>
             </ChatContainer>
