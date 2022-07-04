@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, ParseIntPipe, Patch, Post, Query, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { join } from 'path';
@@ -126,6 +126,7 @@ export class UserController
     @UseInterceptors(FileInterceptor('file', storage))
     async uploadFile(@UploadedFile() file, @User() user)
     {
+        console.log("je suis");
         return this.userService.uploadFile(user, file);
     }
 

@@ -68,6 +68,7 @@ const Settings = () => {
     const formData = new FormData();
     if (picturefile !== undefined) {
       formData.append("picture", picturefile);
+      console.log(formData);
     }
     try {
       const { data } = await axios.post("user/picture", formData);
