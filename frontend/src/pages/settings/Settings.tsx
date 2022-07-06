@@ -19,7 +19,7 @@ const Settings = () => {
   var [tfa, setTfa] = useState<boolean>(false);
   const [picturefile, setPictureFile] = useState<File>();
   var [picture, setPicture] = useState<string>('');
-  var two_factor_qr: string = '';
+  var imageUrl = '';
   
   (async () => {
     const { data } = await axios.get("user");
@@ -41,9 +41,7 @@ const Settings = () => {
       headers: {'content-type': 'application/json'}
     });
     console.log(typeof data.data);
-    var b64str =  btoa(data.data);    // two_factor_qr += image;
-    two_factor_qr = 'data:image/jpeg;base64,' + b64str;
-    console.log(two_factor_qr);
+    
   }
 
   const handleUsernameSubmit = async(event: any) => {
@@ -153,7 +151,7 @@ const Settings = () => {
           <input type="submit" value="Save"/>
         </form>
         <div className="tfa-qr">
-          <img src={two_factor_qr} alt="tfa-qr" />
+          <img src={imageUrl} alt="tfa-qr" />
         </div>
       </div>
     </Wrapper>

@@ -42,7 +42,7 @@ export class UserController
         return this.userService.paginate(page);
     }
 
-    @Get('get/user/:id')
+    @Get('/:id')
     async getUserById(@Param('id', ParseIntPipe) id)
     {
         return this.userService.getUserById(id);
@@ -83,7 +83,9 @@ export class UserController
     @Post('friend/:id')
     async requestFriend(@User() user, @Param('id', ParseIntPipe) id)
     {
-        return this.userService.requestFriend(user, id);
+        const temp = await this.userService.requestFriend(user, id);
+        console.log(temp);
+        return temp;
     }
 
     @Delete('friend/:id')
@@ -95,7 +97,9 @@ export class UserController
     @Get('friend')
     async getFriends(@User() user)
     {
-        return this.userService.getFriends(user.id);
+        const temp = await this.userService.getFriends(user.id);
+        console.log("get friends : ", temp);
+        return temp;
     }
 
     @Post('block/:id')
