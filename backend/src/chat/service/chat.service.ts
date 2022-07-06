@@ -121,6 +121,7 @@ export class ChatService
         if (await this.chatUtilService.clientIsMember(user, channel) === true)
             return ;
         const userStatus = await this.joinedUserStatusRepository.findOneBy({ user, channel });
+        console.log(userStatus)
         if (userStatus)
         {
             if (userStatus.banned !== null)

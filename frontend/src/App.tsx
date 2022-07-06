@@ -14,6 +14,10 @@ import { gameUpdate } from './models/game';
 import GameArea from './pages/game/GameArea';
 import GameFinished from './pages/game/GameFinished';
 import GameWaitingRoom from './pages/game/GameWaitingRoom';
+import {User} from './models/user';
+
+export const TodoContext = React.createContext<any>(null);
+
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -62,6 +66,8 @@ function App() {
       setGameUpdate(data);
     });
     setSocket(newSocket);
+
+
 
     return () => {
       newSocket.disconnect();

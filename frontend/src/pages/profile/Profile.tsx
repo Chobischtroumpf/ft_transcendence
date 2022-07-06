@@ -1,100 +1,166 @@
 import axios from "axios";
 import React, { Component, useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
-import { User } from "../../models/user";
+import { User, UserLevel, UserStatus } from "../../models/user";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useLocation } from "react-router";
 import { Link, Navigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import './Profile.css'
+
 interface Props {
   socket: Socket | null
 }
+
+async function getUser(){
+    const data = await axios.get(`/user`)
+    try {
+      return(data.data);
+    } catch (e) {
+      <Navigate to={'/error500'} />
+    }
+    const data2 = await axios.get(`user/friend`)
+    try {
+      console.log("after get request");
+      // return(data.data);
+    } catch (e) {
+      console.log("error");
+      <Navigate to={'/error500'} />
+    }
+  }
+
+async function getFriends(){
+  console.log("getFriends")
+  const data = await axios.get(`user/friend`)
+  try {
+    console.log("after get request");
+    return(data.data);
+  } catch (e) {
+    console.log("error");
+    <Navigate to={'/error500'} />
+  }
+}
+
+// async function getMatchHistory(){
+//   const data = await axios.get(`/user/matchHistory`)
+//   try {
+//     return(data.data);
+//   } catch (e) {
+//     <Navigate to={'/error500'} />
+//   }
+// }
+
+async function getUserById(userId: string){
+  const data = await axios.get(`/user/${userId}`)
+  try {
+    return(data.data);
+  } catch (e) {
+    <Navigate to={'/error500'} />
+  }
+}
+
 const Profile = ({socket}: Props) =>
 {
-  const [currentUser, setCurrentUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it
-  const [user, setUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it
-  // const [matchHistory, setMatchHistory] = useState<any[]>([]);
-    const [friends, setFriends] = useState<any[]>([]);
-
+  // var tempUser: User = new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0);
+  var [currentUser, setCurrentUser] = useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  var [user, setUser] = useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  
+  const [friends, setFriends] = useState<User[]>([]);
+  
+  const [matchHistory, setMatchHistory] = useState<any[]>([]);
+  
+  var [ownProfile, setOwnProfile] = useState(false);
+  var [showFriendRequest, setShowFriendRequest] = useState(false);
+  var [isLoading, setIsLoading] = useState(true); 
+  
   const queryParams = new URLSearchParams(useLocation().search);
   const userId = queryParams.get("userId");
-  var ownProfile: boolean = false;
-  var showFriendRequest:boolean = false;
 
   if (socket?.connected === false)
         socket?.connect();
 
-  useEffect(() => {
-      setTimeout(async() => {
-          const { data } = await axios.get("user");
-          try {
-            setCurrentUser(data);
-            setUser(data);      
-          } catch (e) {
-            <Navigate to={'/error500'} />
-          }
-      }, 40);
-    (
-      async () => {
-        const {data} = await axios.get(`user/friend`);
-        try {
-          // console.log("friends :", data);
-          setFriends(data);
-        } catch (e) {
-          <Navigate to={'/error500'} />
-        }
-      }
-    )();
-    if (userId !== null)
+
+  function checkUser(){
+    console.log("checkUser");
+    console.log(userId);
+
+    if (userId)
     {
-      setTimeout(async() => {
-        const {data} = await axios.get(`user/get/user/${userId}`,);
-        try {
-          setUser(data);
-        } catch (e) {
-          <Navigate to={'/error500'} />
-        }
-      }, 40);
+      getUserById(userId).then(data => {
+        setUser(data);
+      }).catch(e => {
+        <Navigate to={'/error500'} />
+      }
+      );
     }
-    else {
-      setTimeout(async() => {
-          const { data } = await axios.get("user");
-          try {
-            setUser(data);
-          } catch (e) {
-            <Navigate to={'/error500'} />
-          }
-      }, 40);
-      // (
-      //   async () => {
-      //     const {data} = await axios.get(`user`);
-      //     try {
-      //       setUser(data);
-      //     } catch (e) {
-      //       <Navigate to={'/error500'} />
-      //     }
-      //   }
-      // )();
-      // (
-      //   async () => {
-      //     const {data} = await axios.get(`user/friend`);
-      //     console.log(data);
-      //   }
-      // )();
+    else
+    {
+      setUser(currentUser);
+      console.log(currentUser);
+      console.log(user);
     }
-  }, [userId]);
+  }
+
+  useEffect(() => {
+      getUser()
+      // .then(data => {
+      //   setCurrentUser(data);
+      // }, err => {
+      //   <Navigate to={'/error500'} />
+      // });
+
+      // getFriends().then(data => {
+      //   setFriends(data);
+      // }, err => {
+      //   <Navigate to={'/error500'} />
+      // });
+
+      // getMatchHistory().then(data => {
+      //   // setMatchHistory(data);
+      // }, err => {
+      //   <Navigate to={'/error500'} />
+      // });
+
+      let timer = setTimeout(() => {
+        checkUser();
+
+        // user = currentUser;
+        if (user.id === currentUser.id)
+          setOwnProfile(true);
+        else
+          setOwnProfile(false);
+        if (!friends.includes(currentUser))
+          setShowFriendRequest(true);
+        else
+          setShowFriendRequest(false);
+
+        setIsLoading(false);
+      }, 200);
+
+      return () => clearTimeout(timer)
+    }, [isLoading]);
   
-  if (!userId || user.id === currentUser.id)
-    ownProfile = true;
-  else {
-    ownProfile = false;
-  }
-  if (!friends.includes(currentUser.id)) {
-    showFriendRequest = true;
-  }
   // console.log("friends : ", friends);
+  // console.log("currentUser : ", currentUser.id);
+  // console.log("user : ", user.id);
+  // console.log("ownProfile : ", ownProfile);
+  // console.log("showFriendRequest : ", showFriendRequest);
+
+if (isLoading)
+{
+  return(
+    <Wrapper>
+    <div className="loading">
+      <div className="loading-spinner">
+        <div className="loading-spinner-item">
+          <h1>Loading...</h1>
+        </div>
+      </div>
+    </div>
+    </Wrapper>
+  )
+}
 
   return(
     <Wrapper>
@@ -117,20 +183,19 @@ const Profile = ({socket}: Props) =>
             {
               (showFriendRequest && !ownProfile) && (
                 <button className="btn btn-primary" onClick={() => {
-                  setTimeout(() => {
                   (
                     async () => {
                       const {data} = await axios.post(`user/friend/${user.id}`);
-                      console.log(`user/friend/${user.id}`);
                     }
                   )();
-                  }, 1000);
+                  setTimeout(() => {
                   (
                     async () => {
-                      const {data} = await axios.get(`user/friend`);
-                      // console.log(`friends :`, data);
+                      const {data} = await axios.get(`/user/friend`);
+                      setFriends(data);
                     }
                   )();
+                  }, 100);
                 }
                 }>Send friend request</button>
               )
@@ -176,26 +241,36 @@ const Profile = ({socket}: Props) =>
               <p>{user.wins + user.losses} </p>
             </div>
           </div>
-          <div className="win-loss-ratio">
-            <div className="win-loss-ratio-item">
-              <h2 className="title">Win/Loss Ratio</h2>
-              {
-                (user.wins + user.losses) === 0 ? (
+          {
+            (user.wins + user.losses) === 0 ? (
+              <div className="win-loss-ratio">
+                <div className="win-loss-ratio-item">
+                  <h2 className="title">Win/Loss Ratio</h2>
                   <p>0</p>
-                ) : (
-                  ((user.wins / (user.wins + user.losses)) > 0.5) ? (
-                    <p className="positive">
-                      {(user.wins / (user.wins + user.losses)).toFixed(2)}
-                    </p>
-                  ) : (
-                    <p className="negative">
-                      {(user.wins / (user.wins + user.losses)).toFixed(2)}  
-                    </p>
-                  )
-                )
-              }
-            </div>
-          </div>
+                </div>
+              </div>
+            ) : (
+            ((user.wins / (user.wins + user.losses)) > 0.5) ? (
+              <div className="win-loss-ratio positive">
+                <div className="win-loss-ratio-item">
+                  <h2 className="title">Win/Loss Ratio</h2>
+                  <p className="">
+                    {(user.wins / (user.wins + user.losses)).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="win-loss-ratio negative">
+                <div className="win-loss-ratio-item">
+                <h2 className="title">Win/Loss Ratio</h2>
+                <p className="">
+                  {(user.wins / (user.wins + user.losses)).toFixed(2)}  
+                </p>
+                </div>
+              </div>
+              )
+            )
+          }
         </div>
         <div className="gameHistory">
           <div className="gameHistory-item">
@@ -207,24 +282,28 @@ const Profile = ({socket}: Props) =>
           </div>
 
         </div>
-        <div className="friends-list">
-          <div className="friends-list-item">
-            <h2 className="title">Friends</h2>
-            {(friends.length > 0) ? (
-              <ul>
-                {friends.map((friend:User) => (
-                  <li key={friend.id}>
-                    <a href={`/profile?userId=${friend.id}`}>{friend.username}</a>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>{user.username} has no friends yet.</p>
-            )}
+        {/* {
+          (ownProfile) && 
+          ( */}
+            <div className="friends-list">
+              <div className="friends-list-item">
+                <h2 className="title">Friends</h2>
+                {(friends.length > 0) ? (
+                  <ul>
+                    {friends.map((friend:User) => (
+                      <li key={friend.id}>
+                        <a href={`/profile?userId=${friend.id}`}>{friend.username}</a>
+                        {/* <a href={`/profile/removefriend?userId=${friend.id}`}>Remove</a> */}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>{user.username} has no friends yet.</p>
+                )}
+              </div>
+            </div>
+          {/* )} */}
         </div>
-      </div>
-        {/* <ButtonFriends /> */}
-      </div>
     </Wrapper>
   );
 }

@@ -4,6 +4,11 @@ import { Navigate } from "react-router";
 import Wrapper from "../../components/Wrapper";
 import './Settings.css'
 
+
+export interface tfaDto {
+  tfa: boolean;
+}
+
 const Settings = () => {  
 
   
@@ -12,6 +17,7 @@ const Settings = () => {
   var [tfa, setTfa] = useState<boolean>(false);
   const [picturefile, setPictureFile] = useState<File>();
   var [picture, setPicture] = useState<string>('');
+  var imageUrl = '';
   
   (async () => {
     const { data } = await axios.get("user");
@@ -26,11 +32,16 @@ const Settings = () => {
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
-    var formData = new FormData();
-    formData.append("tfa", tfa.toString());
-    console.log(tfa);
-    const { data } = await axios.post("user/tfa/secret", formData);
-    console.log(data);
+    const tfaForm: tfaDto = { tfa: tfa };
+    const data = await axios({
+      method: 'post',
+      url: "/user/tfa/secret/",
+      data: tfaForm,
+      headers: {'content-type': 'application/json'}
+    });
+    console.log(typeof data.data);
+    
+    
   }
 
   const handleUsernameSubmit = async(event: any) => {
@@ -136,6 +147,9 @@ const Settings = () => {
           </div>
           <input type="submit" value="Save"/>
         </form>
+        <div className="tfa-qr">
+          <img src={imageUrl} alt="tfa-qr" />
+        </div>
       </div>
     </Wrapper>
   );
