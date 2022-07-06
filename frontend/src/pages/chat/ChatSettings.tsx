@@ -8,31 +8,35 @@ import { RiRotateLockFill, RiAdminLine } from 'react-icons/ri';
 import { GiPadlock, GiPadlockOpen } from 'react-icons/gi';
 import Popup from 'reactjs-popup';
 import { Link } from 'react-router-dom';
+import { User } from "../../models/user";
+import { ChannelEntity } from "../../models/Chat";
 import './SettingsPage.css'
 import Wrapper from "../../components/Wrapper";
 
 
 
-// 1 = owner 2 = admin 3 = password=true
+// 1 = owner 2 = admin 3 = password=true 4 = channel=private
 
 
 const ChatSettings = () =>{
 	const queryParams = new URLSearchParams(useLocation().search);
-	const ChatId= queryParams.get("ChatSettingsId");
+	const ChatName = queryParams.get("ChatSettingsId");
 
-	const [UserStatus, setUserStatus] = useState('');
+	// const [UserStatus, setUserStatus] = useState('');
+	// const [currentChannel, setCurrentChannel] = useState('');
 
 
 	// useEffect(() => {
 	// 	(
 	// 	  async () => {
-	// 		const {data} = await axios.get(`chat/all`);
+	// 		const {data} = await axios.get(`chat/${ChatName}`);
 	// 		console.log(data);
+	// 		setCurrentChannel(data);
 	// 	  }
 	// 	)();
 	//   }, []);
 
-    return(
+    return (
 	<Wrapper>
 		<div className='new-user'>
 			<h1>
@@ -40,8 +44,8 @@ const ChatSettings = () =>{
 					SETTINGS : <p/>
 				</u> 
 			</h1>
-			<AddUser chatId={ChatId}/>
-			{ 1 && <AdminUser/>}
+			{/* { 4 && <AddUser chatName={ChatName}/>} */}
+			{ 1 && <AdminUser chatName={ChatName}/>} 
 			{ (1 || 2) && (<BanUser/>)}
 			{ 1 && 3 && (<AddPassword/>)}
 			{ 1 && 3 && (<ModifyPassword/>)}
@@ -49,68 +53,98 @@ const ChatSettings = () =>{
 			{ (1 || 2) && (<MuteUser/>)}
 			{ (1 || 2) && (<UnmuteUser/>)}
 		</div>
-		<Link to={`/chat?chatId=${ChatId}`} className="button-return" type="submit">Return</Link>
+		<Link to={`/chat?chatId=${ChatName}`} className="button-return" type="submit">Return</Link>
     </Wrapper>
     );
 }
+
 interface prop {
-	chatId: string | null
+	chatName: string | null
 }
-const AddUser = (ChatId:prop) => {
+
+// const AddUser = (ChatName:prop) => {
+// 	const [state, setState] = useState(false); 
+// 	const handleOpen = () => {setState(true);}
+// 	const handleClose = () => {setState(false);}
+// 	const [userToAdd, setUserToAdd] = useState('');
+
+// 	const handleClick = async() => {
+// 		try {
+// 			const username = (document.getElementById("add user") as HTMLInputElement).value;
+// 			const {data} = await axios.get(`user/get/user?username=${username}`)
+// 			setUserToAdd(data);
+// 			if (data == "")
+// 				window.alert("Wrong username");
+// 			// await axios.post('chat/add', { ChatName, '' })
+// 		} catch (e) {
+// 			console.log("here");
+// 		}
+// 	};
+
+// 	return (
+// 	<h2>
+// 		Add user : &nbsp;&nbsp;
+// 		<Popup
+// 			trigger={<button><AiOutlineUserAdd/></button>}
+// 			on='click'
+// 			open={state}
+// 			onClose={handleClose}
+// 			onOpen={handleOpen}
+// 			position='top right' modal nested>
+// 			<div className="modal2">
+// 				<button className="close" onClick={handleClose}>&times;</button>
+// 				<div className="header"> Add user</div>
+// 				<div className="content">
+// 				{' '}
+// 				<pre>      Select user to add      </pre>
+// 				</div>
+// 				<div className="actions">
+// 					<div className="actions">
+// 						<input className="input-width" id='add user' type="text" placeholder="Enter the user name"></input>
+// 						<button className="button-return" onClick={() => handleClick()}>Invite user</button>
+// 					</div>
+// 				</div>
+// 			</div>
+// 		</Popup>
+// 	</h2>)
+// }
+export interface AdminUserDto {
+    name: string;
+	adminId: number;
+}
+
+const AdminUser = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
-	const handleOpen = () => {setState(true); onModalOpen();}
+	const handleOpen = () => {setState(true); onModalOpen()};
 	const handleClose = () => {setState(false);}
 	const [userList, setUserList] = useState([]);
 
-
-	console.log(ChatId.chatId);
 	const onModalOpen = async() => {
-		try {
-			const {data} = await axios.get(`chat/getusers/${ChatId.chatId}`);
-			setUserList(data);
-			} catch (e) {
-				console.log("here")
-			}
-		};
-	
-	return (
-	<h2>
-		Add user : &nbsp;&nbsp;
-		<Popup
-			trigger={<button><AiOutlineUserAdd/></button>}
-			on='click'
-			open={state}
-			onClose={handleClose}
-			onOpen={handleOpen}
-			position='top right' modal nested>
-			<div className="modal2">
-				<button className="close" onClick={handleClose}>&times;</button>
-				<div className="header"> Add user</div>
-					<div className="content">
-					{' '}
-					<pre>      Select user to add      </pre>
-					</div>
-					<div className="actions">
-					<Popup
-						trigger={<button className="button-return"> Select user </button>}
-						modal nested>
-						<div className="menu-settings">
-							<div className="menu-item-settings"> item 1</div>
-							<div className="menu-item-settings"> item 2</div>
-							<div className="menu-item-settings"> item 3</div>
-						</div>
-					</Popup>
-				</div>
-			</div>
-		</Popup>
-	</h2>)
-}
+	try {
+		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
+		setUserList(data);
+		} catch (e) {
+			console.log("here")
+		}
+	};
 
-const AdminUser = () => {
-	const [state, setState] = useState(false); 
-	const handleOpen = () => {setState(true);}
-	const handleClose = () => {setState(false);}
-	
+	const handleClick = async( userId:number ) => {
+		try {
+			const name = ChatName.chatName!;
+			console.log(name);
+			console.log(userId);
+			const adminForm : AdminUserDto = { name : name, adminId : userId }
+			const data = await axios({
+					method: 'post',
+					url: "chat/admin",
+					data: adminForm,
+					headers: {'content-type': 'application/json'}
+				})
+		} catch (e) {
+			console.log("herelol");
+		}
+	};
+
 	return (
 	<h2>
 		Make a chat user admin : &nbsp;&nbsp;
@@ -134,11 +168,15 @@ const AdminUser = () => {
 				<Popup
 					trigger={<button className="button-return"> Select user </button>}
 					modal nested>
-					<div className="menu-settings">
-						<div className="menu-item-settings"> item 1</div>
-						<div className="menu-item-settings"> item 2</div>
-						<div className="menu-item-settings"> item 3</div>
-					</div>
+						{userList.map((user: User) => {
+							return (
+								<div key={user.id}>
+									<div className="menu-settings">
+										<div className="menu-item-settings" onClick={() => handleClick(user.id)}>{user.username}</div>
+									</div>
+								</div>
+							)
+						})}
 				</Popup>
 				</div>
 			</div>

@@ -24,65 +24,66 @@ const Profile = ({socket}: Props) =>
   var showFriendRequest:boolean = false;
 
   if (socket?.connected === false)
-  socket?.connect();
+        socket?.connect();
 
   useEffect(() => {
-  (
-    // setTimeout(() => {
-      (async () => {
-        const { data } = await axios.get("user");
+      setTimeout(async() => {
+          const { data } = await axios.get("user");
+          try {
+            setCurrentUser(data);
+            setUser(data);      
+          } catch (e) {
+            <Navigate to={'/error500'} />
+          }
+      }, 40);
+    (
+      async () => {
+        const {data} = await axios.get(`user/friend`);
         try {
-          setCurrentUser(data);
-          setUser(data);
-        
+          // console.log("friends :", data);
+          setFriends(data);
         } catch (e) {
           <Navigate to={'/error500'} />
         }
       }
-      )());
-    // }, 1000));
-  (
-    async () => {
-      const {data} = await axios.get(`user/friend`);
-      try {
-        console.log("friends :", data);
-        setFriends(data);
-      } catch (e) {
-        <Navigate to={'/error500'} />
-      }
-    }
-  )();
-  if (userId !== null)
-  {
-    (
-      async () => {
+    )();
+    if (userId !== null)
+    {
+      setTimeout(async() => {
         const {data} = await axios.get(`user/get/user/${userId}`,);
         try {
           setUser(data);
         } catch (e) {
           <Navigate to={'/error500'} />
         }
-      }
-    )();
-  }
-  else {
-    (
-      async () => {
-        const {data} = await axios.get(`user`);
-        try {
-          setUser(data);
-        } catch (e) {
-          <Navigate to={'/error500'} />
-        }
-      }
-    )();
-    // (
-    //   async () => {
-    //     const {data} = await axios.get(`user/friend`);
-    //     console.log(data);
-    //   }
-    // )();
-  }
+      }, 40);
+    }
+    else {
+      setTimeout(async() => {
+          const { data } = await axios.get("user");
+          try {
+            setUser(data);
+          } catch (e) {
+            <Navigate to={'/error500'} />
+          }
+      }, 40);
+      // (
+      //   async () => {
+      //     const {data} = await axios.get(`user`);
+      //     try {
+      //       setUser(data);
+      //     } catch (e) {
+      //       <Navigate to={'/error500'} />
+      //     }
+      //   }
+      // )();
+      // (
+      //   async () => {
+      //     const {data} = await axios.get(`user/friend`);
+      //     console.log(data);
+      //   }
+      // )();
+    }
   }, [userId]);
   
   if (!userId || user.id === currentUser.id)
@@ -93,7 +94,7 @@ const Profile = ({socket}: Props) =>
   if (!friends.includes(currentUser.id)) {
     showFriendRequest = true;
   }
-  console.log("friends : ", friends);
+  // console.log("friends : ", friends);
 
   return(
     <Wrapper>

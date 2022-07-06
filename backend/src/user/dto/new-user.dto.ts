@@ -13,6 +13,6 @@ export class NewUserDto {
 
 export class tfaDto {
     @IsNotEmpty()
-    @IsBoolean()
+    @IsString()
     tfa: boolean;
 }

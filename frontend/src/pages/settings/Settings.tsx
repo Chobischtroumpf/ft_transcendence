@@ -3,28 +3,21 @@ import { useState, useEffect } from "react";
 import { Navigate } from "react-router";
 import Wrapper from "../../components/Wrapper";
 import './Settings.css'
-import { tfaDto } from "./user.dto";
-import Buffer from "buffer";
-
-
-type ImageProps = {
-  style : {width: '100%', height: '100%'}
-  src: {uri: string}
-}
 
 const Settings = () => {  
+
   
   var [username, setUsername] = useState<string>('');
   const [prevusername, setPrevUsername] = useState<string>();
   var [tfa, setTfa] = useState<boolean>(false);
   const [picturefile, setPictureFile] = useState<File>();
   var [picture, setPicture] = useState<string>('');
-  var two_factor_qr: string = '';
   
   (async () => {
     const { data } = await axios.get("user");
     try {
       setPrevUsername(data.username);
+      // setTfa(data.tfa);
     } catch (e) {
       <Navigate to={'/error500'} />
     }
@@ -33,17 +26,11 @@ const Settings = () => {
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
-    const tfaForm: tfaDto = { tfa: tfa };
-    const data = await axios({
-      method: 'post',
-      url: "/user/tfa/secret/",
-      data: tfaForm,
-      headers: {'content-type': 'application/json'}
-    });
-    console.log(typeof data.data);
-    var b64str =  btoa(data.data);    // two_factor_qr += image;
-    two_factor_qr = 'data:image/jpeg;base64,' + b64str;
-    console.log(two_factor_qr);
+    var formData = new FormData();
+    formData.append("tfa", tfa.toString());
+    console.log(tfa);
+    const { data } = await axios.post("user/tfa/secret", formData);
+    console.log(data);
   }
 
   const handleUsernameSubmit = async(event: any) => {
@@ -84,7 +71,6 @@ const Settings = () => {
   }
 
   const handlePictureChange = (event: any) => {
-    console.log(event.target.files[0]);
     setPicture(URL.createObjectURL(event.target.files[0]));
     setPictureFile(event.target.files[0]);
   }
@@ -97,8 +83,6 @@ const Settings = () => {
     console.log(tfa);
 
   }
-
-  console.log(picture);
 
   return (
     <Wrapper>
@@ -152,9 +136,6 @@ const Settings = () => {
           </div>
           <input type="submit" value="Save"/>
         </form>
-        <div className="tfa-qr">
-          <img src={two_factor_qr} alt="tfa-qr" />
-        </div>
       </div>
     </Wrapper>
   );

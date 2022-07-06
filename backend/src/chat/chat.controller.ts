@@ -21,10 +21,10 @@ export class ChatController
     //    return this.chatUtilService.getAllChannels();
     }
 
-    @Get()
-    getChannelByName(@Body('name') channelName: string)
+    @Get(':name')
+    getChannelByName(@Param('name') name: string)
     {
-        return this.chatUtilService.getChannelByName(channelName);
+        return this.chatUtilService.getChannelByName(name);
     }
 
     @Post('/invite')
@@ -99,9 +99,10 @@ export class ChatController
         return this.chatService.unBanUser(data, user);
     }
 
-    @Patch('/admin')
+    @Post('/admin')
     async giveAdmin(@Body() adminData: AdminUserDto, @User() user)
     {
+        console.log("hey0");
         return this.chatService.giveAdmin(adminData, user);
     }
 
@@ -141,10 +142,10 @@ export class ChatController
         return this.chatService.getMessagesFromChannel(name, user);
     }
 
-    @Get('/getusers/:id')
-    async getAllUsersFromChannel(@Param('id') id: number)
+    @Get('/getusers/:name')
+    async getAllUsersFromChannel(@Param('name') name: string)
     {
-        return this.chatService.getAllUsersFromChannel(id);
+        return this.chatService.getAllUsersFromChannel(name);
     }
 
     @Get('/getuser')
