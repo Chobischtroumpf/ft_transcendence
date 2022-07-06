@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { Component, useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
-import { User } from "../../models/user";
+import { User, UserLevel, UserStatus } from "../../models/user";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { useLocation } from "react-router";
@@ -51,8 +51,9 @@ async function getUserById(userId: string){
 
 const Profile = ({socket}: Props) =>
 {
-  var [currentUser, setCurrentUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it
-  var [user, setUser] = useState<User>({data: Object} as unknown as User); //this is ugly af, but it works,but we gotta change it
+  // var tempUser: User = new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0);
+  var [currentUser, setCurrentUser] = useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  var [user, setUser] = useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
   
   const [friends, setFriends] = useState<User[]>([]);
   
@@ -108,6 +109,7 @@ const Profile = ({socket}: Props) =>
     // }, err => {
     //   <Navigate to={'/error500'} />
     // });
+
     setTimeout(() => {
       checkUser();
 
@@ -123,7 +125,7 @@ const Profile = ({socket}: Props) =>
 
       setIsLoading(false);
     }, 2000);
-    }, [userId]);
+    }, [user]);
   
   // console.log("friends : ", friends);
   // console.log("currentUser : ", currentUser.id);
@@ -225,26 +227,36 @@ if (isLoading)
               <p>{user.wins + user.losses} </p>
             </div>
           </div>
-          <div className="win-loss-ratio">
-            <div className="win-loss-ratio-item">
-              <h2 className="title">Win/Loss Ratio</h2>
-              {
-                (user.wins + user.losses) === 0 ? (
+          {
+            (user.wins + user.losses) === 0 ? (
+              <div className="win-loss-ratio">
+                <div className="win-loss-ratio-item">
+                  <h2 className="title">Win/Loss Ratio</h2>
                   <p>0</p>
-                ) : (
-                  ((user.wins / (user.wins + user.losses)) > 0.5) ? (
-                    <p className="positive">
-                      {(user.wins / (user.wins + user.losses)).toFixed(2)}
-                    </p>
-                  ) : (
-                    <p className="negative">
-                      {(user.wins / (user.wins + user.losses)).toFixed(2)}  
-                    </p>
-                  )
-                )
-              }
-            </div>
-          </div>
+                </div>
+              </div>
+            ) : (
+            ((user.wins / (user.wins + user.losses)) > 0.5) ? (
+              <div className="win-loss-ratio positive">
+                <div className="win-loss-ratio-item">
+                  <h2 className="title">Win/Loss Ratio</h2>
+                  <p className="">
+                    {(user.wins / (user.wins + user.losses)).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="win-loss-ratio negative">
+                <div className="win-loss-ratio-item">
+                <h2 className="title">Win/Loss Ratio</h2>
+                <p className="">
+                  {(user.wins / (user.wins + user.losses)).toFixed(2)}  
+                </p>
+                </div>
+              </div>
+              )
+            )
+          }
         </div>
         <div className="gameHistory">
           <div className="gameHistory-item">

@@ -42,6 +42,7 @@ const Settings = () => {
     });
     console.log(typeof data.data);
     
+    
   }
 
   const handleUsernameSubmit = async(event: any) => {

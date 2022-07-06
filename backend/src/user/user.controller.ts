@@ -97,6 +97,7 @@ export class UserController
     @Get('friend')
     async getFriends(@User() user)
     {
+        console.log(user);
         const temp = await this.userService.getFriends(user.id);
         console.log("get friends : ", temp);
         return temp;
