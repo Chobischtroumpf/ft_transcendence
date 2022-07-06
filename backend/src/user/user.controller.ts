@@ -41,25 +41,13 @@ export class UserController
     {
         return this.userService.paginate(page);
     }
-
-    @Get('/:id')
-    async getUserById(@Param('id', ParseIntPipe) id)
-    {
-        return this.userService.getUserById(id);
-    }
-
+    
     @Get('get/user')
     async getUserByName(@Query('username') username: string)
     {
         return this.userService.getUserByName(username);
     }
-
-    @Get()
-    async getProfile(@User() user)
-    {
-        return this.userService.getUserById(user.id);
-    }
-
+    
     @Post('tfa/secret')
     async register(@Res() response: Response, @User() user, @Body() tfa: tfaDto)
     {
@@ -68,7 +56,7 @@ export class UserController
         const { otpauthUrl } = await this.userService.generateTfaSecret(user);
         return this.userService.pipeQrCodeStream(response, otpauthUrl);
     }
-
+    
     @Post('tfa/turn-on')
     @HttpCode(200)
     async turnOnTfa(@User() user, @Body() { tfaCode })
@@ -78,20 +66,6 @@ export class UserController
             throw new UnauthorizedException('Wrong authentication code');
         }
         await this.userService.turnOnTfa(user.id);
-    }
-
-    @Post('friend/:id')
-    async requestFriend(@User() user, @Param('id', ParseIntPipe) id)
-    {
-        const temp = await this.userService.requestFriend(user, id);
-        console.log(temp);
-        return temp;
-    }
-
-    @Delete('friend/:id')
-    async deleteFriend(@User() user, @Param('id', ParseIntPipe) id)
-    {
-        return this.userService.deleteFriend(user, id);
     }
     
     @Get('friend')
@@ -103,30 +77,18 @@ export class UserController
         return temp;
     }
 
-    @Post('block/:id')
-    async blockUser(@User() user, @Param('id', ParseIntPipe) id)
-    {
-        return this.userService.blockUser(user, id);
-    }
-
-    @Delete('block/:id')
-    async unblockUser(@User() user, @Param('id', ParseIntPipe) id)
-    {
-        return this.userService.unblockUser(user, id);
-    }
-
     @Get('block')
     async getBlockedUsers(@User() user)
     {
         return this.userService.getBlockedUsers(user.id);
     }
-
+    
     @Post('/logout')
     async logOut(@Res({ passthrough: true }) response: Response, @User() user)
     {
         return this.authService.logOut(response, user);
     }
-
+    
     @Post('/picture')
     @UseInterceptors(FileInterceptor('file', storage))
     async uploadFile(@UploadedFile() file, @User() user)
@@ -134,17 +96,55 @@ export class UserController
         console.log("je suis");
         return this.userService.uploadFile(user, file);
     }
-
+    
     @Post('/username')
     async updateUsername(@User() user, @Body() { username })
     {
         console.log(username);
         return this.userService.updateUsername(user, username);
     }
+   
+    @Post('friend/:id')
+    async requestFriend(@User() user, @Param('id', ParseIntPipe) id)
+    {
+        const temp = await this.userService.requestFriend(user, id);
+        console.log(temp);
+        return temp;
+    }
+    
+    @Delete('friend/:id')
+    async deleteFriend(@User() user, @Param('id', ParseIntPipe) id)
+    {
+        return this.userService.deleteFriend(user, id);
+    }
 
+    @Post('block/:id')
+    async blockUser(@User() user, @Param('id', ParseIntPipe) id)
+    {
+        return this.userService.blockUser(user, id);
+    }
+    
+    @Delete('block/:id')
+    async unblockUser(@User() user, @Param('id', ParseIntPipe) id)
+    {
+        return this.userService.unblockUser(user, id);
+    }
+    
     @Get('/picture/:imagename')
     async findPicture(@Param('imagename') imagename, @Res() response: Response)
     {
         return of(response.sendFile(join(process.cwd(), 'uploads/profileimages/' + imagename)));
+    }
+
+    @Get('/:id')
+    async getUserById(@Param('id', ParseIntPipe) id)
+    {
+        return this.userService.getUserById(id);
+    }
+
+    @Get()
+    async getProfile(@User() user)
+    {
+        return this.userService.getUserById(user.id);
     }
 }

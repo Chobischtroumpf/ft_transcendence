@@ -20,13 +20,24 @@ async function getUser(){
     } catch (e) {
       <Navigate to={'/error500'} />
     }
+    const data2 = await axios.get(`user/friend`)
+    try {
+      console.log("after get request");
+      // return(data.data);
+    } catch (e) {
+      console.log("error");
+      <Navigate to={'/error500'} />
+    }
   }
 
 async function getFriends(){
-  const data = await axios.get(`/user/friend`)
+  console.log("getFriends")
+  const data = await axios.get(`user/friend`)
   try {
+    console.log("after get request");
     return(data.data);
   } catch (e) {
+    console.log("error");
     <Navigate to={'/error500'} />
   }
 }
@@ -92,40 +103,43 @@ const Profile = ({socket}: Props) =>
   }
 
   useEffect(() => {
-    getUser().then(data => {
-      setCurrentUser(data);
-    }, err => {
-      <Navigate to={'/error500'} />
-    });
+      getUser()
+      // .then(data => {
+      //   setCurrentUser(data);
+      // }, err => {
+      //   <Navigate to={'/error500'} />
+      // });
 
-    getFriends().then(data => {
-      setFriends(data);
-    }, err => {
-      <Navigate to={'/error500'} />
-    });
+      // getFriends().then(data => {
+      //   setFriends(data);
+      // }, err => {
+      //   <Navigate to={'/error500'} />
+      // });
 
-    // getMatchHistory().then(data => {
-    //   // setMatchHistory(data);
-    // }, err => {
-    //   <Navigate to={'/error500'} />
-    // });
+      // getMatchHistory().then(data => {
+      //   // setMatchHistory(data);
+      // }, err => {
+      //   <Navigate to={'/error500'} />
+      // });
 
-    setTimeout(() => {
-      checkUser();
+      let timer = setTimeout(() => {
+        checkUser();
 
-      // user = currentUser;
-      if (user.id === currentUser.id)
-        setOwnProfile(true);
-      else
-        setOwnProfile(false);
-      if (!friends.includes(currentUser))
-        setShowFriendRequest(true);
-      else
-        setShowFriendRequest(false);
+        // user = currentUser;
+        if (user.id === currentUser.id)
+          setOwnProfile(true);
+        else
+          setOwnProfile(false);
+        if (!friends.includes(currentUser))
+          setShowFriendRequest(true);
+        else
+          setShowFriendRequest(false);
 
-      setIsLoading(false);
-    }, 2000);
-    }, [user]);
+        setIsLoading(false);
+      }, 200);
+
+      return () => clearTimeout(timer)
+    }, [isLoading]);
   
   // console.log("friends : ", friends);
   // console.log("currentUser : ", currentUser.id);
@@ -177,7 +191,7 @@ if (isLoading)
                   setTimeout(() => {
                   (
                     async () => {
-                      const {data} = await axios.get(`user/friend`);
+                      const {data} = await axios.get(`/user/friend`);
                       setFriends(data);
                     }
                   )();
