@@ -254,15 +254,17 @@ export class UserService
 
     async uploadFile(user: UserEntity, file)
     {
+      console.log("llaaaaa");
       const updatedUser = await this.userRepository.findOneBy({ username: user.username });
-      if (updatedUser.picture && updatedUser.picture != file.filename)
-      {
+      // if (updatedUser.picture && updatedUser.picture)
+      // {
           const fs = require('fs');
           const path = './uploads/profileimages/' + updatedUser.picture;
-          fs.unlinkSync(path);
-      }
-      updatedUser.picture = file.filename;
-      await this.userRepository.save(updatedUser);
+          // fs.unlinkSync(path);
+      // }
+      updatedUser.picture = user.username + ".png";
+      // fs.appendFile( user.username + ".png", file);
+      await this.userRepository.save(file);
       return updatedUser;
     }
 }
