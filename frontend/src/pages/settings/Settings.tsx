@@ -12,6 +12,7 @@ const Settings = () => {
   var [tfa, setTfa] = useState<boolean>(false);
   const [picturefile, setPictureFile] = useState<File>();
   var [picture, setPicture] = useState<string>('');
+  var imageUrl = '';
   
   (async () => {
     const { data } = await axios.get("user");
@@ -31,6 +32,9 @@ const Settings = () => {
     console.log(tfa);
     const { data } = await axios.post("user/tfa/secret", formData);
     console.log(data);
+    var blob = new Blob([data.data], { type: "text/plain" });
+    imageUrl = window.URL.createObjectURL(blob);
+
   }
 
   const handleUsernameSubmit = async(event: any) => {
@@ -136,6 +140,7 @@ const Settings = () => {
           </div>
           <input type="submit" value="Save"/>
         </form>
+        <img className="qr-code" src={imageUrl} alt="qr-code" />
       </div>
     </Wrapper>
   );
