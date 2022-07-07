@@ -12,7 +12,7 @@ export const Menu = () => {
                   </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink to={'/'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
+                  <NavLink to={'/profile'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
                     Profile
                   </NavLink>
                 </li>

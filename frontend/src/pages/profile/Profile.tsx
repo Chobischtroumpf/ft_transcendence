@@ -8,6 +8,7 @@ import { useLocation } from "react-router";
 import { Link, Navigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import './Profile.css'
+import { NavLink } from "react-router-dom";
 
 interface Props {
   socket: Socket | null
@@ -20,25 +21,14 @@ async function getUser(){
     } catch (e) {
       <Navigate to={'/error500'} />
     }
-    const data2 = await axios.get(`user/friend`)
-    try {
-      console.log("after get request");
-      // return(data.data);
-    } catch (e) {
-      console.log("error");
-      <Navigate to={'/error500'} />
-    }
   }
 
 async function getFriends(){
-  console.log("getFriends")
   const data = await axios.get(`user/friend`)
   try {
-    console.log("after get request");
     return(data.data);
   } catch (e) {
-    console.log("error");
-    <Navigate to={'/error500'} />
+    return <Navigate to={'/error500'} />;
   }
 }
 
@@ -56,13 +46,12 @@ async function getUserById(userId: string){
   try {
     return(data.data);
   } catch (e) {
-    <Navigate to={'/error500'} />
+   return <Navigate to={'/error500'} />;
   }
 }
 
 const Profile = ({socket}: Props) =>
 {
-  // var tempUser: User = new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0);
   var [currentUser, setCurrentUser] = useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
   var [user, setUser] = useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
   
@@ -73,18 +62,19 @@ const Profile = ({socket}: Props) =>
   var [ownProfile, setOwnProfile] = useState(false);
   var [showFriendRequest, setShowFriendRequest] = useState(false);
   var [isLoading, setIsLoading] = useState(true); 
-  
+  var [counter, setCounter] = useState(0);
+
   const queryParams = new URLSearchParams(useLocation().search);
   const userId = queryParams.get("userId");
 
-  if (socket?.connected === false)
-        socket?.connect();
+  function clickButton(event: any) {
+    event.preventDefault();
+  }
 
+  if (socket?.connected === false)
+    socket?.connect();
 
   function checkUser(){
-    console.log("checkUser");
-    console.log(userId);
-
     if (userId)
     {
       getUserById(userId).then(data => {
@@ -97,24 +87,22 @@ const Profile = ({socket}: Props) =>
     else
     {
       setUser(currentUser);
-      console.log(currentUser);
-      console.log(user);
     }
   }
 
   useEffect(() => {
       getUser()
-      // .then(data => {
-      //   setCurrentUser(data);
-      // }, err => {
-      //   <Navigate to={'/error500'} />
-      // });
+      .then(data => {
+        setCurrentUser(data);
+      }, err => {
+        <Navigate to={'/error500'} />
+      });
 
-      // getFriends().then(data => {
-      //   setFriends(data);
-      // }, err => {
-      //   <Navigate to={'/error500'} />
-      // });
+      getFriends().then(data => {
+        setFriends(data);
+      }, err => {
+        <Navigate to={'/error500'} />
+      });
 
       // getMatchHistory().then(data => {
       //   // setMatchHistory(data);
@@ -130,37 +118,44 @@ const Profile = ({socket}: Props) =>
           setOwnProfile(true);
         else
           setOwnProfile(false);
-        if (!friends.includes(currentUser))
-          setShowFriendRequest(true);
-        else
-          setShowFriendRequest(false);
-
+        console.log(friends[0]);
+        console.log(user);
+        console.log(friends[0] === user);
+        // console.log(friends.includes(user));
+        for (let i = 0; i < friends.length; i++)
+        {
+          if (friends[i].id === user.id)
+          {
+            setShowFriendRequest(false);
+            break;
+          }
+          else
+          {
+            setShowFriendRequest(true);
+          }
+        }
+        if (counter < 5)
+          setCounter(counter + 1);
         setIsLoading(false);
-      }, 200);
+      }, 300);
 
       return () => clearTimeout(timer)
-    }, [isLoading]);
-  
-  // console.log("friends : ", friends);
-  // console.log("currentUser : ", currentUser.id);
-  // console.log("user : ", user.id);
-  // console.log("ownProfile : ", ownProfile);
-  // console.log("showFriendRequest : ", showFriendRequest);
+    }, [counter, showFriendRequest, userId, ownProfile]);
 
-if (isLoading)
-{
-  return(
-    <Wrapper>
-    <div className="loading">
-      <div className="loading-spinner">
-        <div className="loading-spinner-item">
-          <h1>Loading...</h1>
+  if (isLoading)
+  {
+    return(
+      <Wrapper>
+      <div className="loading">
+        <div className="loading-spinner">
+          <div className="loading-spinner-item">
+            <h1>Loading...</h1>
+          </div>
         </div>
       </div>
-    </div>
-    </Wrapper>
-  )
-}
+      </Wrapper>
+    )
+  }
 
   return(
     <Wrapper>
@@ -282,9 +277,9 @@ if (isLoading)
           </div>
 
         </div>
-        {/* {
+        {
           (ownProfile) && 
-          ( */}
+          (
             <div className="friends-list">
               <div className="friends-list-item">
                 <h2 className="title">Friends</h2>
@@ -292,8 +287,8 @@ if (isLoading)
                   <ul>
                     {friends.map((friend:User) => (
                       <li key={friend.id}>
-                        <a href={`/profile?userId=${friend.id}`}>{friend.username}</a>
-                        {/* <a href={`/profile/removefriend?userId=${friend.id}`}>Remove</a> */}
+                        <NavLink to={`/profile?userId=${friend.id}`}> {friend.username} </NavLink>
+                        <a href={`/profile/removefriend?userId=${friend.id}`}>Remove</a>
                       </li>
                     ))}
                   </ul>
@@ -302,7 +297,7 @@ if (isLoading)
                 )}
               </div>
             </div>
-          {/* )} */}
+          )}
         </div>
     </Wrapper>
   );
