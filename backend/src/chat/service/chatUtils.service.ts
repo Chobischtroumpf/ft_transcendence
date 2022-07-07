@@ -116,7 +116,10 @@ export class ChatUtilsService
 
     async getChannelByName(channelName: string)
     {
+        console.log(channelName);
         const channel = await this.chatRepository.findOneBy({ name: channelName })
+        console.log("channel :");
+        console.log(channel);
         if (channel)
             return channel;
         throw new HttpException('Channel doesnt exists', HttpStatus.NOT_FOUND);

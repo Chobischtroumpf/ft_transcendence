@@ -102,7 +102,6 @@ export class ChatController
     @Post('/admin')
     async giveAdmin(@Body() adminData: AdminUserDto, @User() user)
     {
-        console.log("hey0");
         return this.chatService.giveAdmin(adminData, user);
     }
 
@@ -121,7 +120,10 @@ export class ChatController
     @Patch('/modifypassword')
     async modifyPassword(@Body() passwordData: SetPasswordDto, @User() user)
     {
+        console.log("name : " + passwordData.name);
+        console.log("password : " + passwordData.password);
         this.chatService.removePassword(passwordData.name, user);
+        console.log("here");
         return this.chatService.setPassword(passwordData, user);
     }
 
