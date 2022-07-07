@@ -258,7 +258,7 @@ const AddPassword = (ChatName:prop) => {
 		try {
 			const newpwd = (document.getElementById("new password") as HTMLInputElement).value;
 
-			const adminForm : SetPasswordDto = { name : newpwd, password : newpwd }
+			const adminForm : SetPasswordDto = { name : ChatName.chatName!, password : newpwd }
 			const data = await axios({
 					method: 'patch',
 					url: "chat/password",
@@ -308,7 +308,7 @@ const ModifyPassword = (ChatName:prop) => {
 		try {
 			const newpwd = (document.getElementById("modify password") as HTMLInputElement).value;
 
-			const adminForm : SetPasswordDto = { name : newpwd, password : newpwd }
+			const adminForm : SetPasswordDto = { name : ChatName.chatName!, password : newpwd }
 			const data = await axios({
 					method: 'patch',
 					url: "chat/modifypassword",
