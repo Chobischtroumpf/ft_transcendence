@@ -118,6 +118,13 @@ export class ChatController
         return this.chatService.setPassword(passwordData, user);
     }
 
+    @Patch('/modifypassword')
+    async modifyPassword(@Body() passwordData: SetPasswordDto, @User() user)
+    {
+        this.chatService.removePassword(passwordData.name, user);
+        return this.chatService.setPassword(passwordData, user);
+    }
+
     @Patch('/removepassword')
     async removePassword(@Body('name') name: string, @User() user)
     {

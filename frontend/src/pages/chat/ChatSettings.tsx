@@ -12,11 +12,11 @@ import { User } from "../../models/user";
 import { ChannelEntity } from "../../models/Chat";
 import './SettingsPage.css'
 import Wrapper from "../../components/Wrapper";
+import { AdminUserDto, JoinedUserStatusDto, SetPasswordDto } from "./chatSettings.dto";
 
 
 
-// 1 = owner 2 = admin 3 = password=true 4 = channel=private
-
+// 1 = owner 2 = admin 3 = password=true
 
 const ChatSettings = () =>{
 	const queryParams = new URLSearchParams(useLocation().search);
@@ -46,12 +46,12 @@ const ChatSettings = () =>{
 			</h1>
 			{/* { 4 && <AddUser chatName={ChatName}/>} */}
 			{ 1 && <AdminUser chatName={ChatName}/>} 
-			{ (1 || 2) && (<BanUser/>)}
-			{ 1 && 3 && (<AddPassword/>)}
-			{ 1 && 3 && (<ModifyPassword/>)}
-			{ 1 && 3 && (<RemovePassword/>)}
-			{ (1 || 2) && (<MuteUser/>)}
-			{ (1 || 2) && (<UnmuteUser/>)}
+			{ (1 || 2) && (<BanUser chatName={ChatName}/>)}
+			{ 1 && 3 && (<AddPassword chatName={ChatName}/>)}
+			{ 1 && 3 && (<ModifyPassword chatName={ChatName}/>)}
+			{ 1 && 3 && (<RemovePassword chatName={ChatName}/>)}
+			{ (1 || 2) && (<MuteUser chatName={ChatName}/>)}
+			{ (1 || 2) && (<UnmuteUser chatName={ChatName}/>)}
 		</div>
 		<Link to={`/chat?chatId=${ChatName}`} className="button-return" type="submit">Return</Link>
     </Wrapper>
@@ -108,10 +108,6 @@ interface prop {
 // 		</Popup>
 // 	</h2>)
 // }
-export interface AdminUserDto {
-    name: string;
-	adminId: number;
-}
 
 const AdminUser = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
@@ -131,8 +127,6 @@ const AdminUser = (ChatName:prop) => {
 	const handleClick = async( userId:number ) => {
 		try {
 			const name = ChatName.chatName!;
-			console.log(name);
-			console.log(userId);
 			const adminForm : AdminUserDto = { name : name, adminId : userId }
 			const data = await axios({
 					method: 'post',
@@ -184,10 +178,36 @@ const AdminUser = (ChatName:prop) => {
 	</h2>)
 }
 
-const BanUser = () => {
+const BanUser = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
-	const handleOpen = () => {setState(true);}
+	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
+	const [userList, setUserList] = useState([]);
+
+	const onModalOpen = async() => {
+	try {
+		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
+		setUserList(data);
+		} catch (e) {
+			console.log("here")
+		}
+	};
+
+	const handleClick = async( userId:number ) => {
+		try {
+			const name = ChatName.chatName!;
+			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
+			const data = await axios({
+					method: 'patch',
+					url: "chat/ban",
+					data: adminForm,
+					headers: {'content-type': 'application/json'}
+				})
+		} catch (e) {
+			console.log("herelol");
+		}
+	};
+
 	
 	return (
 	<h2>
@@ -212,11 +232,15 @@ const BanUser = () => {
 				<Popup
 					trigger={<button className="button-return"> Select user </button>}
 					modal nested>
-					<div className="menu-settings">
-						<div className="menu-item-settings"> item 1</div>
-						<div className="menu-item-settings"> item 2</div>
-						<div className="menu-item-settings"> item 3</div>
-					</div>
+						{userList.map((user: User) => {
+							return (
+								<div key={user.id}>
+									<div className="menu-settings">
+										<div className="menu-item-settings" onClick={() => handleClick(user.id)}>{user.username}</div>
+									</div>
+								</div>
+							)
+						})}
 				</Popup>
 				</div>
 			</div>
@@ -224,10 +248,28 @@ const BanUser = () => {
 	</h2>)
 }
 
-const AddPassword = () => {
+const AddPassword = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true);}
 	const handleClose = () => {setState(false);}
+	// const [newPassword, setNewPassword] = useState('');
+
+	const handleClick = async() => {
+		try {
+			const newpwd = (document.getElementById("new password") as HTMLInputElement).value;
+
+			const adminForm : SetPasswordDto = { name : newpwd, password : newpwd }
+			const data = await axios({
+					method: 'patch',
+					url: "chat/password",
+					data: adminForm,
+					headers: {'content-type': 'application/json'}
+				})
+		}
+		catch (e) {
+			console.log("here");
+		}
+	};
 	
 	return (
 	<h2>
@@ -249,18 +291,36 @@ const AddPassword = () => {
 					<pre>   Please enter a new password   </pre>
 				</div>
 				<div className="actions">
-					<input className="input-width" id='new password' type="text" ></input><button className="button-return">Set password</button>
+					<input className="input-width" id='new password' type="text" placeholder="Enter the new password"></input>
+					<button className="button-return" onClick={() => handleClick()}>Set password</button>
 				</div>
 			</div>
 		</Popup>
 	</h2>)
 }
 
-const ModifyPassword = () => {
+const ModifyPassword = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true);}
 	const handleClose = () => {setState(false);}
 	
+	const handleClick = async() => {
+		try {
+			const newpwd = (document.getElementById("modify password") as HTMLInputElement).value;
+
+			const adminForm : SetPasswordDto = { name : newpwd, password : newpwd }
+			const data = await axios({
+					method: 'patch',
+					url: "chat/modifypassword",
+					data: adminForm,
+					headers: {'content-type': 'application/json'}
+				})
+		}
+		catch (e) {
+			console.log("here");
+		}
+	};
+
 	return (
 	<h2>
 		Modify password : &nbsp;&nbsp;
@@ -280,20 +340,34 @@ const ModifyPassword = () => {
 				{' '}
 				<pre>      Enter a new password      </pre>
 				</div>
-				<div className="actions"><div className="actions">
-					<input className="input-width" id='new password' type="text" ></input><button className="button-return">Set new password</button>
-				</div>
+				<div className="actions">
+					<input className="input-width" id='modify password' type="text" placeholder="Enter the new password"></input>
+					<button className="button-return" onClick={() => handleClick()}>Change password</button>
 				</div>
 			</div>
 		</Popup>
 	</h2>)
 }
 
-const RemovePassword = () => {
+const RemovePassword = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true);}
 	const handleClose = () => {setState(false);}
 	
+	const handleClick = async() => {
+		try {
+			const data = await axios({
+					method: 'patch',
+					url: "chat/removepassword",
+					data: ChatName,
+					headers: {'content-type': 'application/json'}
+				})
+		}
+		catch (e) {
+			console.log("here");
+		}
+	};
+
 	return (
 	<h2>
 		Remove password : &nbsp;&nbsp;
@@ -314,18 +388,43 @@ const RemovePassword = () => {
 				<pre>    Remove the password   </pre>
 				</div>
 				<div className="actions">
-					<button className="button-return"> Remove password </button>
+					<button onClick={handleClick} className="button-return"> Remove password </button>
 				</div>
 			</div>
 		</Popup>
 	</h2>)
 }
 
-const MuteUser = () => {
+const MuteUser = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
-	const handleOpen = () => {setState(true);}
+	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
-	
+	const [userList, setUserList] = useState([]);
+
+	const onModalOpen = async() => {
+	try {
+		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
+		setUserList(data);
+		} catch (e) {
+			console.log("here")
+		}
+	};
+
+	const handleClick = async( userId:number ) => {
+		try {
+			const name = ChatName.chatName!;
+			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
+			const data = await axios({
+					method: 'patch',
+					url: "chat/mute",
+					data: adminForm,
+					headers: {'content-type': 'application/json'}
+				})
+		} catch (e) {
+			console.log("herelol");
+		}
+	};
+
 	return (
 	<h2>
 		Mute user : &nbsp;&nbsp;
@@ -349,11 +448,15 @@ const MuteUser = () => {
 				<Popup
 					trigger={<button className="button-return"> Select user </button>}
 					modal nested>
-					<div className="menu-settings">
-						<div className="menu-item-settings"> item 1</div>
-						<div className="menu-item-settings"> item 2</div>
-						<div className="menu-item-settings"> item 3</div>
-					</div>
+					{userList.map((user: User) => {
+						return (
+							<div key={user.id}>
+								<div className="menu-settings">
+									<div className="menu-item-settings" onClick={() => handleClick(user.id)}>{user.username}</div>
+								</div>
+							</div>
+						)
+					})}
 				</Popup>
 				</div>
 			</div>
@@ -361,11 +464,36 @@ const MuteUser = () => {
 	</h2>)
 }
 
-const UnmuteUser = () => {
+const UnmuteUser = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
-	const handleOpen = () => {setState(true);}
+	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
-	
+	const [userList, setUserList] = useState([]);
+
+	const onModalOpen = async() => {
+	try {
+		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
+		setUserList(data);
+		} catch (e) {
+			console.log("here")
+		}
+	};
+
+	const handleClick = async( userId:number ) => {
+		try {
+			const name = ChatName.chatName!;
+			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
+			const data = await axios({
+					method: 'patch',
+					url: "chat/unmute",
+					data: adminForm,
+					headers: {'content-type': 'application/json'}
+				})
+		} catch (e) {
+			console.log("herelol");
+		}
+	};
+
 	return (
 	<h2>
 		Unmute user : &nbsp;&nbsp;
@@ -386,15 +514,19 @@ const UnmuteUser = () => {
 				<pre>      Select user to unmute      </pre>
 				</div>
 				<div className="actions">
-				<Popup
-					trigger={<button className="button-return"> Select user </button>}
-					modal nested>
-					<div className="menu-settings">
-						<div className="menu-item-settings"> item 1</div>
-						<div className="menu-item-settings"> item 2</div>
-						<div className="menu-item-settings"> item 3</div>
-					</div>
-				</Popup>
+					<Popup
+						trigger={<button className="button-return"> Select user </button>}
+						modal nested>
+						{userList.map((user: User) => {
+							return (
+								<div key={user.id}>
+									<div className="menu-settings">
+										<div className="menu-item-settings" onClick={() => handleClick(user.id)}>{user.username}</div>
+									</div>
+								</div>
+							)
+						})}
+					</Popup>
 				</div>
 			</div>
 		</Popup>
