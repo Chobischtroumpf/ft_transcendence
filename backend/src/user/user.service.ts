@@ -252,19 +252,11 @@ export class UserService
             throw new HttpException('You have no access to choose yourself', HttpStatus.FORBIDDEN);
     }
 
-    async uploadFile(user: UserEntity, file)
-    {
-      console.log("llaaaaa");
-      const updatedUser = await this.userRepository.findOneBy({ username: user.username });
-      // if (updatedUser.picture && updatedUser.picture)
-      // {
-          const fs = require('fs');
-          const path = './uploads/profileimages/' + updatedUser.picture;
-          // fs.unlinkSync(path);
-      // }
-      updatedUser.picture = user.username + ".png";
-      // fs.appendFile( user.username + ".png", file);
-      await this.userRepository.save(file);
-      return updatedUser;
+    async uploadFile(user: UserEntity, path: any) {
+      console.log(path);
+      user.picture = path;
+
+      return await this.userRepository.save(user);
     }
+
 }

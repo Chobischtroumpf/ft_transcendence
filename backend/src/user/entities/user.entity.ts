@@ -38,7 +38,7 @@ export class UserEntity extends TimestampEntity {
     @Exclude()
     tfaSecret?: string;
 
-    @Column()
+    @Column({default: null})
     picture: string
 
     @Column({ type: "enum", enum: UserStatus, default: UserStatus.offline })

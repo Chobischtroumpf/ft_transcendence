@@ -42,6 +42,7 @@ const Settings = () => {
     else if (prevusername && !username)
       formData.append("username", prevusername);
     try {
+     
       const { data } = await axios.post("/user/username", { username: username });
       console.log(data);
     }
@@ -52,14 +53,14 @@ const Settings = () => {
 
   const handlePictureSubmit = async(event: any) => {
     event.preventDefault();
-    const formData = new FormData();
+    let formData = new FormData();
     if (picturefile !== undefined) {
-      formData.append("picture", picturefile);
-      console.log(formData);
+      formData.append("picture", picturefile, picturefile.name);
+      console.log(picturefile.name);
+    
     }
     try {
-      const { data } = await axios.post("user/picture", formData);
-      console.log(data);
+      const { data } = await axios.post("/user/picture", formData, { headers: {'content-type': 'multipart/form-data'}} );
     }
     catch (e) {
       <Navigate to={'/error500'} />

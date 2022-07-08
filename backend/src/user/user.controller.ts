@@ -123,10 +123,11 @@ export class UserController
     }
 
     @Post('/picture')
-    @UseInterceptors(FileInterceptor('file', storage))
+    @UseInterceptors(FileInterceptor('picture', storage))
     async uploadFile(@UploadedFile() file, @User() user)
     {
-        console.log("je suis");
+        console.log(file);
+        console.log(user.username);
         return this.userService.uploadFile(user, file);
     }
 
