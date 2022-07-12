@@ -65,7 +65,7 @@ export class ChatUtilsService
     }
 
     channelIsDirect(channel: ChannelEntity, channelName: string) {
-        if (channel !== undefined || channelName.includes("direct_with_") === true)
+        if (channel !== null || channelName.includes("direct_with_") === true)
             throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Channel already exists'}, HttpStatus.BAD_REQUEST);
     }
 
@@ -105,7 +105,7 @@ export class ChatUtilsService
 
     async getJoinedUserStatus(user: UserEntity, channel: ChannelEntity)
     {
-        const userStatus = await this.joinedUserStatusRepository.findOneBy({ user, channel });
+        const userStatus: any = await this.joinedUserStatusRepository.find({ where: { channel: { name: channel.name }, user: { username: user.username } } });
         if (userStatus)
             return userStatus;
         throw new HttpException('You are not member of this channel', HttpStatus.FORBIDDEN);
@@ -197,7 +197,7 @@ export class ChatUtilsService
 
     async deleteJoinedUsersStatusByChannel(channel: ChannelEntity)
     {
-        const joinedUsersStatus = await this.joinedUserStatusRepository.findBy({ channel });
+        const joinedUsersStatus = await this.joinedUserStatusRepository.find({ where: { channel: { name: channel.name } } });
         if (!joinedUsersStatus)
             return ;
         for (const joinedUserStatus of joinedUsersStatus)
@@ -207,7 +207,7 @@ export class ChatUtilsService
 
     async deleteJoinedUsersStatusByUser(user: UserEntity)
     {
-        const joinedUsersStatus = await this.joinedUserStatusRepository.findBy({ user });
+        const joinedUsersStatus = await this.joinedUserStatusRepository.find({ where: { user: { username: user.username } } });
         if (!joinedUsersStatus)
             return ;
         for (const joinedUserStatus of joinedUsersStatus)

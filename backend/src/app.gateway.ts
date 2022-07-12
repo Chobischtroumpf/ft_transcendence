@@ -8,7 +8,7 @@ import { UserEntity, UserStatus } from './user/entities/user.entity';
 import { UserService } from './user/user.service';
 import axios from 'axios';
 import { GameService } from './game/game.service';
-import { CreateMessageToChatDto, SetPasswordDto } from './chat/dto/chat.dto';
+import { CreateMessageToChatDto, InvitePlayerOptions, SetPasswordDto } from './chat/dto/chat.dto';
 import { ChatService } from './chat/service/chat.service';
 import { ChatUtilsService } from './chat/service/chatUtils.service';
 
@@ -141,16 +141,17 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage('addInviteToServer')
-  async invitePlayer(@ConnectedSocket() client: Socket, @MessageBody() id: number)
+  async invitePlayer(@ConnectedSocket() client: Socket, @MessageBody() data: InvitePlayerOptions)
   {
     try
     {
       const user = client.data.user;
-      const invitedUser = await this.userService.getUserById_2(id);
+      const invitedUser = await this.userService.getUserById_2(data.id);
       // add invited user to invites
       this.invites.push({
         sender: user.username,
-        invitedUser: invitedUser.username
+        invitedUser: invitedUser.username,
+        gameOptions: { paddleSize: data.paddleSize, paddleSpeed: data.paddleSpeed, ballSpeed: data.ballSpeed },
       });
       for (var i = 0; i < this._sockets.length; i++)
         if (this._sockets[i].data.user.username === invitedUser.username)
@@ -174,12 +175,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         client.emit('acceptInviteToClient', 'Invite doesnt exists');
         return ;
       }
+      const gameOptions = this.invites[index].gameOptions;
       // remove invited user from invites
       this.invites.splice(index, 1);
       const player1: Player = { player: sender };
       const player2: Player = { player: invitedUser };
       // start the game
-      this.startGame(player1, player2);
+      this.startGame(player1, player2, gameOptions);
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -189,9 +191,16 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   {
     try
     {
+      console.log('lol');
       // find the game
-      const game = this.games.find(e => e.name === room)
+      const game = this.games.find(e => e.name === room);
+      console.log(game);
+      if (game.players[0].player.username === client.data.user.username)
+        game.winner = game.players[1];
+      else if (game.players[1].player.username === client.data.user.username)
+        game.winner = game.players[0];
       // end game and leave
+      game.sounds.win === true;
       this.endGame(game);
     }
     catch { throw new WsException('Something went wrong'); }
@@ -210,8 +219,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       {
         const player1: Player = { player: this.queue.shift() };
         const player2: Player = { player: this.queue.shift() };
-        // if (player1.player.username !== player2.player.username)
-          this.startGame(player1, player2);
+        if (player1.player.username !== player2.player.username)
+          this.startGame(player1, player2, this.defaultGameOptions);
       }
     }
     catch { throw new WsException('Something went wrong'); }
@@ -226,10 +235,21 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       // user leaves from queue
       const index = this.queue.findIndex(e => e.id === user.id);
       this.queue.splice(index, 1);
-      this.wss.emit('leaveQueueToClient', user);
     }
     catch { throw new WsException('Something went wrong'); }
   }
+
+  // @SubscribeMessage('nullToServer')
+  // async nullGame(@ConnectedSocket() client: Socket)
+  // {
+  //   client.emit('gameStartsToClient', null);
+  // }
+
+  // @SubscribeMessage('nullGameStartToServer')
+  // async nullGameStart(@ConnectedSocket() client: Socket)
+  // {
+  //   client.emit('gameEndToClient', '');
+  // }
 
   @SubscribeMessage('newSpectatorToServer')
   async addSpectator(@ConnectedSocket() client: Socket, @MessageBody() room: string)
@@ -237,7 +257,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      console.log(room);
       // user joins to game as a spectator
       client.join(room);
       this.wss.to(room).emit('newSpectatorToClient', { username: user.username, room: room });
@@ -311,10 +330,16 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       data: matchBody
     });
     this.wss.to(game.name).emit('gameEndToClient', game.winner.player.username);
+    setTimeout(() => {
+      this.wss.to(game.name).emit('gameEndToClient', '');
+      this.wss.to(game.name).emit('gameStartsToClient', null);
+    }, 2000);
     // players leaves from gameroom and game has been deleted from game array
-    this.wss.to(game.name).socketsLeave(game.name);
-    const index = this.games.findIndex(e => e.id === game.id);
-    this.games.splice(index, 1);
+    setTimeout(() => {
+      this.wss.to(game.name).socketsLeave(game.name);
+      const index = this.games.findIndex(e => e.id === game.id);
+      this.games.splice(index, 1);
+    }, 3000);
   }
 
   addPlayersToGame(player1: UserEntity, player2: UserEntity, room: string)
@@ -329,12 +354,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     this.wss.to(room).emit('gameStartsToClient', room);
   }
 
-  startGame(player1: Player, player2: Player)
+  startGame(player1: Player, player2: Player, gameOptions: GameOptions)
   {
     // adding players to game room and game will be created
     const room = `game_with_${player1.player.id}_${player2.player.id}`;
     this.addPlayersToGame(player1.player, player2.player, room);
-    this.createGame(player1, player2, this.defaultGameOptions, room);
+    this.createGame(player1, player2, gameOptions, room);
   }
 
   createGame(player1: Player, player2: Player, gameOptions: GameOptions, room: string)
