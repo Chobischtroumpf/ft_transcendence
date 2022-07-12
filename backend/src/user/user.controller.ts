@@ -54,7 +54,10 @@ export class UserController
         // if (user.tfa_enabled)
         console.log(tfa);
         const { otpauthUrl } = await this.userService.generateTfaSecret(user);
-        return this.userService.pipeQrCodeStream(response, otpauthUrl);
+        const temp:any = this.userService.pipeQrCodeStream(response, otpauthUrl);
+        // console.log(temp);
+        // return Buffer.from(temp).toString('base64');
+
     }
     
     @Post('tfa/turn-on')
@@ -93,7 +96,6 @@ export class UserController
     @UseInterceptors(FileInterceptor('file', storage))
     async uploadFile(@UploadedFile() file, @User() user)
     {
-        console.log("je suis");
         return this.userService.uploadFile(user, file);
     }
     

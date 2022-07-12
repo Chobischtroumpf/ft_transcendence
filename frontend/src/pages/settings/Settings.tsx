@@ -17,7 +17,7 @@ const Settings = () => {
   var [tfa, setTfa] = useState<boolean>(false);
   const [picturefile, setPictureFile] = useState<File>();
   var [picture, setPicture] = useState<string>('');
-  var imageUrl = '';
+  var imageUrl = 'data:image/jpeg;base64,';
   
   (async () => {
     const { data } = await axios.get("user");
@@ -39,8 +39,8 @@ const Settings = () => {
       data: tfaForm,
       headers: {'content-type': 'application/json'}
     });
-    console.log(typeof data.data);
-    
+    console.log(data);
+    // imageUrl += data.data;
     
   }
 
