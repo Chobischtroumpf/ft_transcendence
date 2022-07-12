@@ -23,7 +23,7 @@ export const Menu = () => {
     } , error => {
       console.log(error);
     });
-  });
+  },[]);
   
 
   return (
