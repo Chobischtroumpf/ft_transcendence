@@ -2,7 +2,13 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router";
 import Wrapper from "../../components/Wrapper";
+import { encode } from "base64-arraybuffer";
 import './Settings.css'
+
+
+export interface tfaDto {
+  tfa: boolean;
+}
 
 const Settings = () => {  
 
@@ -10,31 +16,39 @@ const Settings = () => {
   var [username, setUsername] = useState<string>('');
   const [prevusername, setPrevUsername] = useState<string>();
   var [tfa, setTfa] = useState<boolean>(false);
+  var [tfaImage, setTfaImage] = useState<string | null>(null)
   const [picturefile, setPictureFile] = useState<File>();
   var [picture, setPicture] = useState<string>('');
-  var imageUrl = '';
+  var [prevpicture, setPrevPicture] = useState<string>();
   
+  useEffect(() => {
   (async () => {
     const { data } = await axios.get("user");
     try {
       setPrevUsername(data.username);
+      setPrevPicture(data.picture);
       // setTfa(data.tfa);
     } catch (e) {
       <Navigate to={'/error500'} />
     }
   }
   )();
+  }, []);
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
-    var formData = new FormData();
-    formData.append("tfa", tfa.toString());
-    console.log(tfa);
-    const { data } = await axios.post("user/tfa/secret", formData);
-    console.log(data);
-    var blob = new Blob([data.data], { type: "text/plain" });
-    imageUrl = window.URL.createObjectURL(blob);
+    const tfaForm: tfaDto = { tfa: tfa };
+    const data = await axios({
+      method: 'post',
+      url: "/user/tfa/secret/",
+      data: tfaForm,
+      headers: {'content-type': 'application/json'},
+      responseType: 'arraybuffer'
+    });
+    console.log(data.data);
+    setTfaImage('data:image/jpeg;base64,' + encode(data.data));
 
+    
   }
 
   const handleUsernameSubmit = async(event: any) => {
@@ -46,6 +60,7 @@ const Settings = () => {
     else if (prevusername && !username)
       formData.append("username", prevusername);
     try {
+     
       const { data } = await axios.post("/user/username", { username: username });
       console.log(data);
     }
@@ -56,14 +71,14 @@ const Settings = () => {
 
   const handlePictureSubmit = async(event: any) => {
     event.preventDefault();
-    const formData = new FormData();
+    let formData = new FormData();
     if (picturefile !== undefined) {
-      formData.append("picture", picturefile);
-      console.log(formData);
+      formData.append("picture", picturefile, picturefile.name);
+      console.log(picturefile.name);
+    
     }
     try {
-      const { data } = await axios.post("user/picture", formData);
-      console.log(data);
+      const { data } = await axios.post("/user/picture", formData, { headers: {'content-type': 'multipart/form-data'}} );
     }
     catch (e) {
       <Navigate to={'/error500'} />
@@ -140,7 +155,10 @@ const Settings = () => {
           </div>
           <input type="submit" value="Save"/>
         </form>
-        <img className="qr-code" src={imageUrl} alt="qr-code" />
+        { (tfaImage) && (
+        <div className="tfa-qr">
+          <img src={tfaImage} alt="tfa-qr" />
+        </div>)}
       </div>
     </Wrapper>
   );

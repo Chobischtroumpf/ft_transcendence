@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { User } from 'src/decorators/user.decorator';
 import { UserEntity } from 'src/user/entities/user.entity';
@@ -18,10 +18,10 @@ export class MatchController
         return this.matchService.saveMatch(matchData);
     }
 
-    @Get()
+    @Get("/:id")
     @UseGuards(JwtGuard)
-    getMatches(@User() user: UserEntity)
+    getMatches(@Param('id') id: number)
     {
-        return this.matchService.getMatches(user.id);
+        return this.matchService.getMatches(id);
     }
 }

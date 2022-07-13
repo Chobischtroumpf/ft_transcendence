@@ -14,6 +14,10 @@ import { gameUpdate } from './models/game';
 import GameArea from './pages/game/GameArea';
 import GameFinished from './pages/game/GameFinished';
 import GameWaitingRoom from './pages/game/GameWaitingRoom';
+import {User} from './models/user';
+
+export const TodoContext = React.createContext<any>(null);
+
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -64,6 +68,8 @@ function App() {
     });
     setSocket(newSocket);
 
+
+
     return () => {
       newSocket.disconnect();
     }
@@ -75,7 +81,7 @@ function App() {
         <Routes>
           <Route path="/game" element={<Game socket={socket} games={games} invites={invites} />}></Route>
           <Route path="/" element={<Profile socket={socket}/>}></Route>
-          <Route path="/profile" element={<Profile socket={socket}/>}></Route>
+          <Route path="/profile"  element={<Profile socket={socket} key={2}/>}></Route>
           <Route path="/profile/settings" element={<Settings/>}></Route>
           <Route path="/users" element={<Users socket={socket} />}></Route>
           <Route path="/signin" element={<SingIn />}></Route>

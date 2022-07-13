@@ -54,7 +54,7 @@ export class ChatUtilsService
         return newMessage;
     }
     
-    async clientIsMember(user: UserEntity, channel: ChannelEntity): Promise<boolean>
+    clientIsMember(user: UserEntity, channel: ChannelEntity): boolean
     {
         for(var i = 0; i < channel.members.length; i++) {
             if (channel.members[i].id === user.id) {
@@ -65,8 +65,10 @@ export class ChatUtilsService
     }
 
     channelIsDirect(channel: ChannelEntity, channelName: string) {
-        if (channel !== null || channelName.includes("direct_with_") === true)
-            throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Channel already exists'}, HttpStatus.BAD_REQUEST);
+      if (channel !== null || channelName.includes("direct_with_") === true)
+      {
+        throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Channel already exists'}, HttpStatus.BAD_REQUEST);
+      }
     }
 
     userIsOwner(userStatus: JoinedUserStatus) {
@@ -84,8 +86,8 @@ export class ChatUtilsService
             throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Please insert a password'}, HttpStatus.BAD_REQUEST);
     }
 
-    async checkClientIsMember(user: UserEntity, channel: ChannelEntity) {
-        if (await this.clientIsMember(user, channel) === false)
+    checkClientIsMember(user: UserEntity, channel: ChannelEntity) {
+        if (this.clientIsMember(user, channel) === false)
             throw new HttpException('You are not member of this channel', HttpStatus.FORBIDDEN);
     }
 
@@ -108,6 +110,7 @@ export class ChatUtilsService
         const userStatus: any = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
         if (userStatus)
             return userStatus;
+         console.log("getjoineduserstatus2");
         throw new HttpException('You are not member of this channel', HttpStatus.FORBIDDEN);
     }
 
