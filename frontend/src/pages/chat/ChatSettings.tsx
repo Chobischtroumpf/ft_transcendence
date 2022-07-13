@@ -62,6 +62,11 @@ interface prop {
 	chatName: string | null
 }
 
+interface prop2 {
+	message: string,
+	success: boolean
+}
+
 // const AddUser = (ChatName:prop) => {
 // 	const [state, setState] = useState(false); 
 // 	const handleOpen = () => {setState(true);}
@@ -114,9 +119,12 @@ const AdminUser = (ChatName:prop) => {
 	const handleOpen = () => {setState(true); onModalOpen()};
 	const handleClose = () => {setState(false);}
 	const [userList, setUserList] = useState([]);
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
 
 	const onModalOpen = async() => {
 	try {
+		setPopupMessage("");
 		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
@@ -134,8 +142,13 @@ const AdminUser = (ChatName:prop) => {
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
 				})
-		} catch (e) {
-			console.log("herelol");
+			setPopupMessage("User successfully set as admin");
+			setActionSuccess(true);
+			handleClose();
+		} catch (e:any) {
+			setPopupMessage(e.response.data.message);
+			setActionSuccess(false);
+			handleClose();
 		}
 	};
 
@@ -175,6 +188,7 @@ const AdminUser = (ChatName:prop) => {
 				</div>
 			</div>
 		</Popup>
+		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
 	</h2>)
 }
 
@@ -183,9 +197,12 @@ const BanUser = (ChatName:prop) => {
 	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
 	const [userList, setUserList] = useState([]);
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
 
 	const onModalOpen = async() => {
 	try {
+		setPopupMessage("");
 		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
@@ -203,9 +220,14 @@ const BanUser = (ChatName:prop) => {
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
 				})
-		} catch (e) {
-			console.log("herelol");
-		}
+				setPopupMessage("User successfully banned");
+				setActionSuccess(true);
+				handleClose();
+			} catch (e:any) {
+				setPopupMessage(e.response.data.message);
+				setActionSuccess(false);
+				handleClose();
+			}
 	};
 
 	
@@ -245,13 +267,16 @@ const BanUser = (ChatName:prop) => {
 				</div>
 			</div>
 		</Popup>
+		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
 	</h2>)
 }
 
 const AddPassword = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
-	const handleOpen = () => {setState(true);}
+	const handleOpen = () => {setPopupMessage(""); setState(true);}
 	const handleClose = () => {setState(false);}
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
 	// const [newPassword, setNewPassword] = useState('');
 
 	const handleClick = async() => {
@@ -264,13 +289,17 @@ const AddPassword = (ChatName:prop) => {
 					url: "chat/password",
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
-				})
-		}
-		catch (e) {
-			console.log("here");
+				});
+				setPopupMessage("Password successfully added");
+				setActionSuccess(true);
+				handleClose();
+			} catch (e:any) {
+				setPopupMessage(e.response.data.message);
+				setActionSuccess(false);
+				handleClose();
 		}
 	};
-	
+
 	return (
 	<h2>
 		Add password : &nbsp;&nbsp;
@@ -296,13 +325,16 @@ const AddPassword = (ChatName:prop) => {
 				</div>
 			</div>
 		</Popup>
+		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
 	</h2>)
 }
 
 const ModifyPassword = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
-	const handleOpen = () => {setState(true);}
+	const handleOpen = () => {setPopupMessage(""); setState(true);}
 	const handleClose = () => {setState(false);}
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
 	
 	const handleClick = async() => {
 		try {
@@ -315,9 +347,13 @@ const ModifyPassword = (ChatName:prop) => {
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
 				})
-		}
-		catch (e) {
-			console.log("here");
+				setPopupMessage("Password modified successfully");
+				setActionSuccess(true);
+				handleClose();
+			} catch (e:any) {
+				setPopupMessage(e.response.data.message);
+				setActionSuccess(false);
+				handleClose();
 		}
 	};
 
@@ -346,13 +382,16 @@ const ModifyPassword = (ChatName:prop) => {
 				</div>
 			</div>
 		</Popup>
+		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
 	</h2>)
 }
 
 const RemovePassword = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
-	const handleOpen = () => {setState(true);}
+	const handleOpen = () => {setPopupMessage(""); setState(true);}
 	const handleClose = () => {setState(false);}
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
 	
 	const handleClick = async() => {
 		try {
@@ -362,9 +401,13 @@ const RemovePassword = (ChatName:prop) => {
 					data: ChatName,
 					headers: {'content-type': 'application/json'}
 				})
-		}
-		catch (e) {
-			console.log("here");
+				setPopupMessage("Password successfully removed");
+				setActionSuccess(true);
+				handleClose();
+			} catch (e:any) {
+				setPopupMessage(e.response.data.message);
+				setActionSuccess(false);
+				handleClose();
 		}
 	};
 
@@ -392,6 +435,7 @@ const RemovePassword = (ChatName:prop) => {
 				</div>
 			</div>
 		</Popup>
+		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
 	</h2>)
 }
 
@@ -400,9 +444,12 @@ const MuteUser = (ChatName:prop) => {
 	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
 	const [userList, setUserList] = useState([]);
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
 
 	const onModalOpen = async() => {
 	try {
+		setPopupMessage("");
 		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
@@ -420,8 +467,13 @@ const MuteUser = (ChatName:prop) => {
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
 				})
-		} catch (e) {
-			console.log("herelol");
+				setPopupMessage("User successfully muted");
+				setActionSuccess(true);
+				handleClose();
+			} catch (e:any) {
+				setPopupMessage(e.response.data.message);
+				setActionSuccess(false);
+				handleClose();
 		}
 	};
 
@@ -461,6 +513,7 @@ const MuteUser = (ChatName:prop) => {
 				</div>
 			</div>
 		</Popup>
+		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
 	</h2>)
 }
 
@@ -469,9 +522,12 @@ const UnmuteUser = (ChatName:prop) => {
 	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
 	const [userList, setUserList] = useState([]);
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
 
 	const onModalOpen = async() => {
 	try {
+		setPopupMessage("");
 		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
@@ -483,14 +539,20 @@ const UnmuteUser = (ChatName:prop) => {
 		try {
 			const name = ChatName.chatName!;
 			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
+			handleClose();
 			const data = await axios({
 					method: 'patch',
 					url: "chat/unmute",
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
-				})
-		} catch (e) {
-			console.log("herelol");
+				});
+				setPopupMessage("User successfully unmuted");
+				setActionSuccess(true);
+				handleClose();
+			} catch (e:any) {
+				setPopupMessage(e.response.data.message);
+				setActionSuccess(false);
+				handleClose();
 		}
 	};
 
@@ -530,8 +592,35 @@ const UnmuteUser = (ChatName:prop) => {
 				</div>
 			</div>
 		</Popup>
+		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
 	</h2>)
 }
 
+
+const ModalMessage = (prop:prop2) => {
+	const [state, setState] = useState(true);
+	const handleOpen = () => {setState(true);}
+	const handleClose = () => {console.log("yoo");setState(false);}
+
+	return (
+		<Popup
+			open={state}
+			onClose={handleClose}
+			onOpen={handleOpen}
+			position='top right' modal nested>
+			<div className='modal2'>
+				{prop.success && (<div className="content">
+				{' '}
+					<h1 color="green">{prop.message}</h1>
+				</div>)}
+				{!prop.success && (<div className="content">
+				{' '}
+					<h1 color="red">{prop.message}</h1>
+				</div>)}
+				<button onClick={handleClose}>close&times;</button>
+			</div>
+		</Popup>
+	)
+}
 
 export default ChatSettings;

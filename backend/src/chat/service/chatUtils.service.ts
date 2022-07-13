@@ -19,6 +19,8 @@ export class ChatUtilsService
 
     async createNewJoinedUserStatus(owner: boolean, admin: boolean, muted: Date, banned: Date, channel: ChannelEntity, user: UserEntity)
     {
+        // console.log("channel : " + channel);
+        // console.log("user : " + user);
         const newUserStatus = await this.joinedUserStatusRepository.create({
             owner,
             admin,
@@ -27,6 +29,8 @@ export class ChatUtilsService
             channel,
             user
         });
+        console.log("newUserStatus");
+        console.log(newUserStatus);
         await this.joinedUserStatusRepository.save(newUserStatus);
         return newUserStatus;
     }
@@ -106,7 +110,9 @@ export class ChatUtilsService
     async getJoinedUserStatus(user: UserEntity, channel: ChannelEntity)
     {
         console.log("getjoineduserstatus");
-        const userStatus = await this.joinedUserStatusRepository.findOneBy({user: user, channel: channel});
+        // console.log(channel);
+        // console.log(user);
+        const userStatus = await this.joinedUserStatusRepository.findOne({ where:{ channel: { name: channel.name }, user: { username: user.username}}})
         console.log(userStatus);
         if (userStatus)
             return userStatus;
@@ -116,10 +122,7 @@ export class ChatUtilsService
 
     async getChannelByName(channelName: string)
     {
-        console.log(channelName);
         const channel = await this.chatRepository.findOneBy({ name: channelName })
-        console.log("channel :");
-        console.log(channel);
         if (channel)
             return channel;
         throw new HttpException('Channel doesnt exists', HttpStatus.NOT_FOUND);
