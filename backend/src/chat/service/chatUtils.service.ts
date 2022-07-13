@@ -68,8 +68,8 @@ export class ChatUtilsService
         if (channel !== null || channelName.includes("direct_with_") === true)
         {
             throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Channel already exists'}, HttpStatus.BAD_REQUEST);
-    
-    }}
+        }
+    }
 
     userIsOwner(userStatus: JoinedUserStatus) {
         if (userStatus.owner === false)
@@ -107,9 +107,7 @@ export class ChatUtilsService
 
     async getJoinedUserStatus(user: UserEntity, channel: ChannelEntity)
     {
-        console.log("getjoineduserstatus");
-        const userStatus = await this.joinedUserStatusRepository.findOneBy({user: user, channel: channel});
-        console.log(userStatus);
+        const userStatus: any = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
         if (userStatus)
             return userStatus;
          console.log("getjoineduserstatus2");
@@ -182,7 +180,7 @@ export class ChatUtilsService
 
     async deleteMessagesByUser(author: UserEntity)
     {
-        const messages = await this.messageRepository.findBy({ author });
+        const messages = await this.messageRepository.find({ where: { author: { username: author.username } } });
         if (!messages)
             return ;
         for (const message of messages)
@@ -192,7 +190,7 @@ export class ChatUtilsService
 
     async deleteMessagesByChannel(channel: ChannelEntity)
     {
-        const messages = await this.messageRepository.findBy({ channel });
+        const messages = await this.messageRepository.find({ where: { channel: { name: channel.name } } });
         if (!messages)
             return ;
         for (const message of messages)
@@ -202,7 +200,7 @@ export class ChatUtilsService
 
     async deleteJoinedUsersStatusByChannel(channel: ChannelEntity)
     {
-        const joinedUsersStatus = await this.joinedUserStatusRepository.findBy({ channel });
+        const joinedUsersStatus = await this.joinedUserStatusRepository.find({ where: { channel: { name: channel.name } } });
         if (!joinedUsersStatus)
             return ;
         for (const joinedUserStatus of joinedUsersStatus)
@@ -212,7 +210,7 @@ export class ChatUtilsService
 
     async deleteJoinedUsersStatusByUser(user: UserEntity)
     {
-        const joinedUsersStatus = await this.joinedUserStatusRepository.findBy({ user });
+        const joinedUsersStatus = await this.joinedUserStatusRepository.find({ where: { user: { username: user.username } } });
         if (!joinedUsersStatus)
             return ;
         for (const joinedUserStatus of joinedUsersStatus)

@@ -42,6 +42,7 @@ function App() {
       console.log(data);
     });
     newSocket.on('msgToClient', (data) => {
+      console.log(data);
       setMessages(data);
     });
     newSocket.on('getGamesToClient', (data) => {
@@ -87,9 +88,9 @@ function App() {
           <Route path="/channels" element={<Channels socket={socket} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
-          <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} />}></Route>
+          <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>
           <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
-          <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator}/>}></Route>
+          <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator} socket={socket}/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>

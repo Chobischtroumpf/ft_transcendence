@@ -273,7 +273,7 @@ export class ChatService
     async getMessagesFromChannel(name: string, user: UserEntity)
     {
         const channel = await this.chatUtilService.getChannelByName(name);
-        const messagesFromChannel = await this.messageRepository.findBy({ channel: channel })
+        const messagesFromChannel = await this.messageRepository.find({ where: {channel: { name: channel.name }} });
         const allMessages: MessageEntity[] = [];
         for (const message of messagesFromChannel)
             allMessages.push(message);
