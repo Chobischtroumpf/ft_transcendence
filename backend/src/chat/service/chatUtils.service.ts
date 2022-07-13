@@ -65,15 +65,8 @@ export class ChatUtilsService
     }
 
     channelIsDirect(channel: ChannelEntity, channelName: string) {
-<<<<<<< HEAD
-        console.log(channel);
-        console.log(channelName);
         if (channel !== null || channelName.includes("direct_with_") === true)
         {
-            console.log("je suis icicic");
-=======
-        if (channel !== null || channelName.includes("direct_with_") === true)
->>>>>>> profile_page
             throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Channel already exists'}, HttpStatus.BAD_REQUEST);
     
     }}
