@@ -16,7 +16,7 @@ import { UserService } from './user.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity, ChannelEntity, MessageEntity, JoinedUserStatus]),
-    MulterModule.register({dest: './pictures'}),
+    MulterModule.register({dest: './uploads'}),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,

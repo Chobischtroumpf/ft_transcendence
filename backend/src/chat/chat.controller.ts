@@ -36,6 +36,7 @@ export class ChatController
     @Post('/public')
     async createPublicChannel(@Body('name') channelName: string, @User() user)
     {
+        console.log("iwnfijnwefow");
         return this.chatService.createPublicChannel(channelName, user);
     }
 

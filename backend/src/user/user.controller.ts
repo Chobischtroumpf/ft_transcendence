@@ -93,7 +93,7 @@ export class UserController
     }
     
     @Post('/picture')
-    @UseInterceptors(FileInterceptor('file', storage))
+    @UseInterceptors(FileInterceptor('picture', storage))
     async uploadFile(@UploadedFile() file, @User() user)
     {
         return this.userService.uploadFile(user, file);
@@ -150,3 +150,4 @@ export class UserController
         return this.userService.getUserById(user.id);
     }
 }
+
