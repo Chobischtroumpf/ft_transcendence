@@ -105,7 +105,7 @@ export class ChatUtilsService
 
     async getJoinedUserStatus(user: UserEntity, channel: ChannelEntity)
     {
-        const userStatus: any = await this.joinedUserStatusRepository.find({ where: { channel: { name: channel.name }, user: { username: user.username } } });
+        const userStatus: any = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
         if (userStatus)
             return userStatus;
         throw new HttpException('You are not member of this channel', HttpStatus.FORBIDDEN);
@@ -177,7 +177,7 @@ export class ChatUtilsService
 
     async deleteMessagesByUser(author: UserEntity)
     {
-        const messages = await this.messageRepository.findBy({ author });
+        const messages = await this.messageRepository.find({ where: { author: { username: author.username } } });
         if (!messages)
             return ;
         for (const message of messages)
@@ -187,7 +187,7 @@ export class ChatUtilsService
 
     async deleteMessagesByChannel(channel: ChannelEntity)
     {
-        const messages = await this.messageRepository.findBy({ channel });
+        const messages = await this.messageRepository.find({ where: { channel: { name: channel.name } } });
         if (!messages)
             return ;
         for (const message of messages)

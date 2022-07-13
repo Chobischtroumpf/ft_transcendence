@@ -38,6 +38,7 @@ function App() {
       console.log(data);
     });
     newSocket.on('msgToClient', (data) => {
+      console.log(data);
       setMessages(data);
     });
     newSocket.on('getGamesToClient', (data) => {

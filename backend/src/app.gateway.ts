@@ -113,6 +113,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const channel = await this.chatUtilService.getChannelByName(data.name);
       const message = await this.chatService.createMessageToChannel(data, user);
       const allMessages = await this.chatService.getMessagesFromChannel(data.name, user);
+      console.log(allMessages);
       for (const member of channel.members)
         if (await this.userService.isblocked_true(user, member) === false)
           for (var i = 0; i < this._sockets.length; i++)
