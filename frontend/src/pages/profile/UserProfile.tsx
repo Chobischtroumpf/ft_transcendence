@@ -15,7 +15,6 @@ interface State {
   friends: User[];
   matchHistory: any[];
   socket: Socket | null;
-  profilePicture: string | null;
 }
 
 interface Props {
@@ -33,7 +32,6 @@ export default class UserProfile extends Component<Props, State> {
       friends: this.props.friends,
       matchHistory: [],
       socket: this.props.socket,
-      profilePicture: null
     };
     this.componentDidMount = this.componentDidMount.bind(this); 
     console.log("user", this.props.user);
@@ -49,18 +47,6 @@ export default class UserProfile extends Component<Props, State> {
       console.log(error);
     })
 
-  }
-
-  async getProfilePicture(user: User) {
-    console.log("getProfilePicture");
-    const response = await axios.get(`/user/picture/${user.picture}`);
-    try{
-      console.log(response)
-      return response.data;
-    }
-    catch(error) {
-      console.log(error);
-    }
   }
 
   async getMatchHistory() {
@@ -89,7 +75,7 @@ export default class UserProfile extends Component<Props, State> {
       <div>
         <div className="user-profile">
           <div className="user-name">
-            <img className="profile-picture" src={`http://localhost:3000/user/picture/${this.state.user.picture.}`} alt="avatar" />
+            <img className="profile-picture" src={`http://localhost:3000/user/picture/${this.state.user.picture}`} alt="avatar" />
             <h1>{this.state.user.username}'s profile</h1>
               <span className="status-online">Online</span>
           </div>

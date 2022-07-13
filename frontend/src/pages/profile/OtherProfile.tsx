@@ -15,7 +15,6 @@ interface State {
   matchHistory: any[];
   showAddFriend: boolean;
   socket: Socket | null;
-  profilePicture: string | null;
 }
 
 interface Props {
@@ -32,7 +31,6 @@ export default class OtherProfile extends Component<Props, State> {
       matchHistory: [],
       showAddFriend: true,
       socket: this.props.socket,
-      profilePicture: null
     };
     this.componentDidMount = this.componentDidMount.bind(this); 
   }
@@ -48,11 +46,6 @@ export default class OtherProfile extends Component<Props, State> {
       <Navigate to="/err500" />;
     });
 
-    this.getProfilePicture(this.state.user).then(profilePicture => {
-      this.setState({profilePicture: profilePicture});
-    }, error => {
-      <Navigate to="/err500" />;
-    });
     for (let friend of this.props.friends) {
       if (friend.id === this.state.user.id) {
         this.setState({showAddFriend: false});
@@ -61,17 +54,6 @@ export default class OtherProfile extends Component<Props, State> {
     }
   }
 
-  async getProfilePicture(user: User) {
-    console.log("getProfilePicture");
-    const response = await axios.get(`/user/picture/${user.picture}`);
-    try{
-      console.log(response)
-      return response.data;
-    }
-    catch(error) {
-      console.log(error);
-    }
-  }
   async getMatchHistory() {
     const data = await axios.get(`/match/${this.state.user.id}`)
     try {
