@@ -59,7 +59,8 @@ const Game = ({socket, games, invites}: Props) =>
             setPlace(null);
             return ;
         }
-        socket?.emit('addInviteToServer', data.id);
+        const id = data.id;
+        socket?.emit('addInviteToServer', {id, paddleSize, paddleSpeed, ballSpeed});
         setPlace("queue");
     }
 
@@ -83,6 +84,7 @@ const Game = ({socket, games, invites}: Props) =>
     
     if (place === "queue")
     {
+        // socket?.emit('nullToServer');
         return <Navigate to={'/gamewaitingroom'} />;
     }
 
@@ -107,7 +109,7 @@ const Game = ({socket, games, invites}: Props) =>
                             <td>{game.name}</td>
                             <td>
                             <form onSubmit={spectatorJoin}>
-                                <button onClick={e => setName(game.name)} type="submit">Join as spectator</button>
+                                <button onClick={e => setName(game.name)} type="submit">Join</button>
                             </form>
                             </td>
                         </tr>  

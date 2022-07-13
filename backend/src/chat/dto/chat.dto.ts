@@ -44,3 +44,22 @@ export class CreateMessageToChatDto
     @IsString()
     message: string;
 }
+
+export class InvitePlayerOptions
+{
+    @IsNotEmpty()
+    @IsNumber()
+    id: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    paddleSize: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    paddleSpeed: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    ballSpeed: number;
+}
