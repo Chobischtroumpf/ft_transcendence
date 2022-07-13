@@ -1,12 +1,11 @@
 import * as React from "react";
-import { Component } from "react";
 import axios from "axios";
 import {Socket} from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { User, UserLevel, UserStatus } from "../../models/user";
 import UserProfile from "./UserProfile";
 import './Profile.css'
-import { url } from "inspector";
+import OtherProfile from "./OtherProfile";
 
 interface Props {
   socket: Socket | null;
@@ -18,73 +17,103 @@ interface State {
 }
 
 
-export default class Profile extends Component<Props, State> {
+const Profile = (props: Props) => {
+  const [user, setUser] = React.useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  const [ownUser, setOwnUser] = React.useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  const [friends, setFriends] = React.useState<User[]>([]);
+  var urlParam: string | null = '';
+  // const url = window.location.pathname;
+  const [gotUser, setGotUser] = React.useState<boolean>(false);
+  const [gotOwnUser, setGotOwnUser] = React.useState<boolean>(false);
+  const [gotFriends, setGotFriends] = React.useState<boolean>(false);
+  var [shouldUpdate, setShouldUpdate] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<boolean>(false);
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      user: new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0),
-      urlParam: ''
-    };
-  }
+  React.useEffect(() => {
+    setGotFriends(false);
+    setGotUser(false);
+    setGotOwnUser(false);
 
-  componentDidMount() {
     const query = new URLSearchParams(window.location.search);
-    this.setState({urlParam: query.get('userId')});
+    urlParam = query.get('userId');
+    
 
-    this.getUserById(query.get('userId')).then(user => {
-      this.setState({user: user})
-      console.log("user :", user);
+    getUserById(urlParam).then(answer => {
+      setUser(answer);
+      setGotUser(true);
     }, error => {
-      console.log(error);
+      setError(true);
+    });
+    
+    getUserById(null).then(user => {
+      setOwnUser(user);
+      setGotOwnUser(true);
+    }, error => {
+      setError(true);
+    })
+
+    getFriends().then(friends => {
+      setFriends(friends);
+      setGotFriends(true);
+    }, error => {
+      setError(true);
     });
 
+    setShouldUpdate(false);
+  }, [shouldUpdate, error]);
+
+  function setUpdate() {
+    setShouldUpdate(true);
   }
 
+  async function getFriends() {
+     return axios.get(`/user/friend`).then(answer => {
+      return answer.data;
+    }, error => {
+      setError(true);
+      return [];
+    });
+  }
 
-  async getUserById(userId: string | null) {
+  async function getUserById(userId: string | null) {
     if (userId) {
-        return axios.get(`/user/${userId}`).then(response => {
+      console.log("getUserById", userId);
+      return axios.get(`/user/${userId}`).then(user =>{
+        console.log("after axios : ", user);
+        return user.data;
+      }, error => {
+        setError(true);
+        return null;
+      });
+    }
+    else {
+        return axios.get('/user').then(response => {
           return response.data;
         }, error => {
-          console.log(error);
+          setError(true);
           return null;
         }
       );
     }
-    else {
-        return axios.get('/user').then(response => {
-        console.log("response :", response.data); 
-          return response.data;
-        }, error => {
-          console.log(error);
-        }
-      );
-    }
   }
 
-  render() {
-    console.log(this.state.user);
-    if (!this.state.user || this.state.user.id === 0) {
-      // console.log('user not found');
-      return (<Wrapper><div>Loading...</div></Wrapper>);
-    }
-    else if (this.state.urlParam)
-    {
-      console.log('user found');
-      return (
-        <Wrapper>
-          <UserProfile key={1} socket={this.props.socket} userId={this.state.urlParam} />
-        </Wrapper>
-      );
-    }
-    else {
-      console.log('own profile');
-      return (
-        <Wrapper>
-          <UserProfile key={2} socket={this.props.socket}/>
-        </Wrapper>
-      );
-    }
+  window.onpopstate = function(event) {
+    console.log("onpopstate");
+    setUpdate();
   }
+
+  return (
+    <Wrapper setParentState={setUpdate}>
+      {/* (error === true) ? <Navigate to="/err500" /> : */}
+      {/* ( */}
+      <div className="profile-container">
+      {(gotUser && gotOwnUser && gotFriends) &&
+        ((user.id != ownUser.id) ?
+          (<OtherProfile user={user} friends={friends} socket={props.socket} />) :
+          (<UserProfile friends={friends} user={ownUser} socket={props.socket} setParentState={setShouldUpdate}/>))}
+      </div>{/*)*/}
+    </Wrapper>
+  );
 }
+
+export default Profile;

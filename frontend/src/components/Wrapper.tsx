@@ -12,7 +12,7 @@ type Props = {
 
 export var sockets: Socket[] = [];
 
-const Wrapper = ({children}: Props) =>
+const Wrapper = (props: any) =>
 {
     const [redirect, setRedirect] = useState(false);
 
@@ -40,10 +40,10 @@ const Wrapper = ({children}: Props) =>
 
             <div className="container-fluid">
             <div className="row">
-                <Menu/>
+                <Menu setParentState={props.setParentState} />
 
                 <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    {children}
+                    {props.children}
                 </main>
             </div>
             </div>

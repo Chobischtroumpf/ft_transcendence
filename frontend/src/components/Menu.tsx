@@ -4,7 +4,7 @@ import React from "react";
 import { NavLink, Navigate } from "react-router-dom";
 import { User, UserLevel, UserStatus } from "../models/user";
 
-export const Menu = () => {
+export const Menu = (props: any) => {
 
   const [user, setUser] = React.useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
 
@@ -36,7 +36,7 @@ export const Menu = () => {
             </NavLink>
           </li>
           <li className="nav-item">
-            <NavLink to={`/profile`} key={1} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
+            <NavLink to={`/profile`} key={1} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")} onClick={props.setParentState}>
               Profile
             </NavLink>
           </li>

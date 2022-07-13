@@ -12,8 +12,8 @@ import './Profile.css'
 
 interface State {
   user: User;
-  friends: User[];
   matchHistory: any[];
+  showAddFriend: boolean;
   socket: Socket | null;
   profilePicture: string | null;
 }
@@ -21,34 +21,44 @@ interface State {
 interface Props {
   socket: Socket | null;
   user: User;
-  setParentState: any;
   friends: User[];
 }
 
-export default class UserProfile extends Component<Props, State> {
+export default class OtherProfile extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       user: this.props.user,
-      friends: this.props.friends,
       matchHistory: [],
+      showAddFriend: true,
       socket: this.props.socket,
       profilePicture: null
     };
     this.componentDidMount = this.componentDidMount.bind(this); 
-    console.log("user", this.props.user);
   }
   
   componentDidMount() {
     if (this.state.socket?.connected === false) {
       this.state.socket?.connect();
     }
+
     this.getMatchHistory().then(matchHistory => {
       this.setState({matchHistory: matchHistory});
     }, error => {
-      console.log(error);
-    })
+      <Navigate to="/err500" />;
+    });
 
+    this.getProfilePicture(this.state.user).then(profilePicture => {
+      this.setState({profilePicture: profilePicture});
+    }, error => {
+      <Navigate to="/err500" />;
+    });
+    for (let friend of this.props.friends) {
+      if (friend.id === this.state.user.id) {
+        this.setState({showAddFriend: false});
+        break;
+      }
+    }
   }
 
   async getProfilePicture(user: User) {
@@ -62,7 +72,6 @@ export default class UserProfile extends Component<Props, State> {
       console.log(error);
     }
   }
-
   async getMatchHistory() {
     const data = await axios.get(`/match/${this.state.user.id}`)
     try {
@@ -72,35 +81,40 @@ export default class UserProfile extends Component<Props, State> {
     }
   }
 
-  async getUser() {
-    const data = await axios.get(`/user`)
-    try {
-      return(data.data);
-    } catch (e) {
-      return <Navigate to={'/error500'} />;
-    }
-  }
-
   render() {
-    // console.log("this.state.user", this.state.user);
-    // console.log("this.props.user", this.props.user);
-    
     return (
       <div>
         <div className="user-profile">
           <div className="user-name">
             <img className="profile-picture" src={this.state.user.picture} alt="avatar" />
             <h1>{this.state.user.username}'s profile</h1>
-              <span className="status-online">Online</span>
-          </div>
-        </div>
-        <div className="settings">
-          <div className="settings-gear">
-            <Link to="/profile/settings">
-                <button className="btn btn-primary">
-                <FontAwesomeIcon icon={faGear}/>
-                </button>
-            </Link>
+            {
+              (this.state.user.status === "online") && (
+              <span className="status-online">Online</span>)
+            }
+            {
+              (this.state.user.status === "offline") && (
+                <span className="status-offline">Offline</span>) 
+            }
+            {
+              (this.state.user.status === "playing") && (
+                <span className="status-playing">Playing</span>) 
+            }
+            {
+              (this.state.showAddFriend) && (
+                <button className="btn btn-primary" onClick={() => 
+                  {
+                    (
+                      async () => {
+                        const {data} = await axios.post(`user/friend/${this.state.user.id}`);
+                      }
+                    )();
+                    this.setState({showAddFriend: false});
+                  }
+                }
+                >Send friend request</button>
+                )
+            }
           </div>
         </div>
         <div className="user-stats">
@@ -169,27 +183,6 @@ export default class UserProfile extends Component<Props, State> {
             {/* ) */}
           </div>
         </div>
-      </div>
-      <div className="user-friends">
-      {
-        <div className="friends-list">
-          <div className="friends-list-item">
-            <h2 className="title">Friends</h2>
-            {(this.state.friends.length > 0) ? (
-              <ul>
-                {this.state.friends.map((friend:User) => (
-                  <li key={friend.id}>
-                    <Link to={`/profile?userId=${friend.id}`} onClick={this.props.setParentState}> {friend.username} </Link>
-                  {/* <a href={`/profile/removefriend?userId=${friend.id}`}>Remove</a> */}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>{this.state.user.username} has no friends yet.</p>
-            )}
-            </div>
-        </div>
-        }
       </div>
     </div>
     );
