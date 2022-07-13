@@ -121,6 +121,7 @@ export class ChatService
         if (await this.chatUtilService.clientIsMember(user, channel) === true)
             return ;
         const userStatus = await this.joinedUserStatusRepository.findOneBy({ user, channel });
+        console.log(userStatus)
         if (userStatus)
         {
             if (userStatus.banned !== null)
@@ -279,9 +280,9 @@ export class ChatService
         return allMessages;
     }
 
-    async getAllUsersFromChannel(channelId: number)
+    async getAllUsersFromChannel(channelName: string)
     {
-        const channel = await this.chatUtilService.getChannelById(channelId);
+        const channel = await this.chatUtilService.getChannelByName(channelName);
         return channel.members;
     }
 

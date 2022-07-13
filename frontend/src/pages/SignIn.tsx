@@ -18,7 +18,9 @@ const SignIn = () =>
                 myWindow?.close();
                 setRedirect(true);
                 clearInterval(interval);
-            } catch (e) {}
+            } catch (e) {
+                console.log(e);
+            }
         }, 1000);
     }
 

@@ -41,34 +41,25 @@ export class UserController
     {
         return this.userService.paginate(page);
     }
-
-    @Get('get/user/:id')
-    async getUserById(@Param('id', ParseIntPipe) id)
-    {
-        return this.userService.getUserById(id);
-    }
-
+    
     @Get('get/user')
     async getUserByName(@Query('username') username: string)
     {
         return this.userService.getUserByName(username);
     }
-
-    @Get()
-    async getProfile(@User() user)
-    {
-        return this.userService.getUserById(user.id);
-    }
-
+    
     @Post('tfa/secret')
     async register(@Res() response: Response, @User() user, @Body() tfa: tfaDto)
     {
         // if (user.tfa_enabled)
         console.log(tfa);
         const { otpauthUrl } = await this.userService.generateTfaSecret(user);
-        return this.userService.pipeQrCodeStream(response, otpauthUrl);
-    }
+        const temp:any = this.userService.pipeQrCodeStream(response, otpauthUrl);
+        // console.log(temp);
+        // return Buffer.from(temp).toString('base64');
 
+    }
+    
     @Post('tfa/turn-on')
     @HttpCode(200)
     async turnOnTfa(@User() user, @Body() { tfaCode })
@@ -79,35 +70,14 @@ export class UserController
         }
         await this.userService.turnOnTfa(user.id);
     }
-
-    @Post('friend/:id')
-    async requestFriend(@User() user, @Param('id', ParseIntPipe) id)
-    {
-        return this.userService.requestFriend(user, id);
-    }
-
-    @Delete('friend/:id')
-    async deleteFriend(@User() user, @Param('id', ParseIntPipe) id)
-    {
-        return this.userService.deleteFriend(user, id);
-    }
     
     @Get('friend')
     async getFriends(@User() user)
     {
-        return this.userService.getFriends(user.id);
-    }
-
-    @Post('block/:id')
-    async blockUser(@User() user, @Param('id', ParseIntPipe) id)
-    {
-        return this.userService.blockUser(user, id);
-    }
-
-    @Delete('block/:id')
-    async unblockUser(@User() user, @Param('id', ParseIntPipe) id)
-    {
-        return this.userService.unblockUser(user, id);
+        console.log(user);
+        const temp = await this.userService.getFriends(user.id);
+        console.log("get friends : ", temp);
+        return temp;
     }
 
     @Get('block')
@@ -115,33 +85,69 @@ export class UserController
     {
         return this.userService.getBlockedUsers(user.id);
     }
-
+    
     @Post('/logout')
     async logOut(@Res({ passthrough: true }) response: Response, @User() user)
     {
         return this.authService.logOut(response, user);
     }
-
+    
     @Post('/picture')
     @UseInterceptors(FileInterceptor('picture', storage))
     async uploadFile(@UploadedFile() file, @User() user)
     {
-        console.log(file);
-        console.log(user.username);
         return this.userService.uploadFile(user, file);
     }
-
+    
     @Post('/username')
     async updateUsername(@User() user, @Body() { username })
     {
         console.log(username);
         return this.userService.updateUsername(user, username);
     }
+   
+    @Post('friend/:id')
+    async requestFriend(@User() user, @Param('id', ParseIntPipe) id)
+    {
+        const temp = await this.userService.requestFriend(user, id);
+        console.log(temp);
+        return temp;
+    }
+    
+    @Delete('friend/:id')
+    async deleteFriend(@User() user, @Param('id', ParseIntPipe) id)
+    {
+        return this.userService.deleteFriend(user, id);
+    }
 
+    @Post('block/:id')
+    async blockUser(@User() user, @Param('id', ParseIntPipe) id)
+    {
+        return this.userService.blockUser(user, id);
+    }
+    
+    @Delete('block/:id')
+    async unblockUser(@User() user, @Param('id', ParseIntPipe) id)
+    {
+        return this.userService.unblockUser(user, id);
+    }
+    
     @Get('/picture/:imagename')
     async findPicture(@Param('imagename') imagename, @Res() response: Response)
     {
         return of(response.sendFile(join(process.cwd(), 'uploads/profileimages/' + imagename)));
+    }
+
+    @Get('/:id')
+    async getUserById(@Param('id', ParseIntPipe) id)
+    {
+        return this.userService.getUserById(id);
+    }
+
+    @Get()
+    async getProfile(@User() user)
+    {
+        return this.userService.getUserById(user.id);
     }
 }
 

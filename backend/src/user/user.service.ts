@@ -116,12 +116,18 @@ export class UserService
 
     async requestFriend(user: UserEntity, id: number)
     {
+      // console.log("requestFriend : adding :",id);
       const friend = await this.getUserById(id);
       if (!friend)
         throw new NotFoundException('User not found');
       user.friends = await this.getFriends(user.id);
-      user.friends.push(friend);
-      return await this.userRepository.save(user);
+      if (user.friends.includes(friend))
+        throw new ConflictException('You are already friends');
+      else{
+        user.friends.push(friend);
+        // console.log("requestFriend : user's friends :", user.friends);
+        return await this.userRepository.save(user);
+      }
     }
 
     async deleteFriend(user: UserEntity, id: number)
@@ -172,8 +178,12 @@ export class UserService
     async getFriends(id): Promise<UserEntity[]>
     {
       const requests = await this.getRequestedUsers(id);
-      const requestedBy = await this.getRequestedByUsers(id);
-      return requests.filter((user) => requestedBy.some((usr) => user.id === usr.id));
+      console.log("getFriends : requests :", requests);
+      // const requestedBy = await this.getRequestedByUsers(id);
+      // console.log("getFriends : requestedBy :", requestedBy);
+      // const temp = await requests.filter((user) => requestedBy.some((usr) => user.id === usr.id));
+      // console.log("getFriends : temp :", temp);
+      return requests;
     }
 
     async blockUser(user: UserEntity, id: number)
