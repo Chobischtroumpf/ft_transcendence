@@ -89,7 +89,7 @@ export default class UserProfile extends Component<Props, State> {
       <div>
         <div className="user-profile">
           <div className="user-name">
-            <img className="profile-picture" src={`http://localhost:3000/user/picture/${this.state.user.picture}`} alt="avatar" />
+            <img className="profile-picture" src={`http://localhost:3000/user/picture/${this.state.user.picture.}`} alt="avatar" />
             <h1>{this.state.user.username}'s profile</h1>
               <span className="status-online">Online</span>
           </div>
