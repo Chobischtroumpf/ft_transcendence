@@ -72,6 +72,7 @@ export default class UserProfile extends Component<Props, State> {
     if (this.state.error) {
       return <Navigate to={'/error500'} />;
     }
+    console.log(this.state.user)
     return (
       <div>
         <div className="user-profile">

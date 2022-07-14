@@ -22,6 +22,7 @@ const Settings = () => {
   var [prevpicture, setPrevPicture] = useState<string | undefined>(undefined);
   var [error, setError] = useState<boolean>(false);
   var [tfaActive, setTfaActive] = useState<boolean>(false);
+  var [tfaCode, setTfaCode] = useState<string>('');
 
   const [gotUser, setGotUser] = useState<boolean>(false)
   
@@ -43,17 +44,12 @@ const Settings = () => {
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
-    const tfaForm: tfaDto = { tfa: tfa };
     const data = await axios({
       method: 'post',
       url: "/user/tfa/secret/",
-      data: tfaForm,
-      headers: {'content-type': 'application/json'},
       responseType: 'arraybuffer'
     });
     setTfaImage('data:image/jpeg;base64,' + encode(data.data));
-
-    
   }
 
   const handleUsernameSubmit = async(event: any) => {
@@ -86,9 +82,27 @@ const Settings = () => {
     }
   }
 
+  const handleTfaCodeSubmit = async(event: any) => {
+    event.preventDefault();
+    try {
+      const { data } = await axios.post("/user/tfa/turn-on", { tfaCode: tfaCode });
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
   const handleChange = (event: any) => {
     setUsername(event.target.value);
   }
+
+  const handleTfaChange = (event: any) => {
+    setTfa(event.target.checked);
+  }
+
+  const handleTfaCodeChange = (event: any) => {
+    setTfaCode(event.target.value);
+  }	
 
   const handlePictureChange = (event: any) => {
     setPicture(URL.createObjectURL(event.target.files[0]));
@@ -151,9 +165,19 @@ const Settings = () => {
           <input type="submit" value="Save"/>
         </form>
         { (tfaImage) && (
-        <div className="tfa-qr">
-          <img src={tfaImage} alt="tfa-qr" />
-        </div>)}
+          <div>
+            <div className="tfa-qr">
+              <img src={tfaImage} alt="tfa-qr" />
+            </div>
+            <div>
+              <h1>Scan the QR code to setup your two factor authentication</h1>
+            </div>
+            <form onSubmit={handleTfaCodeSubmit}>
+            <input className="tfa-code input" type="string" name="tfa-code" placeholder="Enter code" onChange={handleTfaCodeChange} />
+            <input type="submit" value="Save"/>
+        </form>
+          </div>
+        )}
       </div>
     </Wrapper>
   );
