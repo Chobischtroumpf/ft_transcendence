@@ -16,7 +16,7 @@ import { AdminUserDto, JoinedUserStatusDto, SetPasswordDto } from "./chatSetting
 
 
 
-// 1 = owner 2 = admin 3 = password=true
+// 1 = owner 2 = admin 3 = password=true 4 = channel=private
 
 const ChatSettings = () =>{
 	const queryParams = new URLSearchParams(useLocation().search);

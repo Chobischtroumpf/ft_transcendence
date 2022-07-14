@@ -122,6 +122,7 @@ export class ChatService
         if (await this.chatUtilService.clientIsMember(user, channel) === true)
             return ;
         const userStatus = await this.joinedUserStatusRepository.findOneBy({ user, channel });
+        console.log(userStatus)
         if (userStatus)
         {
             if (userStatus.banned !== null)
@@ -273,7 +274,7 @@ export class ChatService
     async getMessagesFromChannel(name: string, user: UserEntity)
     {
         const channel = await this.chatUtilService.getChannelByName(name);
-        const messagesFromChannel = await this.messageRepository.findBy({ channel: channel })
+        const messagesFromChannel = await this.messageRepository.find({ where: {channel: { name: channel.name }} });
         const allMessages: MessageEntity[] = [];
         for (const message of messagesFromChannel)
             allMessages.push(message);

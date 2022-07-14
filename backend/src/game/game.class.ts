@@ -79,6 +79,7 @@ export class Invites
 {
     sender: string;
     invitedUser: string;
+    gameOptions: GameOptions;
 }
 
 export class gameNames

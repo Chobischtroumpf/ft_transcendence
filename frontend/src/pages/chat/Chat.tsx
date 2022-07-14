@@ -35,6 +35,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
     }
 
     useEffect(() => {
+        console.log(messages);
         // window.scrollTo(0,document.body.scrollHeight);
         if (socket === null)
             setRedirect(true);

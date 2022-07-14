@@ -36,6 +36,7 @@ export class ChatController
     @Post('/public')
     async createPublicChannel(@Body('name') channelName: string, @User() user)
     {
+        console.log("iwnfijnwefow");
         return this.chatService.createPublicChannel(channelName, user);
     }
 
@@ -102,6 +103,7 @@ export class ChatController
     @Post('/admin')
     async giveAdmin(@Body() adminData: AdminUserDto, @User() user)
     {
+        console.log("hey0");
         return this.chatService.giveAdmin(adminData, user);
     }
 

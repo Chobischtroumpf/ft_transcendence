@@ -14,6 +14,10 @@ import { gameUpdate } from './models/game';
 import GameArea from './pages/game/GameArea';
 import GameFinished from './pages/game/GameFinished';
 import GameWaitingRoom from './pages/game/GameWaitingRoom';
+import {User} from './models/user';
+
+export const TodoContext = React.createContext<any>(null);
+
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -38,6 +42,7 @@ function App() {
       console.log(data);
     });
     newSocket.on('msgToClient', (data) => {
+      console.log(data);
       setMessages(data);
     });
     newSocket.on('getGamesToClient', (data) => {
@@ -63,6 +68,8 @@ function App() {
     });
     setSocket(newSocket);
 
+
+
     return () => {
       newSocket.disconnect();
     }
@@ -74,16 +81,16 @@ function App() {
         <Routes>
           <Route path="/game" element={<Game socket={socket} games={games} invites={invites} />}></Route>
           <Route path="/" element={<Profile socket={socket}/>}></Route>
-          <Route path="/profile" element={<Profile socket={socket}/>}></Route>
+          <Route path="/profile"  element={<Profile socket={socket} key={2}/>}></Route>
           <Route path="/profile/settings" element={<Settings/>}></Route>
           <Route path="/users" element={<Users socket={socket} />}></Route>
           <Route path="/signin" element={<SingIn />}></Route>
           <Route path="/channels" element={<Channels socket={socket} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
-          <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} />}></Route>
+          <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>
           <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
-          <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator}/>}></Route>
+          <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator} socket={socket}/>}></Route>
         </Routes>
       </BrowserRouter>
     </div>
