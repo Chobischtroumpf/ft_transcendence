@@ -52,10 +52,8 @@ export class UserController
     async register(@Res() response: Response, @User() user, @Body() tfa: tfaDto)
     {
         // if (user.tfa_enabled)
-        console.log(tfa);
         const { otpauthUrl } = await this.userService.generateTfaSecret(user);
         const temp:any = this.userService.pipeQrCodeStream(response, otpauthUrl);
-        // console.log(temp);
         // return Buffer.from(temp).toString('base64');
 
     }
@@ -74,9 +72,7 @@ export class UserController
     @Get('friend')
     async getFriends(@User() user)
     {
-        console.log(user);
         const temp = await this.userService.getFriends(user.id);
-        console.log("get friends : ", temp);
         return temp;
     }
 
@@ -102,7 +98,6 @@ export class UserController
     @Post('/username')
     async updateUsername(@User() user, @Body() { username })
     {
-        console.log(username);
         return this.userService.updateUsername(user, username);
     }
    
@@ -110,7 +105,6 @@ export class UserController
     async requestFriend(@User() user, @Param('id', ParseIntPipe) id)
     {
         const temp = await this.userService.requestFriend(user, id);
-        console.log(temp);
         return temp;
     }
     

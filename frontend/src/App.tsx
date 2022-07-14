@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Users from './pages/users/Users';
-import SingIn from './pages/SignIn';
+import SingIn from './pages/SignIn/SignIn';
 import Profile from './pages/profile/Profile';
 import Channels from './pages/chat/Channels';
 import Game from './pages/game/Game';
@@ -14,6 +14,7 @@ import { gameUpdate } from './models/game';
 import GameArea from './pages/game/GameArea';
 import GameFinished from './pages/game/GameFinished';
 import GameWaitingRoom from './pages/game/GameWaitingRoom';
+import {CookiesProvider} from 'react-cookie';
 import {User} from './models/user';
 
 export const TodoContext = React.createContext<any>(null);
@@ -77,22 +78,24 @@ function App() {
 
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/game" element={<Game socket={socket} games={games} invites={invites} />}></Route>
-          <Route path="/" element={<Profile socket={socket}/>}></Route>
-          <Route path="/profile"  element={<Profile socket={socket} key={2}/>}></Route>
-          <Route path="/profile/settings" element={<Settings/>}></Route>
-          <Route path="/users" element={<Users socket={socket} />}></Route>
-          <Route path="/signin" element={<SingIn />}></Route>
-          <Route path="/channels" element={<Channels socket={socket} />}></Route>
-          <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
-          <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
-          <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>
-          <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
-          <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator} socket={socket}/>}></Route>
-        </Routes>
-      </BrowserRouter>
+      <CookiesProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/game" element={<Game socket={socket} games={games} invites={invites} />}></Route>
+            <Route path="/" element={<Profile socket={socket}/>}></Route>
+            <Route path="/profile"  element={<Profile socket={socket} key={2}/>}></Route>
+            <Route path="/profile/settings" element={<Settings/>}></Route>
+            <Route path="/users" element={<Users socket={socket} />}></Route>
+            <Route path="/signin" element={<SingIn />}></Route>
+            <Route path="/channels" element={<Channels socket={socket} />}></Route>
+            <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
+            <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
+            <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>
+            <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
+            <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator} socket={socket}/>}></Route>
+          </Routes>
+        </BrowserRouter>
+      </CookiesProvider>
     </div>
   );
 }

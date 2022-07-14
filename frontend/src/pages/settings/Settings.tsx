@@ -16,10 +16,14 @@ const Settings = () => {
   var [username, setUsername] = useState<string>('');
   const [prevusername, setPrevUsername] = useState<string>();
   var [tfa, setTfa] = useState<boolean>(false);
-  var [tfaImage, setTfaImage] = useState<string | null>(null)
+  var [tfaImage, setTfaImage] = useState<string | null>(null);
   const [picturefile, setPictureFile] = useState<File>();
-  var [picture, setPicture] = useState<string>('');
-  var [prevpicture, setPrevPicture] = useState<string>();
+  var [picture, setPicture] = useState<string | undefined>(undefined);
+  var [prevpicture, setPrevPicture] = useState<string | undefined>(undefined);
+  var [error, setError] = useState<boolean>(false);
+  var [tfaActive, setTfaActive] = useState<boolean>(false);
+
+  const [gotUser, setGotUser] = useState<boolean>(false)
   
   useEffect(() => {
   (async () => {
@@ -27,6 +31,8 @@ const Settings = () => {
     try {
       setPrevUsername(data.username);
       setPrevPicture(data.picture);
+      setTfaActive(data.tfa);
+      setGotUser(true);
       // setTfa(data.tfa);
     } catch (e) {
       <Navigate to={'/error500'} />
@@ -45,7 +51,6 @@ const Settings = () => {
       headers: {'content-type': 'application/json'},
       responseType: 'arraybuffer'
     });
-    console.log(data.data);
     setTfaImage('data:image/jpeg;base64,' + encode(data.data));
 
     
@@ -60,9 +65,7 @@ const Settings = () => {
     else if (prevusername && !username)
       formData.append("username", prevusername);
     try {
-     
       const { data } = await axios.post("/user/username", { username: username });
-      console.log(data);
     }
     catch (e) {
       <Navigate to={'/error500'} />
@@ -73,9 +76,7 @@ const Settings = () => {
     event.preventDefault();
     let formData = new FormData();
     if (picturefile !== undefined) {
-      formData.append("picture", picturefile, picturefile.name);
-      console.log(picturefile.name);
-    
+      formData.append("picture", picturefile, picturefile.name);    
     }
     try {
       const { data } = await axios.post("/user/picture", formData, { headers: {'content-type': 'multipart/form-data'}} );
@@ -94,32 +95,26 @@ const Settings = () => {
     setPictureFile(event.target.files[0]);
   }
 
-  const handleTfaChange = (event: any) => {
-    console.log("checked : " + event.target.checked);
-    setTfa(event.target.checked);
-    console.log(tfa);
-    console.log(tfa);
-    console.log(tfa);
 
-  }
 
   return (
     <Wrapper>
       <div className="settings">
         <h1 className="title">Settings</h1>
-        { (username) && (
-            <div className="user-name">
-            <img className="profile-picture" src={picture} alt="avatar" />
-            <h1>{username}'s profile</h1>
-            </div>
-          )}
-          { (prevusername) && (!username) && (
-            <div className="user-name">
-            <img className="profile-picture" src={picture} alt="avatar" />
-            <h1>{prevusername}'s profile</h1>
-            </div>
-          )}
-          
+        {(gotUser) ? (
+          <div className="user-name">
+            {
+              (picture) ?
+              (<img className="profile-picture" src={picture} alt="avatar" />) : 
+              (<img className="profile-picture" src={`http://localhost:3000/user/picture/${prevpicture}`} alt="avatar" />)
+            }
+            {(username) && (<h1>{username}'s profile</h1>)}
+            {(!username && prevusername) && (<h1>{prevusername}'s profile</h1>)}
+          </div>
+
+          ) : 
+          (<div><h1>Loading</h1></div>)
+      }
         <form onSubmit={handleUsernameSubmit}>
           <input
             className="username input"

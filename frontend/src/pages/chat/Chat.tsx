@@ -68,7 +68,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
                 console.log(message.author.picture);
                 return (
                     <li key={message.id}>
-                        <h5>{message.author.username}</h5>
+                        <Link to={`/profile?userId=${message.author.id}`} className="btn ">{message.author.username}</Link>
                         <h4>{message.content}</h4>
                         <hr></hr>      
                     </li>

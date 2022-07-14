@@ -13,7 +13,7 @@ export class UserService
 {
     constructor(@InjectRepository(UserEntity) private userRepository: Repository<UserEntity>) {}
 
-    async createUser(newUser: NewUserDto): Promise<UserEntity> //console.log ici -> Done : on recoit tout le user42
+    async createUser(newUser: NewUserDto): Promise<UserEntity>
     {
         let user = this.userRepository.create(newUser);
         try {
@@ -103,7 +103,6 @@ export class UserService
 
     updateUsername(user: UserEntity, username: string)
     {
-      console.log(username);
       user.username = username;
       return this.userRepository.save(user);
     }
@@ -116,7 +115,6 @@ export class UserService
 
     async requestFriend(user: UserEntity, id: number)
     {
-      // console.log("requestFriend : adding :",id);
       const friend = await this.getUserById(id);
       if (!friend)
         throw new NotFoundException('User not found');
@@ -125,7 +123,6 @@ export class UserService
         throw new ConflictException('You are already friends');
       else{
         user.friends.push(friend);
-        // console.log("requestFriend : user's friends :", user.friends);
         return await this.userRepository.save(user);
       }
     }
@@ -178,11 +175,6 @@ export class UserService
     async getFriends(id): Promise<UserEntity[]>
     {
       const requests = await this.getRequestedUsers(id);
-      console.log("getFriends : requests :", requests);
-      // const requestedBy = await this.getRequestedByUsers(id);
-      // console.log("getFriends : requestedBy :", requestedBy);
-      // const temp = await requests.filter((user) => requestedBy.some((usr) => user.id === usr.id));
-      // console.log("getFriends : temp :", temp);
       return requests;
     }
 
@@ -263,7 +255,6 @@ export class UserService
     }
 
     async uploadFile(user: UserEntity, path: any) {
-      console.log(path);
       user.picture = path;
 
       return await this.userRepository.save(user);

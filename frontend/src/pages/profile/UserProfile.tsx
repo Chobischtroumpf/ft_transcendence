@@ -15,6 +15,7 @@ interface State {
   friends: User[];
   matchHistory: any[];
   socket: Socket | null;
+  error: boolean;
 }
 
 interface Props {
@@ -32,9 +33,9 @@ export default class UserProfile extends Component<Props, State> {
       friends: this.props.friends,
       matchHistory: [],
       socket: this.props.socket,
+      error: false
     };
     this.componentDidMount = this.componentDidMount.bind(this); 
-    console.log("user", this.props.user);
   }
   
   componentDidMount() {
@@ -44,7 +45,7 @@ export default class UserProfile extends Component<Props, State> {
     this.getMatchHistory().then(matchHistory => {
       this.setState({matchHistory: matchHistory});
     }, error => {
-      console.log(error);
+      this.setState({error: true});
     })
 
   }
@@ -54,7 +55,7 @@ export default class UserProfile extends Component<Props, State> {
     try {
       return(data.data);
     } catch (e) {
-      return <Navigate to={'/error500'} />;
+      this.setState({error: true});
     }
   }
 
@@ -63,14 +64,14 @@ export default class UserProfile extends Component<Props, State> {
     try {
       return(data.data);
     } catch (e) {
-      return <Navigate to={'/error500'} />;
+      this.setState({error: true});
     }
   }
 
-  render() {
-    // console.log("this.state.user", this.state.user);
-    // console.log("this.props.user", this.props.user);
-    
+  render() {   
+    if (this.state.error) {
+      return <Navigate to={'/error500'} />;
+    }
     return (
       <div>
         <div className="user-profile">

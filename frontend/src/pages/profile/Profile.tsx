@@ -77,9 +77,7 @@ const Profile = (props: Props) => {
 
   async function getUserById(userId: string | null) {
     if (userId) {
-      console.log("getUserById", userId);
       return axios.get(`/user/${userId}`).then(user =>{
-        console.log("after axios : ", user);
         return user.data;
       }, error => {
         setError(true);
@@ -98,7 +96,6 @@ const Profile = (props: Props) => {
   }
 
   window.onpopstate = function(event) {
-    console.log("onpopstate");
     setUpdate();
   }
 

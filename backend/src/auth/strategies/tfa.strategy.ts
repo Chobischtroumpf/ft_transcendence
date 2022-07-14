@@ -12,11 +12,9 @@ export class TfaStrategy extends PassportStrategy(Strategy, 'jwt-tfa') {
 
     const extractJwtFromCookie = (req: Request) => {
       let token = null;
-      console.log(req.cookies);
       if (req && req.cookies) {
         token = req.cookies['access_token'];
       }
-      console.log(token);
       return token || ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     };
 
@@ -28,7 +26,6 @@ export class TfaStrategy extends PassportStrategy(Strategy, 'jwt-tfa') {
   }
 
   async validate(payload: any) {
-    console.log(payload);
     const user = await this.userService.getUserById(payload.id);
     if (user) {
       return user;

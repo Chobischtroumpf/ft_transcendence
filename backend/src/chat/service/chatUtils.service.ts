@@ -110,7 +110,6 @@ export class ChatUtilsService
         const userStatus: any = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
         if (userStatus)
             return userStatus;
-         console.log("getjoineduserstatus2");
         throw new HttpException('You are not member of this channel', HttpStatus.FORBIDDEN);
     }
 
@@ -225,7 +224,6 @@ export class ChatUtilsService
             author: user,
             channel: channel
         });
-        console.log(message);
         try {
             message = await this.messageRepository.save(message);
         } catch (e) {

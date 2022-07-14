@@ -21,7 +21,6 @@ export class AuthController {
 	@UseGuards(FtGuard)
 	ftAuth()
 	{
-		console.log('42login');
 		return ;
 	}
 
