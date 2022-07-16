@@ -60,7 +60,7 @@ export class UserController
 
   @Post('tfa/turn-on')
   @HttpCode(200)
-  async turnOnTfa(@User() user, @Body() { tfaCode })
+  async turnOnTfa(@User() user, @Body() { tfaCode }, @Res({passthrough: true}) res)
   {
     const isCodeValid = this.userService.isTfaCodeValid(tfaCode, user);
     console.log("iscodevalid: ", isCodeValid);
@@ -70,6 +70,11 @@ export class UserController
       throw new UnauthorizedException('Wrong authentication code');
     }
     await this.userService.turnOnTfa(user.id);
+    
+    const jwt = this.authService.treatTfa(user.id, true);
+
+		res.clearCookie('access_token');
+		res.cookie('access_token', jwt);
   }
 
   @Post('tfa/turn-off')
