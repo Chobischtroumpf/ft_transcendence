@@ -178,7 +178,7 @@ export class UserService
     async getFriends(id): Promise<UserEntity[]>
     {
       const requests = await this.getRequestedUsers(id);
-      // console.log("getFriends : requests :", requests);
+      console.log("getFriends : requests :", requests);
       // const requestedBy = await this.getRequestedByUsers(id);
       // console.log("getFriends : requestedBy :", requestedBy);
       // const temp = await requests.filter((user) => requestedBy.some((usr) => user.id === usr.id));
@@ -262,17 +262,11 @@ export class UserService
             throw new HttpException('You have no access to choose yourself', HttpStatus.FORBIDDEN);
     }
 
-    async uploadFile(user: UserEntity, file)
-    {
-      const updatedUser = await this.userRepository.findOneBy({ username: user.username });
-      if (updatedUser.picture && updatedUser.picture != file.filename)
-      {
-          const fs = require('fs');
-          const path = './uploads/profileimages/' + updatedUser.picture;
-          fs.unlinkSync(path);
-      }
-      updatedUser.picture = file.filename;
-      await this.userRepository.save(updatedUser);
-      return updatedUser;
+    async uploadFile(user: UserEntity, path: any) {
+      console.log(path);
+      user.picture = path;
+
+      return await this.userRepository.save(user);
     }
+
 }

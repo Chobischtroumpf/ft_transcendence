@@ -39,6 +39,13 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     setPlace(true);
   }
 
+  const leave = async (e: SyntheticEvent, channelId: number) =>
+  {
+    e.preventDefault();
+
+    await axios.delete(`chat/leave/${channelId}`);
+  }
+
   if (place === true)
   {
     useEffect(() => {
@@ -87,6 +94,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                 <th scope="col">name</th>
                 <th scope="col">status</th>
                 <th scope="col">join</th>
+                <th scope="col">leave</th>
                 <th scope="col">delete</th>
               </tr>
             </thead>
@@ -101,6 +109,9 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                       <form onSubmit={join}>
                         <button onClick={e => setName(channel.name)} type="submit">Join</button>
                       </form>
+                    </td>
+                    <td>
+                        <button onClick={e => leave(e, channel.id)} type="submit">Leave</button>
                     </td>
                     <td>
                       {/* <form onSubmit={join}> */}

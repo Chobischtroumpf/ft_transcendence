@@ -4,9 +4,11 @@ import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { MessageI } from "../../models/Chat";
 import styled from "styled-components"
+import { Link } from 'react-router-dom';
 import { GiSleepy } from "react-icons/gi";
 import axios from "axios";
 import { tmpdir } from "os";
+import { channel } from "diagnostics_channel";
 
 type Props = {
     socket: Socket | null,
@@ -53,7 +55,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
         <Wrapper>
 
             <div>{infoMsg}</div>
-            
+            <Link to={`/chat/chatsettings?ChatSettingsId=${channelName}`} type="submit">settings</Link>
             <ChatContainer>
             <ChatInputContainer>
             <form onSubmit={newMsg}>
