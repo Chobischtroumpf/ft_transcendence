@@ -75,6 +75,18 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   ///////// CHAT PART /////////////
 
+  @SubscribeMessage('getChannelsToServer')
+  async getChannels(@ConnectedSocket() client: Socket, @MessageBody() page: number)
+  {
+    try
+    {
+      const user = client.data.user;
+      const result = await this.chatUtilService.paginate(page);
+      this.wss.emit('getChannelsToClient', result);
+    }
+    catch { throw new WsException('Something went wrong'); }
+  }
+
   @SubscribeMessage('joinToServer')
   async joinRoom(@ConnectedSocket() client: Socket, @MessageBody() channelData: SetPasswordDto)
   {
@@ -334,13 +346,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     setTimeout(() => {
       this.wss.to(game.name).emit('gameEndToClient', '');
       this.wss.to(game.name).emit('gameStartsToClient', null);
-    }, 2000);
+    }, 9000);
     // players leaves from gameroom and game has been deleted from game array
     setTimeout(() => {
       this.wss.to(game.name).socketsLeave(game.name);
       const index = this.games.findIndex(e => e.id === game.id);
       this.games.splice(index, 1);
-    }, 3000);
+    }, 10000);
   }
 
   addPlayersToGame(player1: UserEntity, player2: UserEntity, room: string)

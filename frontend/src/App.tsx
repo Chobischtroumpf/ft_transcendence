@@ -26,6 +26,8 @@ function App() {
   const [spectator, setSpectator] = useState<string | null>(null);
   const [gameWinner, setGameWinner] = useState('');
   const [invites, setInvites] = useState<any[]>([]);
+  const [channels, setChannels] = useState([]);
+  const [lastPage, setLastPage] = useState(0);
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
@@ -62,6 +64,10 @@ function App() {
     newSocket.on('gameUpdateToClient', (data) => {
       setGameUpdate(data);
     });
+    newSocket.on('getChannelsToClient', (data) => {
+      setChannels(data.data);
+      setLastPage(data.meta.last_page);
+    })
     setSocket(newSocket);
 
     return () => {
@@ -79,7 +85,7 @@ function App() {
           <Route path="/profile/settings" element={<Settings/>}></Route>
           <Route path="/users" element={<Users socket={socket} />}></Route>
           <Route path="/signin" element={<SingIn />}></Route>
-          <Route path="/channels" element={<Channels socket={socket} />}></Route>
+          <Route path="/channels" element={<Channels socket={socket} channels={channels} lastPage={lastPage} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
           <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>

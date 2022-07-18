@@ -8,13 +8,13 @@ import { Navigate } from "react-router";
 
 type Props = {
   socket: Socket | null,
+  channels: Channel[],
+  lastPage: number,
 };
 
-const Channels = ({socket}: Props) =>
+const Channels = ({socket, channels, lastPage}: Props) =>
 {
-  const [channels, setChannels] = useState([]);
   const [page, setPage] = useState(1);
-  const [lastPage, setLastPage] = useState(0);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState(ChannelStatus.public);
@@ -30,7 +30,7 @@ const Channels = ({socket}: Props) =>
       await axios.post('chat/protected', { name, password });
     else if (status === ChannelStatus.private)
       await axios.post('chat/private', { name });
-    window.location.reload();
+    socket?.emit('getChannelsToServer', page);
   }
 
   const join = async (e: SyntheticEvent) =>
@@ -48,14 +48,7 @@ const Channels = ({socket}: Props) =>
   }
 
   useEffect(() => {
-    (
-      async () => {
-        const {data} = await axios.get(`chat/all?page=${page}`);
-
-        setChannels(data.data);
-        setLastPage(data.meta.last_page);
-      }
-    )();
+    socket?.emit('getChannelsToServer', page);
   }, [page]);
 
   const next = () =>

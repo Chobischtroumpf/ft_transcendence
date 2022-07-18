@@ -9,7 +9,7 @@ export class GameService
 
     private readonly defaultCanvas: Canvas = {
         h: 200,
-        w: 300,
+        w: 400,
     };
 
     // when player hits the ball
