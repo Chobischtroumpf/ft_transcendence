@@ -21,9 +21,27 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
 {
     const [newMessage, setNewMessage] = useState('');
     const [infoMsg, setInfoMsg] = useState(joinMsg);
+    const [game, setGame] = useState(false);
     const [redirect, setRedirect] = useState(false);
     const [base64, setBase64] = useState();
+    const [name, setName] = useState('');
  
+    const pongGame = async (e: SyntheticEvent) =>
+    {
+        e.preventDefault();
+        const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${name}`);
+        const resp = await axios.get('/user');
+        if (data === '' || data.username === resp.data.username)
+        {
+            window.alert(`User: (${name}) doesn't exists or you invited yourself, try again!`);
+            setGame(false);
+            return ;
+        }
+        const id = data.id;
+        socket?.emit('addInviteToServer', {id, paddleSize: 40, paddleSpeed: 6, ballSpeed: 3});
+        setGame(true);
+    }
+
     const newMsg = async (e: SyntheticEvent) =>
     {
         e.preventDefault();
@@ -50,6 +68,11 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
         // leave channel emit here
         return <Navigate to={'/channels'} />;
     }
+
+    if (game === true)
+    {
+        return <Navigate to={'/gamewaitingroom'} />;
+    }
     
     return (
         <Wrapper>
@@ -68,6 +91,9 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
                 console.log(message.author.picture);
                 return (
                     <li key={message.id}>
+                        <form onSubmit={pongGame}>
+                            <button onClick={e => setName(message.author.username)} type="submit">Play</button>
+                        </form>
                         <h5>{message.author.username}</h5>
                         <h4>{message.content}</h4>
                         <hr></hr>      

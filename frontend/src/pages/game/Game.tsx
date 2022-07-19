@@ -56,9 +56,10 @@ const Game = ({socket, games, invites}: Props) =>
     const options = async (e: SyntheticEvent) => {
         e.preventDefault();
         const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${invitedUser}`);
-        if (data === '')
+        const resp = await axios.get('/user');
+        if (data === '' || data.username === resp.data.username)
         {
-            window.alert(`User: (${invitedUser}) doesn't exists, try again`);
+            window.alert(`User: (${invitedUser}) doesn't exists or you invited yourself, try again!`);
             setPlace(null);
             return ;
         }

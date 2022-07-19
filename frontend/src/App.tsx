@@ -51,6 +51,7 @@ function App() {
       setGames(data);
     });
     newSocket.on('addInviteToClient', (data) => {
+      window.alert(`${data.username} invited you to play pong! Good luck!`);
       setInvites(invites => [...invites, data]);
     });
     newSocket.on('leaveQueueToClient', (data) => {
