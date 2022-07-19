@@ -1,24 +1,18 @@
 import axios from "axios";
 import React, { SyntheticEvent, useEffect, useState } from "react";
-import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { User } from "../../models/user";
 import minigames from "../../assets/minigames.png";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Card, Form, Stack, Table } from 'react-bootstrap';
+import { Button, Card, Table } from 'react-bootstrap';
 import { Navigate } from "react-router";
 
-type Props = {
-  socket: Socket | null,
-};
-
-const Users = ({socket}: Props) =>
+const Users = () =>
 {
   const [users, setUsers] = useState([]);
   const [userId, setUserId] = useState(0);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(0);
-  const [response, setResponse] = useState<null | string>(null);
   const [place, setPlace] = useState(false);
 
   useEffect(() => {
@@ -29,25 +23,21 @@ const Users = ({socket}: Props) =>
     }, 40);
   }, [page]);
 
-  const join = async (e: SyntheticEvent) =>
-  {
+  const join = async (e: SyntheticEvent) => {
     e.preventDefault();
     setPlace(true);
   }
 
-  if (place === true)
-  {
+  if (place === true) {
     return <Navigate to={`/profile?userId=${userId}`} />;
   }
 
-  const next = () =>
-  {
+  const next = () => {
     if (page < lastPage)
       setPage(page + 1);
   }
 
-  const prev = () =>
-  {
+  const prev = () => {
     if (page >= 2)
       setPage(page - 1);
   }

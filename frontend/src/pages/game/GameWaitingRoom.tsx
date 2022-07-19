@@ -1,11 +1,9 @@
-import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
-import { BallClass, GameOptions, gameUpdate, PlayerClass, Sound } from "../../models/game";
-import '../game/Game.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Card, Form, Stack } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import waitingImage from "../../assets/waitingroom.png";
 
 type Props = {
@@ -24,8 +22,7 @@ const GameWaitingRoom = ({ gameStart, spectator, socket }: Props) =>
         setPlace("leave");
     }
 
-    if (place === "leave")
-    {
+    if (place === "leave") {
         return <Navigate to={'/game'} />;
     }
 
@@ -54,7 +51,6 @@ const GameWaitingRoom = ({ gameStart, spectator, socket }: Props) =>
                     </div>
                     </Card.ImgOverlay>
                 </Card>
-                
             </Wrapper>
         )
     }
@@ -63,10 +59,7 @@ const GameWaitingRoom = ({ gameStart, spectator, socket }: Props) =>
         if (spectator !== null)
             return <Navigate to={`/gamearea?gamename=${spectator}`} />;
         else
-        {
-            console.log(gameStart);
             return <Navigate to={`/gamearea?gamename=${gameStart}`} />;
-        }
     }
     
 }

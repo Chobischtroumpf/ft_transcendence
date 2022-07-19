@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router";
-import { Socket } from "socket.io-client";
+import React from "react";
 import Wrapper from "../../components/Wrapper";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Card, Form, Stack } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import winnerImage from '../../assets/winner.png';
 
 type Props = {

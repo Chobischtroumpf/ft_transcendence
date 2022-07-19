@@ -1,15 +1,12 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
 import { Socket } from 'socket.io-client';
-import background from "../../assets/pong.png";
 import pongImage from "../../assets/the_pong.png";
-import { User } from "../../models/user";
 import axios from "axios";
-import { GameClass, gameNames, Invite } from "../../models/game";
-import './Game.css';
+import { gameNames, Invite } from "../../models/game";
 import { Navigate } from "react-router";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Card, Form, Stack, Table } from 'react-bootstrap';
+import { Card, Form, Stack, Table } from 'react-bootstrap';
 
 type Props = {
     socket: Socket | null,
@@ -24,10 +21,6 @@ const Game = ({socket, games, invites}: Props) =>
     const [paddleSpeed, setPaddleSpeed] = useState(6);
     const [ballSpeed, setBallSpeed] = useState(3);
     const [invitedUser, setInvitedUser] = useState<string | null>(null);
-    const [matchMaking, setMatchMaking] = useState(false);
-    const [player2, setPlayer2] = useState<User | null>(null);
-    const [acceptInvite, setAcceptInvite] = useState(false);
-    const [allGames, setAllGames] = useState<GameClass | null>(null);
     const [name, setName] = useState('');
     const [inviter, setInviter] = useState<string | null>(null);
 
@@ -35,11 +28,10 @@ const Game = ({socket, games, invites}: Props) =>
         setPlace(null);
     }, []);
 
-    const spectatorJoin = async (e: SyntheticEvent) =>
-    {
+    const spectatorJoin = async (e: SyntheticEvent) => {
       e.preventDefault();
       socket?.emit('newSpectatorToServer', { room: name });
-      setPlace("queue"); // change it later, go to spectating game
+      setPlace("queue");
     }
 
     const submit = async (e: SyntheticEvent) => {
@@ -79,8 +71,7 @@ const Game = ({socket, games, invites}: Props) =>
         setPlace(null);
     } 
 
-    const Join = async (e: SyntheticEvent) =>
-    {
+    const Join = async (e: SyntheticEvent) => {
         e.preventDefault();
         setPlace("join");
     }
@@ -91,9 +82,7 @@ const Game = ({socket, games, invites}: Props) =>
         return <Navigate to={'/gamewaitingroom'} />;
     }
     
-    if (place === "queue")
-    {
-        // socket?.emit('nullToServer');
+    if (place === "queue") {
         return <Navigate to={'/gamewaitingroom'} />;
     }
 
@@ -106,17 +95,7 @@ const Game = ({socket, games, invites}: Props) =>
                     <Card.Body>
                     <div className="col-md-12 text-center">
                         <form onSubmit={back}>
-                            <button style={{
-                                    background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                    width: "200px",
-                                    height: "50px",
-                                    border: "ridge",
-                                    borderColor: "gray",
-                                    borderRadius: "20px",
-                                    color: "white",
-                                    fontWeight: "bold",
-                                    fontFamily: "Optima, sans-serif"
-                            }} type="submit">Back</button>
+                            <button style={buttonStyle_3} type="submit">Back</button>
                         </form>
                     </div>
                     <br />
@@ -238,47 +217,17 @@ const Game = ({socket, games, invites}: Props) =>
                         <Stack direction="horizontal" gap={3}>
                         <div>
                             <form onSubmit={options}>
-                                <button style={{
-                                    background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                    width: "150px",
-                                    height: "100px",
-                                    border: "ridge",
-                                    borderColor: "gray",
-                                    borderRadius: "20px",
-                                    color: "white",
-                                    fontWeight: "bold",
-                                    fontFamily: "Optima, sans-serif"
-                                }} type="submit">Start Game With Invited User</button>
+                                <button style={buttonStyle_2} type="submit">Start Game With Invited User</button>
                             </form>
                         </div>
                         <div>
                             <form onSubmit={queue}>
-                                <button style={{
-                                        background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                        width: "150px",
-                                        height: "100px",
-                                        border: "ridge",
-                                        borderColor: "gray",
-                                        borderRadius: "20px",
-                                        color: "white",
-                                        fontWeight: "bold",
-                                        fontFamily: "Optima, sans-serif"
-                                }} type="submit">Join Queue And Start Game</button>
+                                <button style={buttonStyle_2} type="submit">Join Queue And Start Game</button>
                             </form>
                         </div>
                         <div>
                             <form onSubmit={back}>
-                                <button style={{
-                                        background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                        width: "150px",
-                                        height: "100px",
-                                        border: "ridge",
-                                        borderColor: "gray",
-                                        borderRadius: "20px",
-                                        color: "white",
-                                        fontWeight: "bold",
-                                        fontFamily: "Optima, sans-serif"
-                                }} type="submit">Back</button>
+                                <button style={buttonStyle_2} type="submit">Back</button>
                             </form>
                         </div>
                         </Stack>
@@ -321,34 +270,12 @@ const Game = ({socket, games, invites}: Props) =>
                     <Stack direction="horizontal" gap={2}>
                     <div>
                         <form onSubmit={submit}>
-                            <button style={{
-                                background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                padding: "13px 0",
-                                width: "200px",
-                                height: "100px",
-                                border: "ridge",
-                                borderColor: "gray",
-                                borderRadius: "20px",
-                                color: "white",
-                                fontWeight: "bold",
-                                fontFamily: "Optima, sans-serif"
-                            }} type="submit">Game Options</button>
+                            <button style={buttonStyle} type="submit">Game Options</button>
                         </form>
                     </div>
                     <div>
                         <form onSubmit={submit_spectator}>
-                            <button style={{
-                                background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                padding: "13px 0",
-                                width: "200px",
-                                height: "100px",
-                                border: "ridge",
-                                borderColor: "gray",
-                                borderRadius: "20px",
-                                color: "white",
-                                fontWeight: "bold",
-                                fontFamily: "Optima, sans-serif"
-                            }} type="submit">On Going Games</button>
+                            <button style={buttonStyle} type="submit">On Going Games</button>
                         </form>
                     </div>
                 </Stack>
@@ -358,3 +285,40 @@ const Game = ({socket, games, invites}: Props) =>
     );
 }
 export default Game;
+
+const buttonStyle = {
+    background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
+    padding: "13px 0",
+    width: "200px",
+    height: "100px",
+    border: "ridge",
+    borderColor: "gray",
+    borderRadius: "20px",
+    color: "white",
+    fontWeight: "bold",
+    fontFamily: "Optima, sans-serif"
+}
+
+const buttonStyle_2 = {
+    background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
+    width: "150px",
+    height: "100px",
+    border: "ridge",
+    borderColor: "gray",
+    borderRadius: "20px",
+    color: "white",
+    fontWeight: "bold",
+    fontFamily: "Optima, sans-serif"
+}
+
+const buttonStyle_3 = {
+    background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
+    width: "200px",
+    height: "50px",
+    border: "ridge",
+    borderColor: "gray",
+    borderRadius: "20px",
+    color: "white",
+    fontWeight: "bold",
+    fontFamily: "Optima, sans-serif"
+}
