@@ -9,7 +9,7 @@ import { GameClass, gameNames, Invite } from "../../models/game";
 import './Game.css';
 import { Navigate } from "react-router";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Card, Form, Stack } from 'react-bootstrap';
+import { Button, Card, Form, Stack, Table } from 'react-bootstrap';
 
 type Props = {
     socket: Socket | null,
@@ -100,7 +100,7 @@ const Game = ({socket, games, invites}: Props) =>
     {
         return(
             <Wrapper>
-                <Card>
+                <Card bg="light">
                     <Card.Img src={pongImage} />
                     <Card.Body>
                     <div className="col-md-12 text-center">
@@ -118,9 +118,9 @@ const Game = ({socket, games, invites}: Props) =>
                             }} type="submit">Back</button>
                         </form>
                     </div>
-                    <div>
-                    <table className="table table-striped table-sm"> 
-                        <thead>
+                    <br />
+                    <Table striped bordered hover variant="dark">
+                    <thead>
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">name</th>
@@ -142,8 +142,7 @@ const Game = ({socket, games, invites}: Props) =>
                             )
                         })}
                         </tbody>
-                    </table>
-                    </div>
+                    </Table>
                     </Card.Body>
                 </Card>
             </Wrapper>
@@ -154,9 +153,8 @@ const Game = ({socket, games, invites}: Props) =>
     {
         return(
             <Wrapper>
-                <Card className="mb-3" style={{ color: '#000' }}>
+                <Card bg="light" className="mb-3" style={{ color: '#000' }}>
                     <Card.Img src={pongImage} />
-                    {/* <Card.ImgOverlay> */}
                         <Form>
                             <Form.Group>
                                 <Stack direction="horizontal" gap={4}>
@@ -283,34 +281,31 @@ const Game = ({socket, games, invites}: Props) =>
                             </form>
                         </div>
                         </Stack>
-                    {/* </Card.ImgOverlay> */}
                     <Card.Body>
-                        <div>
-                            <table className="table table-striped table-sm"> 
+                        <Table striped bordered hover variant="dark">
                             <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Player who invited</th>
-                                <th scope="col">Join to game</th>
-                            </tr>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Player who invited</th>
+                                    <th scope="col">Join to game</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {invites.map((invite: Invite) => {
-                                return (
-                                <tr key={invite.id}>
-                                    <td>{invite.id}</td>
-                                    <td>{invite.username}</td>
-                                    <td>
-                                    <form onSubmit={Join}>
-                                        <button onClick={e => setInviter(invite.username)} type="submit">Join</button>
-                                    </form>
-                                    </td>
-                                </tr>  
-                                )
-                            })}
+                                {invites.map((invite: Invite) => {
+                                    return (
+                                    <tr key={invite.id}>
+                                        <td>{invite.id}</td>
+                                        <td>{invite.username}</td>
+                                        <td>
+                                        <form onSubmit={Join}>
+                                            <button onClick={e => setInviter(invite.username)} type="submit">Join</button>
+                                        </form>
+                                        </td>
+                                    </tr>  
+                                    )
+                                })}
                             </tbody>
-                            </table>
-                        </div>
+                        </Table>
                     </Card.Body>
                     </Card>
             </Wrapper>
@@ -319,7 +314,7 @@ const Game = ({socket, games, invites}: Props) =>
 
     return(
         <Wrapper>
-            <Card>
+            <Card bg="light">
                 <Card.Img src={pongImage} />
                 <Card.Body>
                     <Stack direction="horizontal" gap={2}>

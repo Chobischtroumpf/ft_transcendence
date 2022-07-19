@@ -1,8 +1,12 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { User } from "../../models/user";
+import minigames from "../../assets/minigames.png";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Card, Form, Stack, Table } from 'react-bootstrap';
+import { Navigate } from "react-router";
 
 type Props = {
   socket: Socket | null,
@@ -11,9 +15,11 @@ type Props = {
 const Users = ({socket}: Props) =>
 {
   const [users, setUsers] = useState([]);
+  const [userId, setUserId] = useState(0);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(0);
   const [response, setResponse] = useState<null | string>(null);
+  const [place, setPlace] = useState(false);
 
   useEffect(() => {
     setTimeout(async() => {
@@ -21,9 +27,18 @@ const Users = ({socket}: Props) =>
       setUsers(data.data);
       setLastPage(data.meta.last_page);
     }, 40);
-    
-
   }, [page]);
+
+  const join = async (e: SyntheticEvent) =>
+  {
+    e.preventDefault();
+    setPlace(true);
+  }
+
+  if (place === true)
+  {
+    return <Navigate to={`/profile?userId=${userId}`} />;
+  }
 
   const next = () =>
   {
@@ -39,37 +54,41 @@ const Users = ({socket}: Props) =>
 
   return (
     <Wrapper>
-        <div className="table-responsive">
-        <table className="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">username</th>
-              <th scope="col">status</th>
-              <th scope="col">level</th>
-              <th scope="col">wins</th>
-              <th scope="col">losses</th>
-              <th scope="col">rank</th>
-            </tr>
-          </thead>
-          <tbody>
-          {users.map((user: User) => {
-              
-              return (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.username}</td>
-                  <td>{user.status}</td>
-                  <td>{user.level}</td>
-                  <td>{user.wins}</td>
-                  <td>{user.losses}</td>
-                  <td>{user.rank}</td>
-                </tr>  
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
+      <Card bg="light">
+        <Card.Img src={minigames} />
+        <Card.Body>
+          <Table striped bordered hover variant="dark">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">username</th>
+                <th scope="col">status</th>
+                <th scope="col">level</th>
+                <th scope="col">wins</th>
+                <th scope="col">losses</th>
+                <th scope="col">rank</th>
+              </tr>
+            </thead>
+            <tbody>
+            {users.map((user: User) => {
+                return (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td>
+                      <form onSubmit={join}>
+                        <Button variant="link" onClick={e => setUserId(user.id)} type="submit">{user.username}</Button>
+                      </form>
+                    </td>
+                    <td>{user.status}</td>
+                    <td>{user.level}</td>
+                    <td>{user.wins}</td>
+                    <td>{user.losses}</td>
+                    <td>{user.rank}</td>
+                  </tr>  
+                )
+              })}
+            </tbody>
+          </Table>
       <nav>
         <ul className="pagination">
             <li className="page-item">
@@ -80,6 +99,8 @@ const Users = ({socket}: Props) =>
             </li>
         </ul>
       </nav>
+      </Card.Body>
+      </Card>
     </Wrapper>
   );
 }

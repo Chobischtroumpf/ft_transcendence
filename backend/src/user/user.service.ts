@@ -178,7 +178,7 @@ export class UserService
     async getFriends(id): Promise<UserEntity[]>
     {
       const requests = await this.getRequestedUsers(id);
-      console.log("getFriends : requests :", requests);
+      // console.log("getFriends : requests :", requests);
       // const requestedBy = await this.getRequestedByUsers(id);
       // console.log("getFriends : requestedBy :", requestedBy);
       // const temp = await requests.filter((user) => requestedBy.some((usr) => user.id === usr.id));
@@ -263,7 +263,7 @@ export class UserService
     }
 
     async uploadFile(user: UserEntity, path: any) {
-      console.log(path);
+      // console.log(path);
       user.picture = path;
 
       return await this.userRepository.save(user);

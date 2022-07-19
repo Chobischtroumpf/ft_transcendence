@@ -74,9 +74,9 @@ export class UserController
     @Get('friend')
     async getFriends(@User() user)
     {
-        console.log(user);
+        // console.log(user);
         const temp = await this.userService.getFriends(user.id);
-        console.log("get friends : ", temp);
+        // console.log("get friends : ", temp);
         return temp;
     }
 
@@ -110,7 +110,7 @@ export class UserController
     async requestFriend(@User() user, @Param('id', ParseIntPipe) id)
     {
         const temp = await this.userService.requestFriend(user, id);
-        console.log(temp);
+        // console.log(temp);
         return temp;
     }
     

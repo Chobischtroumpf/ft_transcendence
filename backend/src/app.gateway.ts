@@ -125,7 +125,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const channel = await this.chatUtilService.getChannelByName(data.name);
       const message = await this.chatService.createMessageToChannel(data, user);
       const allMessages = await this.chatService.getMessagesFromChannel(data.name, user);
-      console.log(allMessages);
       for (const member of channel.members)
         if (await this.userService.isblocked_true(user, member) === false)
           for (var i = 0; i < this._sockets.length; i++)
@@ -204,10 +203,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   {
     try
     {
-      console.log('lol');
       // find the game
       const game = this.games.find(e => e.name === room);
-      console.log(game);
       if (game.players[0].player.username === client.data.user.username)
         game.winner = game.players[1];
       else if (game.players[1].player.username === client.data.user.username)

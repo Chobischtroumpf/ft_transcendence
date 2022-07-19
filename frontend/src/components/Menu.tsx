@@ -32,22 +32,22 @@ export const Menu = (props: any) => {
         <ul className="nav flex-column">
         <li className="nav-item">
             <NavLink to={'/game'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
-              Game
+              <h2>Game</h2>
             </NavLink>
           </li>
           <li className="nav-item">
             <NavLink to={`/profile`} key={1} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")} onClick={props.setParentState}>
-              Profile
+              <h2>Profile</h2>
             </NavLink>
           </li>
           <li className="nav-item">
             <NavLink to={'/users'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
-              Users
+              <h2>Users</h2>
             </NavLink>
           </li>
           <li className="nav-item">
             <NavLink to={'/channels'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
-              Channels
+              <h2>Channels</h2>
             </NavLink>
           </li>
         </ul>

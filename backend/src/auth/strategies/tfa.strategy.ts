@@ -12,11 +12,11 @@ export class TfaStrategy extends PassportStrategy(Strategy, 'jwt-tfa') {
 
     const extractJwtFromCookie = (req: Request) => {
       let token = null;
-      console.log(req.cookies);
+      // console.log(req.cookies);
       if (req && req.cookies) {
         token = req.cookies['access_token'];
       }
-      console.log(token);
+      // console.log(token);
       return token || ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     };
 
