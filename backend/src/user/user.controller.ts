@@ -69,7 +69,7 @@ export class UserController
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
-    await this.userService.turnOnTfa(user.id);
+    await this.userService.turnOnTfa(user);
     
     const jwt = this.authService.treatTfa(user.id, true);
 

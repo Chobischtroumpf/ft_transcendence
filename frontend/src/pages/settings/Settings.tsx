@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Navigate } from "react-router";
 import Wrapper from "../../components/Wrapper";
 import { encode } from "base64-arraybuffer";
+import { User } from "../../models/user";
 import './Settings.css'
 
 
@@ -12,16 +13,13 @@ export interface tfaDto {
 
 const Settings = () => {  
 
-  
+  const [user, setUser] = useState<User>();
   var [username, setUsername] = useState<string>('');
-  const [prevusername, setPrevUsername] = useState<string>();
   var [tfa, setTfa] = useState<boolean>(false);
   var [tfaImage, setTfaImage] = useState<string | null>(null);
   const [picturefile, setPictureFile] = useState<File>();
   var [picture, setPicture] = useState<string | undefined>(undefined);
-  var [prevpicture, setPrevPicture] = useState<string | undefined>(undefined);
   var [error, setError] = useState<boolean>(false);
-  var [tfaActive, setTfaActive] = useState<boolean>(false);
   var [tfaCode, setTfaCode] = useState<string>('');
 
   const [gotUser, setGotUser] = useState<boolean>(false)
@@ -30,9 +28,7 @@ const Settings = () => {
   (async () => {
     const { data } = await axios.get("user");
     try {
-      setPrevUsername(data.username);
-      setPrevPicture(data.picture);
-      setTfaActive(data.tfa);
+      setUser(data);
       setGotUser(true);
       // setTfa(data.tfa);
     } catch (e) {
@@ -56,10 +52,8 @@ const Settings = () => {
     event.preventDefault();
 
     const formData = new FormData();
-    if (username)
-      formData.append("username", username);
-    else if (prevusername && !username)
-      formData.append("username", prevusername);
+    if (!username && user)
+      setUsername(user.username);
     try {
       const { data } = await axios.post("/user/username", { username: username });
     }
@@ -120,10 +114,10 @@ const Settings = () => {
             {
               (picture) ?
               (<img className="profile-picture" src={picture} alt="avatar" />) : 
-              (<img className="profile-picture" src={`http://localhost:3000/user/picture/${prevpicture}`} alt="avatar" />)
+              (<img className="profile-picture" src={`http://localhost:3000/user/picture/${user?.picture}`} alt="avatar" />)
             }
             {(username) && (<h1>{username}'s profile</h1>)}
-            {(!username && prevusername) && (<h1>{prevusername}'s profile</h1>)}
+            {(!username && user?.username) && (<h1>{user?.username}'s profile</h1>)}
           </div>
 
           ) : 
@@ -134,7 +128,7 @@ const Settings = () => {
             className="username input"
             type="string"
             name="username"
-            placeholder={prevusername}
+            placeholder={user?.username}
             value={username}
             onChange={handleChange}
           />
@@ -151,7 +145,7 @@ const Settings = () => {
             />
             <input type="submit" value="Save"/>
         </form>
-
+        {(user?.) ? (
         <form onSubmit={handleTfaSubmit}>
           <div className="tfa input">
             <input

@@ -14,10 +14,12 @@ const SignIn = () =>
       const interval = setInterval(async () => {
         if (getCookie("access_token") !== null) {      
           myWindow?.close();
-          setRedirect(true);
-          clearInterval(interval);
+         setRedirect(true);
+         clearInterval(interval);
         }
       }, 1000);
+
+      // return () => clearInterval(interval);
     }
 
   function getCookie(name: string): string | null {
@@ -34,7 +36,7 @@ const SignIn = () =>
   }
 
   if (redirect) {
-    return <Navigate to={'/'} />
+    return <Navigate to={'/auth/tfa'} />
   }
 
   return(

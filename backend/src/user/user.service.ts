@@ -60,11 +60,10 @@ export class UserService
       return await this.userRepository.findOneBy({ username });
     }
 
-    async setTfaSecret(secret: string, id: number)
+    async setTfaSecret(secret: string, user: UserEntity)
     {
-      return this.userRepository.update(id, {
-        tfaSecret: secret
-      });
+      user.tfaSecret = secret;	
+      return this.userRepository.save(user);
     }
 
     async generateTfaSecret(user: UserEntity)
@@ -73,7 +72,7 @@ export class UserService
 
       const otpauthUrl = authenticator.keyuri(user.username, process.env.APP_NAME, secret);
 
-      await this.setTfaSecret(secret, user.id);
+      await this.setTfaSecret(secret, user);
 
       return {
         secret,
@@ -86,11 +85,10 @@ export class UserService
       return toFileStream(stream, otpauthUrl);
     }
 
-    async turnOnTfa(id: number)
+    async turnOnTfa(user: UserEntity)
     {
-      return this.userRepository.update(id, {
-        tfaEnabled: true
-      });
+      user.tfaEnabled = true; 
+      return this.userRepository.save(user);
     }
 
     async turnOffTfa(id: number) {
