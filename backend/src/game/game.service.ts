@@ -15,7 +15,6 @@ export class GameService
     // when player hits the ball
     setRandomBallDirection(x: number)
     {
-
         var direction: Dir;
         if (x === 1) // home player
             direction = Math.floor(Math.random() * 3) + 4;
