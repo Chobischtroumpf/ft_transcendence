@@ -47,6 +47,10 @@ function App() {
     newSocket.on('getGamesToClient', (data) => {
       setGames(data);
     });
+    newSocket.on('addUpdatedInviteToClient', (data) => {
+      invites.splice(data, 1);
+      setInvites(invites);
+    });
     newSocket.on('addInviteToClient', (data) => {
       window.alert(`${data.username} invited you to play pong! Good luck!`);
       setInvites(invites => [...invites, data]);

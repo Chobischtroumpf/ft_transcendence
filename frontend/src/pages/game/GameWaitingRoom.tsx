@@ -46,7 +46,7 @@ const GameWaitingRoom = ({ gameStart, spectator, socket }: Props) =>
                                 color: "white",
                                 fontWeight: "bold",
                                 fontFamily: "Optima, sans-serif"
-                            }} type="submit">Leave queue</button>
+                            }} type="submit">Leave</button>
                         </form>
                     </div>
                     </Card.ImgOverlay>
