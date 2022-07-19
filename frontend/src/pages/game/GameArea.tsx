@@ -6,8 +6,6 @@ import { gameUpdate } from "../../models/game";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Card } from 'react-bootstrap';
 import sahara from '../../assets/sahara.png';
-// import useSound from 'use-sound';
-// import mySound from '../../assets/bounce.mp3';
 
 type Props = {
     socket: Socket | null,
@@ -17,8 +15,6 @@ type Props = {
 
 const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
 {
-    // const [audio] = useSound('../../assets/bounce.mp3');
-
     const style = {
         border: '1px solid black',
     };
@@ -33,7 +29,6 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
             return ;  
         switch (event.key) {
             case "ArrowUp":
-                // audio();
                 socket?.emit('moveDownToServer');
                 break ;
             case "ArrowDown":
