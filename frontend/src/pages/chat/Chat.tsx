@@ -9,6 +9,9 @@ import { GiSleepy } from "react-icons/gi";
 import axios from "axios";
 import { tmpdir } from "os";
 import { channel } from "diagnostics_channel";
+import { Card, Container } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import chatImage from '../../assets/chat2.png';
 
 type Props = {
     socket: Socket | null,
@@ -80,9 +83,13 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
     
     return (
         <Wrapper>
-
             <div>{infoMsg}</div>
             <Link to={`/chat/chatsettings?ChatSettingsId=${channelName}`} type="submit">settings</Link>
+            <br />
+            <br />
+            <Card bg="dark">
+            <Card.Img src={chatImage} variant="bottom" />
+            <Card.ImgOverlay>
             <ChatContainer>
             <ChatInputContainer>
             <form onSubmit={newMsg}>
@@ -95,9 +102,9 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
                 if (myName === message.author.username)
                 {
                     return (
-                        <li style={{listStyleType: 'none'}} key={message.id}>
+                        <li style={{listStyleType: 'none' }} key={message.id}>
                             <form onSubmit={pongGame}>
-                                <h5 style={{textAlign: 'right'}}><span style={{backgroundColor: '#90ee90', borderRadius: '20px'}}>{message.content}</span></h5>
+                                <h5 style={{textAlign: 'right', padding: '10px' }}><span style={{backgroundColor: '#f1f1f1', borderRadius: '20px', padding: '10px' }}>{message.content}</span></h5>
                             </form>
                         </li>
                     );
@@ -107,8 +114,8 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
                     return (
                         <li style={{listStyleType: 'none' }} key={message.id}>
                             <form onSubmit={pongGame}>
-                                <h6>{message.author.username} <button onClick={e => setName(message.author.username)} type="submit">Invite to play Pong</button></h6>
-                                <h5><span style={{backgroundColor: '#90ee90', borderRadius: '20px'}}>{message.content}</span></h5>
+                                <h6 style={{ padding: '10px' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px'}}>{message.author.username}: <button onClick={e => setName(message.author.username)} type="submit">Invite to play Pong</button></span></h6>
+                                <h5 style={{ padding: '10px' }}><span style={{backgroundColor: '#f1f1f1', borderRadius: '20px', padding: '10px'}}>{message.content}</span></h5>
                             </form>
                         </li>
                     );
@@ -116,6 +123,8 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
             })}
             </div>
             </ChatContainer>
+            </Card.ImgOverlay>
+            </Card>
         </Wrapper>
     );
 }
