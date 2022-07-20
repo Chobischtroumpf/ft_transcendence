@@ -12,6 +12,7 @@ import { channel } from "diagnostics_channel";
 import { Card, Container } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import chatImage from '../../assets/chat2.png';
+import { url } from "inspector";
 
 type Props = {
     socket: Socket | null,
@@ -83,14 +84,10 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
     
     return (
         <Wrapper>
-            <div>{infoMsg}</div>
             <Link to={`/chat/chatsettings?ChatSettingsId=${channelName}`} type="submit">settings</Link>
+            <ChatContainer style={{ backgroundImage: `url(${chatImage})`, borderRadius: '20px', padding: '20px' }}>
+            <div className="col-md-12 text-center"><b>{infoMsg}</b></div>
             <br />
-            <br />
-            <Card bg="dark">
-            <Card.Img src={chatImage} variant="bottom" />
-            <Card.ImgOverlay>
-            <ChatContainer>
             <ChatInputContainer>
             <form onSubmit={newMsg}>
                 <input placeholder="message" id="inputMessage" value={newMessage} size={19} required onChange={e => setNewMessage(e.target.value)}/>
@@ -123,8 +120,6 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
             })}
             </div>
             </ChatContainer>
-            </Card.ImgOverlay>
-            </Card>
         </Wrapper>
     );
 }
