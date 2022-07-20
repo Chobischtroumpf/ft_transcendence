@@ -135,6 +135,8 @@ export class UserController
     @Get('/picture/:imagename')
     async findPicture(@Param('imagename') imagename, @Res() response: Response)
     {
+        // if (imagename === null)
+            // return something ????
         return of(response.sendFile(join(process.cwd(), 'uploads/profileimages/' + imagename)));
     }
 
