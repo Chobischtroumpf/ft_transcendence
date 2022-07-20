@@ -25,6 +25,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
     const [redirect, setRedirect] = useState(false);
     const [base64, setBase64] = useState();
     const [name, setName] = useState('');
+    const [myName, setMyName] = useState('');
  
     const pongGame = async (e: SyntheticEvent) =>
     {
@@ -53,6 +54,10 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
     }
 
     useEffect(() => {
+        (async () => {
+            const {data} = await axios.get('user');
+            setMyName(data.username);
+        }) ()
         // window.scrollTo(0,document.body.scrollHeight);
         if (socket === null)
             setRedirect(true);
@@ -87,16 +92,27 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
             </ChatInputContainer>
             <div>
             {messages.map((message: MessageI) => {
-                return (
-                    <li key={message.id}>
-                        <form onSubmit={pongGame}>
-                            <button onClick={e => setName(message.author.username)} type="submit">Play</button>
-                        </form>
-                        <h5>{message.author.username}</h5>
-                        <h4>{message.content}</h4>
-                        <hr></hr>      
-                    </li>
-                );
+                if (myName === message.author.username)
+                {
+                    return (
+                        <li style={{listStyleType: 'none'}} key={message.id}>
+                            <form onSubmit={pongGame}>
+                                <h5 style={{textAlign: 'right'}}><span style={{backgroundColor: '#90ee90', borderRadius: '20px'}}>{message.content}</span></h5>
+                            </form>
+                        </li>
+                    );
+                }
+                else
+                {
+                    return (
+                        <li style={{listStyleType: 'none' }} key={message.id}>
+                            <form onSubmit={pongGame}>
+                                <h6>{message.author.username} <button onClick={e => setName(message.author.username)} type="submit">Invite to play Pong</button></h6>
+                                <h5><span style={{backgroundColor: '#90ee90', borderRadius: '20px'}}>{message.content}</span></h5>
+                            </form>
+                        </li>
+                    );
+                }
             })}
             </div>
             </ChatContainer>
