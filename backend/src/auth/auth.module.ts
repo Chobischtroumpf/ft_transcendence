@@ -22,7 +22,7 @@ import { TfaStrategy } from './strategies/tfa.strategy';
     UserModule, TypeOrmModule.forFeature([UserEntity, ChannelEntity, MessageEntity, JoinedUserStatus]), PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: 3600 }
+      signOptions: { expiresIn: 86400 }
     })
   ],
   exports: [AuthService, JwtStrategy, PassportModule],

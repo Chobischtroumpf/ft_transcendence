@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router";
-import { Socket } from "socket.io-client";
+import React from "react";
 import Wrapper from "../../components/Wrapper";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Card } from 'react-bootstrap';
+import winnerImage from '../../assets/winner.png';
 
 type Props = {
     winner: string,
@@ -11,9 +12,14 @@ const GameFinished = ({winner}: Props) =>
 {
     return(
         <Wrapper>
-            <div>
-                <h1>Winner is: {winner}</h1>
-            </div>
+            <Card>
+                <Card.Img src={winnerImage} />
+                <Card.Body>
+                    <div className="col-md-12 text-center">
+                        <h1>{winner}</h1>
+                    </div>
+                </Card.Body>
+            </Card>
         </Wrapper>
     );
 }

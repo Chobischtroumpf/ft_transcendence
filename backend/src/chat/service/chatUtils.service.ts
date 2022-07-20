@@ -29,8 +29,8 @@ export class ChatUtilsService
             channel,
             user
         });
-        console.log("newUserStatus");
-        console.log(newUserStatus);
+        // console.log("newUserStatus");
+        // console.log(newUserStatus);
         await this.joinedUserStatusRepository.save(newUserStatus);
         return newUserStatus;
     }
@@ -111,7 +111,6 @@ export class ChatUtilsService
 
     async getJoinedUserStatus(user: UserEntity, channel: ChannelEntity)
     {
-        console.log("getjoineduserstatus");
         const userStatus: any = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
         if (userStatus)
             return userStatus;

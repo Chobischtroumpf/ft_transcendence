@@ -192,27 +192,6 @@ export class UserService
       return await this.userRepository.save(user);
     }
 
-    // async blockUser(user: UserEntity, id: number)
-    // {
-    //     this.userIdIsSame(id, user.id);
-    //     const blockedUser = await this.getUserById(id);
-    //     user.blockedUsers = await this.getBlockedUsers(user.id);
-    //     for (const x of user.blockedUsers)
-    //         if (x.id === blockedUser.id)
-    //             throw new HttpException({status: HttpStatus.FORBIDDEN, error: 'User is already blocked'}, HttpStatus.FORBIDDEN);
-    //     user.blockedUsers.push(blockedUser);
-    //     return await this.userRepository.save(user);
-    // }
-
-    // async unblockUser(user: UserEntity, id: number)
-    // {
-    //     this.userIdIsSame(id, user.id);
-    //     const blockedUser = await this.getUserById(id);
-    //     user.blockedUsers = await this.getBlockedUsers(user.id);
-    //     user.blockedUsers = user.blockedUsers.filter((blockedUser) => {return id !== blockedUser.id});
-    //     return await this.userRepository.save(user);
-    // }
-
     async unblockUser(user: UserEntity, id: number)
     {
       user.blockedUsers = await this.getBlockedUsers(user.id);
@@ -259,8 +238,7 @@ export class UserService
     }
 
     async uploadFile(user: UserEntity, path: any) {
-      user.picture = path;
-
+      user.picture = path.filename;
       return await this.userRepository.save(user);
     }
 

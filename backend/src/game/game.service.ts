@@ -9,13 +9,12 @@ export class GameService
 
     private readonly defaultCanvas: Canvas = {
         h: 200,
-        w: 300,
+        w: 400,
     };
 
     // when player hits the ball
     setRandomBallDirection(x: number)
     {
-
         var direction: Dir;
         if (x === 1) // home player
             direction = Math.floor(Math.random() * 3) + 4;
@@ -163,25 +162,27 @@ export class GameService
                 break;
             case Dir.LEFT:
                 ball.x -= ball.speed;
+                ball.x -= ball.speed;
                 break;
             case Dir.RIGHT:
                 ball.x += ball.speed;
+                ball.x += ball.speed;
                 break;
             case Dir.UPLEFT:
-                ball.x -= ball.speed;
-                ball.y += ball.speed;
+                ball.x -= (ball.speed * 1,5);
+                ball.y += (ball.speed * 1,5);
                 break;
             case Dir.DOWNLEFT:
-                ball.x -= ball.speed;
-                ball.y -= ball.speed;
+                ball.x -= (ball.speed * 1,5);
+                ball.y -= (ball.speed * 1,5);
                 break;
             case Dir.UPRIGHT:
-                ball.x += ball.speed;
-                ball.y += ball.speed;
+                ball.x += (ball.speed * 1,5);
+                ball.y += (ball.speed * 1,5);
                 break;
             case Dir.DOWNRIGHT:
-                ball.x += ball.speed;
-                ball.y -= ball.speed;
+                ball.x += (ball.speed * 1,5);
+                ball.y -= (ball.speed * 1,5);
             default:
                 break;
         }
