@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useLocation } from "react-router";
+import { Navigate, useLocation } from "react-router";
 import React, { SyntheticEvent, useEffect, useState } from "react";
 
 import { AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineAudioMuted, } from 'react-icons/ai';
@@ -13,19 +13,34 @@ import { ChannelEntity } from "../../models/Chat";
 import './SettingsPage.css'
 import Wrapper from "../../components/Wrapper";
 import { AdminUserDto, JoinedUserStatusDto, SetPasswordDto } from "./chatSettings.dto";
+import ModalMessage from "./ModalMessage"
+import { Socket } from "socket.io-client";
 
 
+type Props = {
+    socket: Socket | null,
+};
 
 // 1 = owner 2 = admin 3 = password=true 4 = channel=private
 
-const ChatSettings = () =>{
+const ChatSettings = (socket:Props) =>{
 	const queryParams = new URLSearchParams(useLocation().search);
 	const ChatName = queryParams.get("ChatSettingsId");
+    const [redirect, setRedirect] = useState(false);
 
 	// const [UserStatus, setUserStatus] = useState('');
 	// const [currentChannel, setCurrentChannel] = useState('');
 
+	useEffect(() => {
+		if (socket.socket === null)
+			setRedirect(true);
+	})
 
+
+    if (redirect === true)
+    {
+        return <Navigate to={'/channels'} />;
+    }
 	// useEffect(() => {
 	// 	(
 	// 	  async () => {
@@ -60,11 +75,6 @@ const ChatSettings = () =>{
 
 interface prop {
 	chatName: string | null
-}
-
-interface prop2 {
-	message: string,
-	success: boolean
 }
 
 // const AddUser = (ChatName:prop) => {
@@ -343,7 +353,7 @@ const ModifyPassword = (ChatName:prop) => {
 			const adminForm : SetPasswordDto = { name : ChatName.chatName!, password : newpwd }
 			const data = await axios({
 					method: 'patch',
-					url: "chat/modifypassword",
+					url: "chat/password",
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
 				})
@@ -398,7 +408,7 @@ const RemovePassword = (ChatName:prop) => {
 			const data = await axios({
 					method: 'patch',
 					url: "chat/removepassword",
-					data: ChatName,
+					data: {name:ChatName.chatName},
 					headers: {'content-type': 'application/json'}
 				})
 				setPopupMessage("Password successfully removed");
@@ -594,33 +604,6 @@ const UnmuteUser = (ChatName:prop) => {
 		</Popup>
 		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
 	</h2>)
-}
-
-
-const ModalMessage = (prop:prop2) => {
-	const [state, setState] = useState(true);
-	const handleOpen = () => {setState(true);}
-	const handleClose = () => {console.log("yoo");setState(false);}
-
-	return (
-		<Popup
-			open={state}
-			onClose={handleClose}
-			onOpen={handleOpen}
-			position='top right' modal nested>
-			<div className='modal2'>
-				{prop.success && (<div className="content">
-				{' '}
-					<h1 color="green">{prop.message}</h1>
-				</div>)}
-				{!prop.success && (<div className="content">
-				{' '}
-					<h1 color="red">{prop.message}</h1>
-				</div>)}
-				<button onClick={handleClose}>close&times;</button>
-			</div>
-		</Popup>
-	)
 }
 
 export default ChatSettings;

@@ -36,7 +36,6 @@ export class ChatController
     @Post('/public')
     async createPublicChannel(@Body('name') channelName: string, @User() user)
     {
-        console.log("iwnfijnwefow");
         return this.chatService.createPublicChannel(channelName, user);
     }
 
@@ -103,7 +102,6 @@ export class ChatController
     @Post('/admin')
     async giveAdmin(@Body() adminData: AdminUserDto, @User() user)
     {
-        console.log("hey0");
         return this.chatService.giveAdmin(adminData, user);
     }
 
@@ -116,16 +114,6 @@ export class ChatController
     @Patch('/password')
     async setPassword(@Body() passwordData: SetPasswordDto, @User() user)
     {
-        return this.chatService.setPassword(passwordData, user);
-    }
-
-    @Patch('/modifypassword')
-    async modifyPassword(@Body() passwordData: SetPasswordDto, @User() user)
-    {
-        console.log("name : " + passwordData.name);
-        console.log("password : " + passwordData.password);
-        this.chatService.removePassword(passwordData.name, user);
-        console.log("here");
         return this.chatService.setPassword(passwordData, user);
     }
 
@@ -169,5 +157,12 @@ export class ChatController
     async getChannelsFromUser(@Body('userId') userId: number)
     {
         return this.chatService.getChannelsFromUser(userId);
+    }
+    
+    @Get('/userstatus/:name')
+    async getUserStatus(@Param('name') name: string, @User() user)
+    {
+        console.log("controler");
+        return this.chatUtilService.getStatus(name, user);
     }
 }

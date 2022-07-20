@@ -93,7 +93,7 @@ function App() {
           <Route path="/signin" element={<SingIn />}></Route>
           <Route path="/channels" element={<Channels socket={socket} channels={channels} lastPage={lastPage} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
-          <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>
+          <Route path="chat/chatSettings" element={<ChatSettings socket={socket}/>}></Route>
           <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>
           <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
           <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator} socket={socket}/>}></Route>

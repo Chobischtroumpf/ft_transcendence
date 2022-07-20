@@ -53,7 +53,6 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
     }
 
     useEffect(() => {
-        console.log(messages);
         // window.scrollTo(0,document.body.scrollHeight);
         if (socket === null)
             setRedirect(true);
@@ -88,7 +87,6 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
             </ChatInputContainer>
             <div>
             {messages.map((message: MessageI) => {
-                console.log(message.author.picture);
                 return (
                     <li key={message.id}>
                         <form onSubmit={pongGame}>

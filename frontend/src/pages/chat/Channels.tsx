@@ -5,6 +5,8 @@ import { Channel, ChannelStatus } from "../../models/channel";
 import io, { Socket } from 'socket.io-client';
 import {Link} from "react-router-dom"
 import { Navigate } from "react-router";
+import ModalMessage from "./ModalMessage"
+import ModalPwd from "./ModalPwd"
 
 type Props = {
   socket: Socket | null,
@@ -19,11 +21,15 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState(ChannelStatus.public);
   const [place, setPlace] = useState(false);
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
 
   const submit = async (e: SyntheticEvent) =>
   {
     e.preventDefault();
+    setPopupMessage("");
 
+    try {
     if (status === ChannelStatus.public)
       await axios.post('chat/public', { name });
     else if (status === ChannelStatus.protected)
@@ -31,19 +37,66 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     else if (status === ChannelStatus.private)
       await axios.post('chat/private', { name });
     socket?.emit('getChannelsToServer', page);
+    setPopupMessage("Channel " + name + " successfully created");
+    setActionSuccess(true);}
+    catch (e:any) {
+      setPopupMessage(e.response.data.error);
+      setActionSuccess(false);
+    }
   }
 
-  const join = async (e: SyntheticEvent) =>
+  const join = async (e: SyntheticEvent, channelName: string) =>
   {
     e.preventDefault();
+
+    const data = await axios.get(`chat/${channelName}`);
+    console.log(data.data.status);
+    if (data.data.status !== "public")
+    {
+      try {
+        console.log("here");
+        return <ModalPwd chatName={channelName}/>
+      }
+      catch (e) {
+        return
+      }
+    }
     setPlace(true);
   }
 
   const leave = async (e: SyntheticEvent, channelId: number) =>
   {
     e.preventDefault();
+    setPopupMessage("");
 
-    await axios.delete(`chat/leave/${channelId}`);
+    try {
+      await axios.delete(`chat/leave/${channelId}`);
+      socket?.emit('getChannelsToServer', page);
+      setPopupMessage("Channel successfully left");
+      setActionSuccess(true);
+    }
+    catch (e:any) {
+      setPopupMessage(e.response.data.message);
+      setActionSuccess(false);
+    }
+  }
+
+  const chanDelete = async (e: SyntheticEvent, channelId: number) =>
+  {
+    e.preventDefault();
+    setPopupMessage("");
+
+    try {
+      await axios.delete(`chat/delete/${channelId}`);
+      socket?.emit('getChannelsToServer', page);
+      setPopupMessage("Channel successfully deleted");
+      setActionSuccess(true);
+    }
+      catch(e:any)
+    {
+      setPopupMessage(e.response.data.message);
+      setActionSuccess(false);
+    }
   }
 
   if (place === true)
@@ -54,9 +107,10 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     return <Navigate to={`/chat?chatId=${name}`} />;
   }
 
+
   useEffect(() => {
-    socket?.emit('getChannelsToServer', page);
-  }, [page]);
+      socket?.emit('getChannelsToServer', page);
+  }, [page, socket]);
 
   const next = () =>
   {
@@ -106,7 +160,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                     <td>{channel.name}</td>
                     <td>{channel.status}</td>
                     <td>
-                      <form onSubmit={join}>
+                      <form onSubmit={e => join(e, channel.name)}>
                         <button onClick={e => setName(channel.name)} type="submit">Join</button>
                       </form>
                     </td>
@@ -114,9 +168,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                         <button onClick={e => leave(e, channel.id)} type="submit">Leave</button>
                     </td>
                     <td>
-                      {/* <form onSubmit={join}> */}
-                        <button type="submit">Delete</button>
-                      {/* </form> */}
+                      <button onClick={e => chanDelete(e, channel.id)} type="submit">Delete</button>
                     </td>
                   </tr>  
                 )
@@ -133,7 +185,8 @@ const Channels = ({socket, channels, lastPage}: Props) =>
               <a href="#" className="page-link" onClick={next}>Next</a>
             </li>
         </ul>
-      </nav>
+      </nav>		
+      { popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
     </Wrapper>
   );
 }
