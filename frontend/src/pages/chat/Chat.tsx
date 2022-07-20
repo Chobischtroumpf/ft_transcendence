@@ -86,7 +86,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
         <Wrapper>
             <Link to={`/chat/chatsettings?ChatSettingsId=${channelName}`} type="submit">settings</Link>
             <div className="col-md-12 text-center">
-                <h3><span style={{backgroundColor: '#282A29', color: '#ddd', borderRadius: '20px', padding: '15px 30px' }}>{channelName}</span></h3>
+                <h3><span style={{backgroundColor: '#ddd', color: 'black', borderRadius: '20px', padding: '15px 70px' }}>{channelName}</span></h3>
             </div>
             <ChatContainer style={{ backgroundImage: `url(${chatImage})`, borderRadius: '20px', padding: '20px' }}>
             <div className="col-md-12 text-center"><b>{infoMsg}</b></div>
