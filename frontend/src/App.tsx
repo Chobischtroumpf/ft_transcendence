@@ -15,7 +15,6 @@ import { gameUpdate } from './models/game';
 import GameArea from './pages/game/GameArea';
 import GameFinished from './pages/game/GameFinished';
 import GameWaitingRoom from './pages/game/GameWaitingRoom';
-import {CookiesProvider} from 'react-cookie';
 import {User} from './models/user';
 
 export const TodoContext = React.createContext<any>(null);
@@ -79,7 +78,6 @@ function App() {
 
   return (
     <div className="App">
-      <CookiesProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/game" element={<Game socket={socket} games={games} invites={invites} />}></Route>
@@ -97,7 +95,6 @@ function App() {
             <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator} socket={socket}/>}></Route>
           </Routes>
         </BrowserRouter>
-      </CookiesProvider>
     </div>
   );
 }

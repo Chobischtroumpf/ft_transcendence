@@ -6,7 +6,7 @@ import { User, UserLevel, UserStatus } from "../models/user";
 
 export const Menu = (props: any) => {
 
-  const [user, setUser] = React.useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  const [user, setUser] = React.useState<User>(new User(0, '', '', false, '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
   
 
   async function getUser() {

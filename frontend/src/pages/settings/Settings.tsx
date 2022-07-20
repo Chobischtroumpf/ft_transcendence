@@ -145,19 +145,20 @@ const Settings = () => {
             />
             <input type="submit" value="Save"/>
         </form>
-        {(user?.) ? (
+        {(user?.tfaEnabled) ? (
         <form onSubmit={handleTfaSubmit}>
           <div className="tfa input">
-            <input
-              className="tfa"
-              type="checkbox"
-              name="Two Factor Auth"
-              value="Two Factor Auth"
-              onChange={handleTfaChange}/>
-              Two Factor Auth
+          <input type="submit" value="Enable Two Factor Authentication"/>
           </div>
-          <input type="submit" value="Save"/>
+        </form>) : (
+        <form onSubmit={handleTfaCodeSubmit}>
+          <div className="tfa input">
+            <h2>deactivate TFA</h2>
+            <input type="text" name="tfaCode" placeholder="Enter TFA Code" value={tfaCode} onChange={handleTfaCodeChange}/>
+            <input type="submit" value="Turn Off TFA"/>
+          </div>
         </form>
+        )}
         { (tfaImage) && (
           <div>
             <div className="tfa-qr">

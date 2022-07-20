@@ -19,6 +19,7 @@ export class User
         public id: number,
         public username: string,
         public socketId: string,
+        public tfaEnabled: boolean,
         public picture: string,
         public status: UserStatus,
         public level: UserLevel,

@@ -18,8 +18,8 @@ interface State {
 
 
 const Profile = (props: Props) => {
-  const [user, setUser] = React.useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
-  const [ownUser, setOwnUser] = React.useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  const [user, setUser] = React.useState<User>(new User(0, '', '',false, '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  const [ownUser, setOwnUser] = React.useState<User>(new User(0, '', '', false, '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
   const [friends, setFriends] = React.useState<User[]>([]);
   var urlParam: string | null = '';
   // const url = window.location.pathname;
@@ -105,7 +105,7 @@ const Profile = (props: Props) => {
       {/* ( */}
       <div className="profile-container">
       {(gotUser && gotOwnUser && gotFriends) &&
-        ((user.id != ownUser.id) ?
+        ((user?.id != ownUser?.id) ?
           (<OtherProfile user={user} friends={friends} socket={props.socket} />) :
           (<UserProfile friends={friends} user={ownUser} socket={props.socket} setParentState={setShouldUpdate}/>))}
       </div>{/*)*/}
