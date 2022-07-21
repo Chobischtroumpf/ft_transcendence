@@ -76,7 +76,7 @@ const Settings = () => {
     }
   }
 
-  const handleTfaCodeSubmit = async(event: any) => {
+  const handleTfaTurnOn = async(event: any) => {
     event.preventDefault();
     try {
       const { data } = await axios.post("/user/tfa/turn-on", { tfaCode: tfaCode });
@@ -85,6 +85,19 @@ const Settings = () => {
       console.log(e);
     }
   }
+
+  const handleTfaTurnOff = async(event: any) => {
+    event.preventDefault();
+    try {
+      await axios.post("/user/tfa/turn-off", { tfaCode: tfaCode });
+      const { data } = await axios.get("user");
+      setUser(data);
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
 
   const handleChange = (event: any) => {
     setUsername(event.target.value);
@@ -110,7 +123,8 @@ const Settings = () => {
       <div className="settings">
         <h1 className="title">Settings</h1>
         {(gotUser) ? (
-          <div className="user-name">
+         <>
+         <div className="user-name">
             {
               (picture) ?
               (<img className="profile-picture" src={picture} alt="avatar" />) : 
@@ -119,10 +133,6 @@ const Settings = () => {
             {(username) && (<h1>{username}'s profile</h1>)}
             {(!username && user?.username) && (<h1>{user?.username}'s profile</h1>)}
           </div>
-
-          ) : 
-          (<div><h1>Loading</h1></div>)
-      }
         <form onSubmit={handleUsernameSubmit}>
           <input
             className="username input"
@@ -145,13 +155,13 @@ const Settings = () => {
             />
             <input type="submit" value="Save"/>
         </form>
-        {(user?.tfaEnabled) ? (
+        {(user && !user.tfaEnabled === true) ? (
         <form onSubmit={handleTfaSubmit}>
           <div className="tfa input">
           <input type="submit" value="Enable Two Factor Authentication"/>
           </div>
         </form>) : (
-        <form onSubmit={handleTfaCodeSubmit}>
+        <form onSubmit={handleTfaTurnOff}>
           <div className="tfa input">
             <h2>deactivate TFA</h2>
             <input type="text" name="tfaCode" placeholder="Enter TFA Code" value={tfaCode} onChange={handleTfaCodeChange}/>
@@ -167,15 +177,20 @@ const Settings = () => {
             <div>
               <h1>Scan the QR code to setup your two factor authentication</h1>
             </div>
-            <form onSubmit={handleTfaCodeSubmit}>
+            <form onSubmit={handleTfaTurnOn}>
             <input className="tfa-code input" type="string" name="tfa-code" placeholder="Enter code" onChange={handleTfaCodeChange} />
             <input type="submit" value="Save"/>
         </form>
           </div>
         )}
+        </>
+        ) : 
+        (<div><h1>Loading</h1></div>)
+      }
       </div>
     </Wrapper>
   );
+
 };
 
 export default Settings;

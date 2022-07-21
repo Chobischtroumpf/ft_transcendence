@@ -92,6 +92,7 @@ function App() {
           <Route path="/profile/settings" element={<Settings/>}></Route>
           <Route path="/users" element={<Users />}></Route>
           <Route path="/signin" element={<SingIn />}></Route>
+          <Route path="/auth/tfa" element={<Auth />}></Route>
           <Route path="/channels" element={<Channels socket={socket} channels={channels} lastPage={lastPage} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings/>}></Route>

@@ -238,8 +238,10 @@ export class UserService
     }
 
     async uploadFile(user: UserEntity, path: any) {
-      user.picture = path.filename;
-      return await this.userRepository.save(user);
+      // user.picture = path.filename;
+      // console.log(user.picture);
+      await this.userRepository.update(user.id, {picture: path.filename});
+      return await this.getUserById(user.id);
     }
 
 }

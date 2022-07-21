@@ -55,8 +55,15 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   }
 
   useEffect(() => {
-    socket?.emit('getChannelsToServer', page);
-  }, [page]);
+    if (socket?.connected === false) {
+      socket?.connect();
+    }
+    socket?.on('getChannelsToClient', (data) => {
+      channels = (data.data);
+    });
+    console.log(socket);
+    console.log(channels);
+  }, [page, socket]);
 
   const next = () =>
   {
