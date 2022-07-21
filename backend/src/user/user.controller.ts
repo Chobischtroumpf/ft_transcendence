@@ -83,6 +83,7 @@ export class UserController
   async turnOffTfa(
     @User() user,
     @Body() { tfaCode }
+  ) {
     await this.userService.turnOffTfa(user.id);
   }
   
