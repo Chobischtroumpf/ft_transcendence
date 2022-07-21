@@ -122,9 +122,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       await this.chatService.joinChannel(channelData, user);
       client.join(channelData.name);
       const chatUsers = [];
-      for (const socket of this._sockets)
-        if (socket.rooms.has(channelData.name))
-          chatUsers.push(socket.data.user.username);
+      // for (const socket of this._sockets)
+      //   if (socket.rooms.has(channelData.name))
+      //     chatUsers.push(socket.data.user.username);
       const allMessages = await this.chatService.getMessagesFromChannel(channelData.name, user);
       this.wss.to(channelData.name).emit('joinToClient', { msg: `${user.username} joined to channel at ${new Date}`, channel: channelData.name, messages: allMessages, onlineUsers: chatUsers });
     }
