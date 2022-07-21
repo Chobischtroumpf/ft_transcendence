@@ -40,6 +40,7 @@ const Settings = () => {
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
+    console.log("into handleTfaSubmit");
     const data = await axios({
       method: 'post',
       url: "/user/tfa/secret/",
@@ -50,11 +51,10 @@ const Settings = () => {
 
   const handleUsernameSubmit = async(event: any) => {
     event.preventDefault();
-
-    const formData = new FormData();
     if (!username && user)
       setUsername(user.username);
-    try {
+    console.log("into username submit");
+      try {
       const { data } = await axios.post("/user/username", { username: username });
     }
     catch (e) {

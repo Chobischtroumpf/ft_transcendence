@@ -77,8 +77,8 @@ export class UserService
 
     async setTfaSecret(secret: string, user: UserEntity)
     {
-      user.tfaSecret = secret;	
-      return this.userRepository.save(user);
+      // user.tfaSecret = secret;	
+      return this.userRepository.update(user.id, {tfaSecret: secret});
     }
 
     async generateTfaSecret(user: UserEntity)
@@ -102,8 +102,9 @@ export class UserService
 
     async turnOnTfa(user: UserEntity)
     {
-      user.tfaEnabled = true; 
-      return this.userRepository.save(user);
+      return this.userRepository.update(user.id, {
+        tfaEnabled: true
+      });
     }
 
     async turnOffTfa(id: number) {
@@ -122,8 +123,7 @@ export class UserService
 
     updateUsername(user: UserEntity, username: string)
     {
-      user.username = username;
-      return this.userRepository.save(user);
+      return this.userRepository.update(user.id, {username: username});
     }
 
     updateStatus(user: UserEntity, status: UserStatus)
