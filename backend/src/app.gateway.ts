@@ -92,6 +92,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     {
       const user = client.data.user;
       const result = await this.chatUtilService.paginate(page);
+      const channels = await this.chatUtilService.getAllChannels();
+      for (const channel of channels)
+        client.leave(channel.name);
       this.wss.emit('getChannelsToClient', result);
     }
     catch { throw new WsException('Something went wrong'); }
@@ -135,11 +138,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const channel = await this.chatUtilService.getChannelByName(data.name);
       const message = await this.chatService.createMessageToChannel(data, user);
       const allMessages = await this.chatService.getMessagesFromChannel(data.name, user);
-      for (const member of channel.members)
-        if (await this.userService.isblocked_true(user, member) === false)
-          for (var i = 0; i < this._sockets.length; i++)
-            // if (this._sockets[i].data.user.username === user.username)
-            this._sockets[i].emit('msgToClient', allMessages);
+      this.wss.to(data.name).emit('msgToClient', allMessages);
+      // PUT THIS BACK ON SOMEPOINT !!!! IT CHECKS BLOCKED USERS
+      // for (const member of channel.members)
+      //   if (await this.userService.isblocked_true(user, member) === false)
+      //     for (var i = 0; i < this._sockets.length; i++)
+      //       // if (this._sockets[i].data.user.username === user.username)
+      //       this._sockets[i].emit('msgToClient', allMessages);
     }
     catch { throw new WsException('Something went wrong'); }
   }

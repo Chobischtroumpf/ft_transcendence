@@ -117,16 +117,6 @@ export class ChatController
         return this.chatService.setPassword(passwordData, user);
     }
 
-    @Patch('/modifypassword')
-    async modifyPassword(@Body() passwordData: SetPasswordDto, @User() user)
-    {
-        console.log("name : " + passwordData.name);
-        console.log("password : " + passwordData.password);
-        this.chatService.removePassword(passwordData.name, user);
-        console.log("here");
-        return this.chatService.setPassword(passwordData, user);
-    }
-
     @Patch('/removepassword')
     async removePassword(@Body('name') name: string, @User() user)
     {
@@ -167,5 +157,12 @@ export class ChatController
     async getChannelsFromUser(@Body('userId') userId: number)
     {
         return this.chatService.getChannelsFromUser(userId);
+    }
+    
+    @Get('/userstatus/:name')
+    async getUserStatus(@Param('name') name: string, @User() user)
+    {
+        console.log("controler");
+        return this.chatUtilService.getStatus(name, user);
     }
 }

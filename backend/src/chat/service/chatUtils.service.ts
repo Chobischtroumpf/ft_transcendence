@@ -29,8 +29,8 @@ export class ChatUtilsService
             channel,
             user
         });
-        // console.log("newUserStatus");
-        // console.log(newUserStatus);
+        console.log("newUserStatus");
+        console.log(newUserStatus);
         await this.joinedUserStatusRepository.save(newUserStatus);
         return newUserStatus;
     }
@@ -234,5 +234,13 @@ export class ChatUtilsService
             throw new WsException('Error while saving message to the database');
         }
         return message;
+    }
+
+    async getStatus(channelName:string, user:UserEntity)
+    {
+        const channel = await this.getChannelByName(channelName);
+        this.checkClientIsMember(user, channel);
+        const userStatus = await this.getJoinedUserStatus(user, channel);
+        return userStatus;
     }
 }
