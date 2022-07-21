@@ -96,6 +96,9 @@ export class UserController
     @UseInterceptors(FileInterceptor('picture', storage))
     async uploadFile(@UploadedFile() file, @User() user)
     {
+        if (!file) {
+            throw new UnauthorizedException('No file uploaded');
+        }
         return this.userService.uploadFile(user, file);
     }
     
