@@ -138,7 +138,7 @@ const Chat = ({socket, joinMsg, channelName, messages/*, onlineUsers*/}: Props) 
                     return (
                         <li style={{listStyleType: 'none' }} key={message.id}>
                             <form onSubmit={pongGame}>
-                                <h5 style={{ padding: '10px' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px'}}><b>{message.author.username}:</b> {message.content}</span></h5>
+                                <h5 style={{ padding: '10px' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px'}}><b>{message.author.username}:</b> {message.content} <button onClick={e => setName(message.author.username)} type="submit">Invite to play Pong</button></span></h5>
                             </form>
                         </li>
                     );
