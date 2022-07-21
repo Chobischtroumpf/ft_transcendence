@@ -31,6 +31,7 @@ function App() {
   const [invites, setInvites] = useState<any[]>([]);
   const [channels, setChannels] = useState([]);
   const [lastPage, setLastPage] = useState(0);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
@@ -38,6 +39,7 @@ function App() {
       setJoinMsg(data.msg);
       setChannelName(data.channel);
       setMessages(data.messages);
+      setOnlineUsers(data.onlineUsers);
     });
     newSocket.on('leaveToClient', (data) => {
       console.log(data);
@@ -94,7 +96,7 @@ function App() {
           <Route path="/signin" element={<SingIn />}></Route>
           <Route path="/auth/tfa" element={<Auth />}></Route>
           <Route path="/channels" element={<Channels socket={socket} channels={channels} lastPage={lastPage} />}></Route>
-          <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
+          <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages} onlineUsers={onlineUsers}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings socket={socket}/>}></Route>
           <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>
           <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>

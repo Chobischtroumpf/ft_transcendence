@@ -83,11 +83,6 @@ export class UserController
   async turnOffTfa(
     @User() user,
     @Body() { tfaCode }
-  ) {
-    // const isCodeValid = this.userService.isTfaCodeValid(tfaCode, user);
-    // if (!isCodeValid) {
-    //   throw new UnauthorizedException('Wrong authentication code');
-    // }
     await this.userService.turnOffTfa(user.id);
   }
   
