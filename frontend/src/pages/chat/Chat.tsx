@@ -19,9 +19,10 @@ type Props = {
     joinMsg: string,
     channelName: string,
     messages: MessageI[],
+    onlineUsers: string[],
 };
 
-const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
+const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
 {
     const [newMessage, setNewMessage] = useState('');
     const [infoMsg, setInfoMsg] = useState(joinMsg);
@@ -85,8 +86,31 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
     return (
         <Wrapper>
             <Link to={`/chat/chatsettings?ChatSettingsId=${channelName}`} type="submit">settings</Link>
+            
             <div className="col-md-12 text-center">
-                <h3><span style={{backgroundColor: '#ddd', color: 'black', borderRadius: '20px', padding: '15px 70px' }}>{channelName}</span></h3>
+                <h3>{channelName}</h3>
+            </div>
+            <div>
+            <h5 style={{ padding: '1px' }}><u>Online chat members:</u></h5>
+            {onlineUsers.map((onlineUser) => {
+                if (myName === onlineUser)
+                {
+                    return (
+                    <li style={{ listStyleType : 'none' }}>
+                        <h6 style={{ padding: '1px', color: 'green' }}>{onlineUser}</h6>
+                    </li>
+                    );
+                }
+                else
+                {
+                    return (
+                    <li style={{ listStyleType : 'none' }}>
+                        <h6 style={{ padding: '1px', color: 'green' }}>{onlineUser} <button onClick={e => setName(onlineUser)} type="submit">Invite to play Pong</button></h6>
+                    </li>
+                    );
+                }
+            }
+            )}
             </div>
             <ChatContainer style={{ backgroundImage: `url(${chatImage})`, borderRadius: '20px', padding: '20px' }}>
             <div className="col-md-12 text-center"><b>{infoMsg}</b></div>
@@ -114,8 +138,7 @@ const Chat = ({socket, joinMsg, channelName, messages}: Props) =>
                     return (
                         <li style={{listStyleType: 'none' }} key={message.id}>
                             <form onSubmit={pongGame}>
-                                <h6 style={{ padding: '10px' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px'}}>{message.author.username}: <button onClick={e => setName(message.author.username)} type="submit">Invite to play Pong</button></span></h6>
-                                <h5 style={{ padding: '10px' }}><span style={{backgroundColor: '#f1f1f1', borderRadius: '20px', padding: '10px'}}>{message.content}</span></h5>
+                                <h5 style={{ padding: '10px' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px'}}><b>{message.author.username}:</b> {message.content}</span></h5>
                             </form>
                         </li>
                     );
