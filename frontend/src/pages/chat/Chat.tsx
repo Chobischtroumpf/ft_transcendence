@@ -19,10 +19,10 @@ type Props = {
     joinMsg: string,
     channelName: string,
     messages: MessageI[],
-    onlineUsers: string[],
+    // onlineUsers: string[],
 };
 
-const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
+const Chat = ({socket, joinMsg, channelName, messages/*, onlineUsers*/}: Props) =>
 {
     const [newMessage, setNewMessage] = useState('');
     const [infoMsg, setInfoMsg] = useState(joinMsg);
@@ -90,7 +90,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
             <div className="col-md-12 text-center">
                 <h3>{channelName}</h3>
             </div>
-            <div>
+            {/* <div>
             <h5 style={{ padding: '1px' }}><u>Online chat members:</u></h5>
             {onlineUsers.map((onlineUser) => {
                 if (myName === onlineUser)
@@ -111,7 +111,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
                 }
             }
             )}
-            </div>
+            </div> */}
             <ChatContainer style={{ backgroundImage: `url(${chatImage})`, borderRadius: '20px', padding: '20px' }}>
             <div className="col-md-12 text-center"><b>{infoMsg}</b></div>
             <br />
