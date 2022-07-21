@@ -12,8 +12,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
   
   const cors = require('cors');
-  require('dotenv').config();
-  console.log(process.env.JWT_SECRET);
+  // require('dotenv').config();
+  // console.logprocess.env.JWT_SECRET);
   const corsOptions = {
     origin: ["http://127.0.0.1:3000", "http://localhost:3000", "http://127.0.0.1:3001", "http://localhost:3001", "http://127.0.0.1:3002", "http://localhost:3002", 'http://localhost:3001', 'http://localhost:3000'],
     credentials: true,
