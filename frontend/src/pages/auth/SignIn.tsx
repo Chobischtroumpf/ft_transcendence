@@ -10,34 +10,34 @@ const SignIn = () =>
     const [redirectTFA, setRedirectTFA] = useState(false);
     const [redirect, setRedirect] = useState(false);
     const [error, setError] = useState(false);
+    const [myWindow, setMyWindow] = useState<Window | null>(null);
 
     const submit = async (e: SyntheticEvent) => {
       e.preventDefault();
-      const myWindow = window.open('http://localhost:3000/auth/42');
+      setMyWindow(window.open('http://localhost:3000/auth/42'));
+
+      // return () => clearInterval(interval);
+    }
+
+    useEffect(() => {
       const interval = setInterval(async () => {
         if (getCookie("access_token") !== null) {   
           var tfaEnabled = false;
           async () => {
             try {
               await axios.get('user');
-              tfaEnabled = false
+              setRedirect(true);
             } catch (e) {
-              tfaEnabled = true
+              setRedirectTFA(true);
             }
-          }
-          if (tfaEnabled) {
-            setRedirectTFA(true);
-          }
-          else {
-            setRedirect(true);
           }
           myWindow?.close();
           clearInterval(interval);
         }
       }, 1000);
-
-      // return () => clearInterval(interval);
+      return () => clearInterval(interval);
     }
+    , [redirect, redirectTFA]);
 
   function getCookie(name: string): string | null {
     const nameLenPlus = (name.length + 1);
@@ -52,9 +52,9 @@ const SignIn = () =>
       })[0] || null;
   }
   
-    if (redirect) {
-      return <Navigate to={'/'} />
-    }
+  if (redirect) {
+    return <Navigate to={'/'} />
+  }
 
   if (redirectTFA) {
     return <Navigate to={'/auth/tfa'} />

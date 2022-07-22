@@ -1,27 +1,90 @@
-.message__outer {
+.chat_container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+    width: 100%;
+    /* max-height: 90vh; */
+    height: 90vh;
+    /* min-height: 70vh; */
+    /* overflow: auto; */
+    /* scrollbar-width: none; */
+    /* background-color: black; */
+    margin-bottom: 5px;
+}
+
+.chat_name {
+    text-align: center;
+}
+
+.chat_setting_link {
+    grid-column: 5;
+    grid-row: 4;
+    justify-self: center;
+}
+
+.chat_setting_button {
+    background-color: #6c757d;
+    border: #6c757d;
+    border-radius: 20px;
+    padding: 10px;
+    color: white;
+    outline: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.chat_members_list {
+    grid-column: 5;
+    grid-row: 1;
+    overflow-y: scroll;
+}
+
+.chat_message_container {
+    grid-column: 1/span 2;
+    grid-row: 1/span 3;
+    overflow-y: scroll;
+}
+
+.chat_input_container {
+    grid-column: 1/span 2;  
+    grid-row: 4;
+    border-radius: 20px;
+}
+
+.input_container_form {
+    position: relative;
     display: flex;
+    justify-content: center;
 }
 
-.message__inner {
-    flex: 1;
-    display: flex;
-    flex-direction: row-reverse;
+.input_container_input {
+    bottom: 4px;
+    border: 1px solid gray;
+    border-radius: 20px;
+    padding: 10px;
+    outline: none;
+    width: 100%;
+}
+  
+.input_container_button {
+    background-color: #6c757d;
+    border: #6c757d;
+    border-radius: 20px;
+    padding: 10px;
+    color: white;
+    outline: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.5;
+    
+    /* display: none !important ; */
 }
 
-.message__actions {
-    width: 67px;
-    padding-right: 5px;
-}
-
-.message__spacer {
-    flex: 1;
-}
-
-.message__bubble {
-    max-width: calc(100% - 67px);
-    overflow-wrap: break-word;
-}
-
-.message__actions {
-    flex-shrink: 0;
-}
+.input_container_button:hover {
+    color: #fff;
+    background-color: #5c636a;
+    border-color: #565e64;
+  }
