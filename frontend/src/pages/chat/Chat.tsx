@@ -106,11 +106,12 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
             </div>
             <div>
             <h5 style={{ padding: '1px' }}><u>Online chat members:</u></h5>
-            {onlineUsers.map((onlineUser) => {
+            {onlineUsers.map((onlineUser, index) => {
                 if (myName === onlineUser)
                 {
                     return (
-                    <li style={{ listStyleType : 'none' }}>
+                        
+                    <li style={{ listStyleType : 'none' }} key={index}>
                         <h6 style={{ padding: '1px', color: 'green' }}>{onlineUser}</h6>
                     </li>
                     );
@@ -118,7 +119,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
                 else
                 {
                     return (
-                    <li style={{ listStyleType : 'none' }}>
+                    <li style={{ listStyleType : 'none' }} key={index}>
                         <h6 style={{ padding: '1px', color: 'green' }}>{onlineUser} <button onClick={e => setName(onlineUser)} type="submit">Invite to play Pong</button></h6>
                     </li>
                     );
