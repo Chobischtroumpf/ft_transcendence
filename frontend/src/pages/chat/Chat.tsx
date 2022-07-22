@@ -74,8 +74,6 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
     }, []);
 
     useEffect(() => {
-        // if (channelName !== null)
-        //     setName(channelName);
         (async () => {
             const {data} = await axios.get('user');
             setMyName(data.username);
@@ -106,7 +104,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
             <div className="col-md-12 text-center">
                 <h3>{channelName}</h3>
             </div>
-            {/* <div>
+            <div>
             <h5 style={{ padding: '1px' }}><u>Online chat members:</u></h5>
             {onlineUsers.map((onlineUser) => {
                 if (myName === onlineUser)
@@ -127,7 +125,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
                 }
             }
             )}
-            </div> */}
+            </div>
             <ChatContainer style={{ backgroundImage: `url(${chatImage})`, borderRadius: '20px', padding: '20px' }}>
             <div className="col-md-12 text-center"><b>{infoMsg}</b></div>
             <br />
