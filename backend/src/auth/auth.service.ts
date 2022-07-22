@@ -61,7 +61,6 @@ export class AuthService
         const user = await this.getUserFromAuthenticationToken(temp[1]);
         if (!user)
             throw new WsException('Invalid credentials.');
-     //   console.log(user);
         return user;
     }
 

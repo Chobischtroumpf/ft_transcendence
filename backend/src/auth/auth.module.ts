@@ -21,8 +21,8 @@ import { TfaStrategy } from './strategies/tfa.strategy';
     ConfigModule.forRoot(), //isGlobal ne marche pas !!??
     UserModule, TypeOrmModule.forFeature([UserEntity, ChannelEntity, MessageEntity, JoinedUserStatus]), PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: 3600 }
+      secret: "monsecret",
+      signOptions: { expiresIn: 86400 }
     })
   ],
   exports: [AuthService, JwtStrategy, PassportModule],

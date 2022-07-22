@@ -29,7 +29,6 @@
 
 //   async handleConnection(@ConnectedSocket() client: Socket)
 //   {
-//       console.log('lol');
 //     try
 //     {
 //       const user = await this.authService.getUserFromSocket(client);

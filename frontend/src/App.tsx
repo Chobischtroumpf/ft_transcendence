@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Users from './pages/users/Users';
-import SingIn from './pages/SignIn';
+import SingIn from './pages/auth/SignIn';
+import Auth from './pages/auth/Auth';
 import Profile from './pages/profile/Profile';
 import Channels from './pages/chat/Channels';
 import Game from './pages/game/Game';
@@ -94,6 +95,7 @@ function App() {
           <Route path="/profile/settings" element={<Settings/>}></Route>
           <Route path="/users" element={<Users />}></Route>
           <Route path="/signin" element={<SingIn />}></Route>
+          <Route path="/auth/tfa" element={<Auth />}></Route>
           <Route path="/channels" element={<Channels socket={socket} channels={channels} lastPage={lastPage} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages} onlineUsers={onlineUsers}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings socket={socket}/>}></Route>

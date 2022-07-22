@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Navigate } from "react-router";
 import Wrapper from "../../components/Wrapper";
 import { encode } from "base64-arraybuffer";
+import { User } from "../../models/user";
 import './Settings.css'
 
 
@@ -12,21 +13,23 @@ export interface tfaDto {
 
 const Settings = () => {  
 
-  
+  const [user, setUser] = useState<User>();
   var [username, setUsername] = useState<string>('');
-  const [prevusername, setPrevUsername] = useState<string>();
   var [tfa, setTfa] = useState<boolean>(false);
-  var [tfaImage, setTfaImage] = useState<string | null>(null)
+  var [tfaImage, setTfaImage] = useState<string | null>(null);
   const [picturefile, setPictureFile] = useState<File>();
-  var [picture, setPicture] = useState<string>('');
-  var [prevpicture, setPrevPicture] = useState<string>();
+  var [picture, setPicture] = useState<string | undefined>(undefined);
+  var [error, setError] = useState<boolean>(false);
+  var [tfaCode, setTfaCode] = useState<string>('');
+
+  const [gotUser, setGotUser] = useState<boolean>(false)
   
   useEffect(() => {
   (async () => {
     const { data } = await axios.get("user");
     try {
-      setPrevUsername(data.username);
-      setPrevPicture(data.picture);
+      setUser(data);
+      setGotUser(true);
       // setTfa(data.tfa);
     } catch (e) {
       <Navigate to={'/error500'} />
@@ -37,32 +40,22 @@ const Settings = () => {
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
-    const tfaForm: tfaDto = { tfa: tfa };
+    console.log("into handleTfaSubmit");
     const data = await axios({
       method: 'post',
       url: "/user/tfa/secret/",
-      data: tfaForm,
-      headers: {'content-type': 'application/json'},
       responseType: 'arraybuffer'
     });
-    console.log(data.data);
     setTfaImage('data:image/jpeg;base64,' + encode(data.data));
-
-    
   }
 
   const handleUsernameSubmit = async(event: any) => {
     event.preventDefault();
-
-    const formData = new FormData();
-    if (username)
-      formData.append("username", username);
-    else if (prevusername && !username)
-      formData.append("username", prevusername);
-    try {
-     
+    if (!username && user)
+      setUsername(user.username);
+    console.log("into username submit");
+      try {
       const { data } = await axios.post("/user/username", { username: username });
-      console.log(data);
     }
     catch (e) {
       <Navigate to={'/error500'} />
@@ -73,9 +66,7 @@ const Settings = () => {
     event.preventDefault();
     let formData = new FormData();
     if (picturefile !== undefined) {
-      formData.append("picture", picturefile, picturefile.name);
-      console.log(picturefile.name);
-    
+      formData.append("picture", picturefile, picturefile.name);    
     }
     try {
       const { data } = await axios.post("/user/picture", formData, { headers: {'content-type': 'multipart/form-data'}} );
@@ -85,47 +76,69 @@ const Settings = () => {
     }
   }
 
+  const handleTfaTurnOn = async(event: any) => {
+    event.preventDefault();
+    try {
+      const { data } = await axios.post("/user/tfa/turn-on", { tfaCode: tfaCode });
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+  const handleTfaTurnOff = async(event: any) => {
+    event.preventDefault();
+    try {
+      await axios.post("/user/tfa/turn-off", { tfaCode: tfaCode });
+      const { data } = await axios.get("user");
+      setUser(data);
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+
   const handleChange = (event: any) => {
     setUsername(event.target.value);
   }
+
+  const handleTfaChange = (event: any) => {
+    setTfa(event.target.checked);
+  }
+
+  const handleTfaCodeChange = (event: any) => {
+    setTfaCode(event.target.value);
+  }	
 
   const handlePictureChange = (event: any) => {
     setPicture(URL.createObjectURL(event.target.files[0]));
     setPictureFile(event.target.files[0]);
   }
 
-  const handleTfaChange = (event: any) => {
-    console.log("checked : " + event.target.checked);
-    setTfa(event.target.checked);
-    console.log(tfa);
-    console.log(tfa);
-    console.log(tfa);
 
-  }
 
   return (
     <Wrapper>
       <div className="settings">
         <h1 className="title">Settings</h1>
-        { (username) && (
-            <div className="user-name">
-            <img className="profile-picture" src={picture} alt="avatar" />
-            <h1>{username}'s profile</h1>
-            </div>
-          )}
-          { (prevusername) && (!username) && (
-            <div className="user-name">
-            <img className="profile-picture" src={picture} alt="avatar" />
-            <h1>{prevusername}'s profile</h1>
-            </div>
-          )}
-          
+        {(gotUser) ? (
+         <>
+         <div className="user-name">
+            {
+              (picture) ?
+              (<img className="profile-picture" src={picture} alt="avatar" />) : 
+              (<img className="profile-picture" src={`http://localhost:3000/user/picture/${user?.picture}`} alt="avatar" />)
+            }
+            {(username) && (<h1>{username}'s profile</h1>)}
+            {(!username && user?.username) && (<h1>{user?.username}'s profile</h1>)}
+          </div>
         <form onSubmit={handleUsernameSubmit}>
           <input
             className="username input"
             type="string"
             name="username"
-            placeholder={prevusername}
+            placeholder={user?.username}
             value={username}
             onChange={handleChange}
           />
@@ -142,26 +155,42 @@ const Settings = () => {
             />
             <input type="submit" value="Save"/>
         </form>
-
+        {(user && !user.tfaEnabled === true) ? (
         <form onSubmit={handleTfaSubmit}>
           <div className="tfa input">
-            <input
-              className="tfa"
-              type="checkbox"
-              name="Two Factor Auth"
-              value="Two Factor Auth"
-              onChange={handleTfaChange}/>
-              Two Factor Auth
+          <input type="submit" value="Enable Two Factor Authentication"/>
           </div>
-          <input type="submit" value="Save"/>
+        </form>) : (
+        <form onSubmit={handleTfaTurnOff}>
+          <div className="tfa input">
+            <h2>deactivate TFA</h2>
+            <input type="text" name="tfaCode" placeholder="Enter TFA Code" value={tfaCode} onChange={handleTfaCodeChange}/>
+            <input type="submit" value="Turn Off TFA"/>
+          </div>
         </form>
+        )}
         { (tfaImage) && (
-        <div className="tfa-qr">
-          <img src={tfaImage} alt="tfa-qr" />
-        </div>)}
+          <div>
+            <div className="tfa-qr">
+              <img src={tfaImage} alt="tfa-qr" />
+            </div>
+            <div>
+              <h1>Scan the QR code to setup your two factor authentication</h1>
+            </div>
+            <form onSubmit={handleTfaTurnOn}>
+            <input className="tfa-code input" type="string" name="tfa-code" placeholder="Enter code" onChange={handleTfaCodeChange} />
+            <input type="submit" value="Save"/>
+        </form>
+          </div>
+        )}
+        </>
+        ) : 
+        (<div><h1>Loading</h1></div>)
+      }
       </div>
     </Wrapper>
   );
+
 };
 
 export default Settings;

@@ -13,7 +13,7 @@ export class UserService
 {
     constructor(@InjectRepository(UserEntity) private userRepository: Repository<UserEntity>) {}
 
-    async createUser(newUser: NewUserDto): Promise<UserEntity> //console.log ici -> Done : on recoit tout le user42
+    async createUser(newUser: NewUserDto): Promise<UserEntity>
     {
         let user = this.userRepository.create(newUser);
         try {
@@ -75,11 +75,10 @@ export class UserService
       return await this.userRepository.findOneBy({ username });
     }
 
-    async setTfaSecret(secret: string, id: number)
+    async setTfaSecret(secret: string, user: UserEntity)
     {
-      return this.userRepository.update(id, {
-        tfaSecret: secret
-      });
+      // user.tfaSecret = secret;	
+      return this.userRepository.update(user.id, {tfaSecret: secret});
     }
 
     async generateTfaSecret(user: UserEntity)
@@ -88,7 +87,7 @@ export class UserService
 
       const otpauthUrl = authenticator.keyuri(user.username, process.env.APP_NAME, secret);
 
-      await this.setTfaSecret(secret, user.id);
+      await this.setTfaSecret(secret, user);
 
       return {
         secret,
@@ -101,10 +100,16 @@ export class UserService
       return toFileStream(stream, otpauthUrl);
     }
 
-    async turnOnTfa(id: number)
+    async turnOnTfa(user: UserEntity)
     {
-      return this.userRepository.update(id, {
+      return this.userRepository.update(user.id, {
         tfaEnabled: true
+      });
+    }
+
+    async turnOffTfa(id: number) {
+      return this.userRepository.update(id, {
+        tfaEnabled: false
       });
     }
 
@@ -118,9 +123,7 @@ export class UserService
 
     updateUsername(user: UserEntity, username: string)
     {
-      console.log(username);
-      user.username = username;
-      return this.userRepository.save(user);
+      return this.userRepository.update(user.id, {username: username});
     }
 
     updateStatus(user: UserEntity, status: UserStatus)
@@ -131,7 +134,6 @@ export class UserService
 
     async requestFriend(user: UserEntity, id: number)
     {
-      // console.log("requestFriend : adding :",id);
       const friend = await this.getUserById(id);
       if (!friend)
         throw new NotFoundException('User not found');
@@ -140,7 +142,6 @@ export class UserService
         throw new ConflictException('You are already friends');
       else{
         user.friends.push(friend);
-        // console.log("requestFriend : user's friends :", user.friends);
         return await this.userRepository.save(user);
       }
     }
@@ -193,11 +194,6 @@ export class UserService
     async getFriends(id): Promise<UserEntity[]>
     {
       const requests = await this.getRequestedUsers(id);
-      // console.log("getFriends : requests :", requests);
-      // const requestedBy = await this.getRequestedByUsers(id);
-      // console.log("getFriends : requestedBy :", requestedBy);
-      // const temp = await requests.filter((user) => requestedBy.some((usr) => user.id === usr.id));
-      // console.log("getFriends : temp :", temp);
       return requests;
     }
 
@@ -210,27 +206,6 @@ export class UserService
       user.blockedUsers.push(toBlock);
       return await this.userRepository.save(user);
     }
-
-    // async blockUser(user: UserEntity, id: number)
-    // {
-    //     this.userIdIsSame(id, user.id);
-    //     const blockedUser = await this.getUserById(id);
-    //     user.blockedUsers = await this.getBlockedUsers(user.id);
-    //     for (const x of user.blockedUsers)
-    //         if (x.id === blockedUser.id)
-    //             throw new HttpException({status: HttpStatus.FORBIDDEN, error: 'User is already blocked'}, HttpStatus.FORBIDDEN);
-    //     user.blockedUsers.push(blockedUser);
-    //     return await this.userRepository.save(user);
-    // }
-
-    // async unblockUser(user: UserEntity, id: number)
-    // {
-    //     this.userIdIsSame(id, user.id);
-    //     const blockedUser = await this.getUserById(id);
-    //     user.blockedUsers = await this.getBlockedUsers(user.id);
-    //     user.blockedUsers = user.blockedUsers.filter((blockedUser) => {return id !== blockedUser.id});
-    //     return await this.userRepository.save(user);
-    // }
 
     async unblockUser(user: UserEntity, id: number)
     {
@@ -278,9 +253,10 @@ export class UserService
     }
 
     async uploadFile(user: UserEntity, path: any) {
-      user.picture = path.filename;
-
-      return await this.userRepository.save(user);
+      // user.picture = path.filename;
+      // console.log(user.picture);
+      await this.userRepository.update(user.id, {picture: path.filename});
+      return await this.getUserById(user.id);
     }
 
 }

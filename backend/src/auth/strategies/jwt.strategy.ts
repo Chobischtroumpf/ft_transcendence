@@ -16,7 +16,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       if (req && req.cookies) {
         token = req.cookies['access_token'];
       }
-      // console.log(token);
       return token || ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     };
 
@@ -28,6 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
+    console.log(payload);
     const user = await this.userService.getUserById(payload.id);
     if (user) {
       if (!user.tfaEnabled || payload.tfaOK) {

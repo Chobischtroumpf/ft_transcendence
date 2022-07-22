@@ -5,24 +5,19 @@ import { User, UserLevel, UserStatus } from "../models/user";
 
 const Nav = () =>
 {
-    const [user, setUser] = useState(new User(0, '', '', 'default.png', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+    const [user, setUser] = useState(new User(0, '', '', false, 'default.png', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
 
     useEffect(() => {
         (
             async () => {
-                const {data} = await axios.get('user');
 
-                setUser(new User(
-                    data.id,
-                    data.username,
-                    data.socketId,
-                    data.picture,
-                    data.status,
-                    data.level,
-                    data.wins,
-                    data.losses,
-                    data.rank,
-                ));
+                try {
+                    const {data} = await axios.get('user');
+                    setUser(data);
+                }
+                catch (e) {
+                    console.log(e);
+                }
             }
         )();
     }, []);

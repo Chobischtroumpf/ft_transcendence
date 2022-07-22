@@ -20,7 +20,7 @@ import { UserService } from './user.service';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: 3600 }
+      signOptions: { expiresIn: 86400 }
     })],
   exports: [UserService],
   controllers: [UserController],

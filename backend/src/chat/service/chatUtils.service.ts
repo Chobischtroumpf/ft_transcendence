@@ -228,7 +228,6 @@ export class ChatUtilsService
             author: user,
             channel: channel
         });
-        console.log(message);
         try {
             message = await this.messageRepository.save(message);
         } catch (e) {
