@@ -107,7 +107,15 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const user = client.data.user;
       const channel = await this.chatUtilService.getChannelByName(name);
       client.leave(name);
-      this.wss.to(name).emit('leaveToClient', `User: ${user.username} left from the channel`)
+      const chatUsers = [];
+      for (const socket of this._sockets)
+      {
+        if (socket.rooms.has(name))
+        {
+          chatUsers.push(socket.data.user.username);
+        }
+      }
+      this.wss.to(name).emit('leaveToClient', { msg: `User: ${user.username} left from the channel`, onlineUsers: chatUsers })
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -120,17 +128,17 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const user = client.data.user;
       await this.chatService.joinChannel(channelData, user);
       client.join(channelData.name);
-      // const chatUsers = [];
-      // for (const socket of this._sockets)
-      // {
-      //   console.log(channelData.name);
-      //   if (socket.rooms.has(channelData.name))
-      //   {
-      //     chatUsers.push(socket.data.user.username);
-      //   }
-      // }
+      const chatUsers = [];
+      for (const socket of this._sockets)
+      {
+        if (socket.rooms.has(channelData.name))
+        {
+          chatUsers.push(socket.data.user.username);
+        }
+      }
       const allMessages = await this.chatService.getMessagesFromChannel(channelData.name, user);
-      this.wss.to(channelData.name).emit('joinToClient', { msg: `${user.username} joined to channel at ${new Date}`, channel: channelData.name, messages: allMessages/*,onlineUsers: chatUsers*/ });
+      // client.emit('joinToClient', { channel: channelData.name });
+      this.wss.to(channelData.name).emit('joinToClient', { msg: `${user.username} joined to channel at ${new Date}`, channel: channelData.name, messages: allMessages, onlineUsers: chatUsers });
     }
     catch { throw new WsException('Something went wrong'); }
   }

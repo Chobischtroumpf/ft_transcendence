@@ -20,10 +20,10 @@ type Props = {
     joinMsg: string,
     channelName: string,
     messages: MessageI[],
-    // onlineUsers: string[],
+    onlineUsers: string[],
 };
 
-const Chat = ({socket, joinMsg, channelName, messages/*, onlineUsers*/}: Props) =>
+const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
 {
     const [newMessage, setNewMessage] = useState('');
     const [infoMsg, setInfoMsg] = useState(joinMsg);
@@ -64,13 +64,18 @@ const Chat = ({socket, joinMsg, channelName, messages/*, onlineUsers*/}: Props) 
     useEffect(() => {
         const intervalId = setInterval(() => {
             if(window.location.href != oldURL){
-                socket?.emit('leaveChannelToServer', channelName);
+                var url_string = oldURL;
+                var url = new URL(url_string);
+                const temp = url.searchParams.get('chatId');
+                socket?.emit('leaveChannelToServer', temp);
                 clearInterval(intervalId);
             }
         }, 1000);
     }, []);
 
     useEffect(() => {
+        // if (channelName !== null)
+        //     setName(channelName);
         (async () => {
             const {data} = await axios.get('user');
             setMyName(data.username);
@@ -80,14 +85,12 @@ const Chat = ({socket, joinMsg, channelName, messages/*, onlineUsers*/}: Props) 
             setRedirect(true);
         setInfoMsg(joinMsg);
         return () => {
-            // socket?.emit('leaveToServer', channelName);
-            // leave channel emit here
+
           }
     }, [joinMsg, socket]);
 
     if (redirect === true)
     {
-        // leave channel emit here
         return <Navigate to={'/channels'} />;
     }
 
