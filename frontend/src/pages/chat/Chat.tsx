@@ -14,6 +14,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import chatImage from '../../assets/chat2.png';
 import { url } from "inspector";
 
+
 type Props = {
     socket: Socket | null,
     joinMsg: string,
@@ -31,6 +32,8 @@ const Chat = ({socket, joinMsg, channelName, messages/*, onlineUsers*/}: Props) 
     const [base64, setBase64] = useState();
     const [name, setName] = useState('');
     const [myName, setMyName] = useState('');
+    const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
+    var oldURL = window.location.href;
  
     const pongGame = async (e: SyntheticEvent) =>
     {
@@ -57,6 +60,15 @@ const Chat = ({socket, joinMsg, channelName, messages/*, onlineUsers*/}: Props) 
         setNewMessage("");
         window.scrollTo(0,document.body.scrollHeight);
     }
+   
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            if(window.location.href != oldURL){
+                socket?.emit('leaveChannelToServer', channelName);
+                clearInterval(intervalId);
+            }
+        }, 1000);
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -68,6 +80,7 @@ const Chat = ({socket, joinMsg, channelName, messages/*, onlineUsers*/}: Props) 
             setRedirect(true);
         setInfoMsg(joinMsg);
         return () => {
+            // socket?.emit('leaveToServer', channelName);
             // leave channel emit here
           }
     }, [joinMsg, socket]);

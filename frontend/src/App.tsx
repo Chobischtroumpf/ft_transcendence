@@ -41,7 +41,8 @@ function App() {
       // setOnlineUsers(data.onlineUsers);
     });
     newSocket.on('leaveToClient', (data) => {
-      console.log(data);
+      setJoinMsg(data);
+      console.log('  ' + data);
     });
     newSocket.on('msgToClient', (data) => {
       setMessages(data);

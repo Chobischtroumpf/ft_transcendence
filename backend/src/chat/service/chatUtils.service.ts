@@ -29,8 +29,8 @@ export class ChatUtilsService
             channel,
             user
         });
-        console.log("newUserStatus");
-        console.log(newUserStatus);
+        // console.log("newUserStatus");
+        // console.log(newUserStatus);
         await this.joinedUserStatusRepository.save(newUserStatus);
         return newUserStatus;
     }

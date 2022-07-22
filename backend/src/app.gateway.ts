@@ -93,27 +93,21 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       const result = await this.chatUtilService.paginate(page);
-      const channels = await this.chatUtilService.getAllChannels();
-      for (const channel of channels)
-        client.leave(channel.name);
       this.wss.emit('getChannelsToClient', result);
     }
     catch { throw new WsException('Something went wrong'); }
   }
 
-  @SubscribeMessage('leaveChannelsToServer')
-  async leave(@ConnectedSocket() client: Socket)
+  @SubscribeMessage('leaveChannelToServer')
+  async leave(@ConnectedSocket() client: Socket, @MessageBody() name: string)
   {
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
-      const channels = await this.chatUtilService.getAllChannels();
-      for (const channel of channels)
-        client.leave(channel.name);
-      
+      const channel = await this.chatUtilService.getChannelByName(name);
+      client.leave(name);
+      this.wss.to(name).emit('leaveToClient', `User: ${user.username} left from the channel`)
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -124,7 +118,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       await this.chatService.joinChannel(channelData, user);
       client.join(channelData.name);
       // const chatUsers = [];
@@ -143,17 +136,15 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage('leaveToServer')
-  async leaveChannel(@ConnectedSocket() client: Socket, @MessageBody() id: number)
+  async leaveChannel(@ConnectedSocket() client: Socket, @MessageBody() name: string)
   {
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
-      const channel = await this.chatUtilService.getChannelById(id);
-      const name = channel.name;
-      await this.chatService.leaveChannel(id, user);
+      const channel = await this.chatUtilService.getChannelByName(name);
+      await this.chatService.leaveChannel(channel.id, user);
       client.leave(name);
-      this.wss.to(name).emit('leaveToClient', `User: ${user.username} left from the channel`)
+      this.wss.to(name).emit('leaveToClient', `User: ${user.username} left from the channel`);
     }
     catch { throw new WsException('Something went wrong'); }
   }
