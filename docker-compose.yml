@@ -7,7 +7,7 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - ./backend/.env
+      - ./backend/src/common/envs/development.env
     restart: always
     networks:
       - postgres

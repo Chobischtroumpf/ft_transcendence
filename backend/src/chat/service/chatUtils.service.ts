@@ -19,8 +19,6 @@ export class ChatUtilsService
 
     async createNewJoinedUserStatus(owner: boolean, admin: boolean, muted: Date, banned: Date, channel: ChannelEntity, user: UserEntity)
     {
-        // console.log("channel : " + channel);
-        // console.log("user : " + user);
         const newUserStatus = await this.joinedUserStatusRepository.create({
             owner,
             admin,
@@ -29,8 +27,6 @@ export class ChatUtilsService
             channel,
             user
         });
-        // console.log("newUserStatus");
-        // console.log(newUserStatus);
         await this.joinedUserStatusRepository.save(newUserStatus);
         return newUserStatus;
     }

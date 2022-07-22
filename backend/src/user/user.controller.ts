@@ -63,9 +63,6 @@ export class UserController
   async turnOnTfa(@User() user, @Body() { tfaCode }, @Res({passthrough: true}) res)
   {
     const isCodeValid = this.userService.isTfaCodeValid(tfaCode, user);
-    console.log("iscodevalid: ", isCodeValid);
-    console.log(tfaCode);
-
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }

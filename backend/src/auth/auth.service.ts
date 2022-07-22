@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
+import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { Socket } from 'socket.io';
 import { ChatService } from 'src/chat/service/chat.service';
@@ -14,6 +15,8 @@ import { Repository } from 'typeorm';
 export class AuthService
 {
     constructor(
+        @Inject(ConfigService)
+        public config: ConfigService,
         @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
         private userService: UserService,
         private chatUtilService: ChatUtilsService,
@@ -24,8 +27,9 @@ export class AuthService
     async treatFtOauth(user42)
     {
         let user = await this.userService.getUserById(user42.id);
-        if (!user)
+        if (!user){
             user = await this.userService.createUser(user42);
+        }
         const jwt = this.jwtService.sign({id: user.id, username: user.username});
         return {user, jwt};
     }

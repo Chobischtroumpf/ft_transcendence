@@ -7,11 +7,18 @@ import { UserEntity, UserStatus } from './entities/user.entity';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
 import { number } from '@hapi/joi';
+import { Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
 
 @Injectable()
 export class UserService
 {
-    constructor(@InjectRepository(UserEntity) private userRepository: Repository<UserEntity>) {}
+  @Inject(ConfigService)
+  public config: ConfigService;
+
+
+  constructor(@InjectRepository(UserEntity) private userRepository: Repository<UserEntity>) {}
 
     async createUser(newUser: NewUserDto): Promise<UserEntity>
     {
@@ -253,8 +260,6 @@ export class UserService
     }
 
     async uploadFile(user: UserEntity, path: any) {
-      // user.picture = path.filename;
-      // console.log(user.picture);
       await this.userRepository.update(user.id, {picture: path.filename});
       return await this.getUserById(user.id);
     }

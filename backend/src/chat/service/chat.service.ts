@@ -116,15 +116,12 @@ export class ChatService
     {
 
         const channel = await this.chatUtilService.getChannelByName(channelData.name);
-        // console.log(channel.id);
         this.chatUtilService.channelIsPrivate(channel);
         if (channel.status === ChannelStatus.direct && (channel.name.includes("direct_with_") === false || channel.name.includes(`${user.id}`) === false))
             throw new WsException('you dont have acceess to join here');
         if (await this.chatUtilService.clientIsMember(user, channel) === true)
             return ;
         const userStatus = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
-        // const userStatus = await this.joinedUserStatusRepository.findOneBy({ user, channel });
-        // console.log('loool');
         if (userStatus)
         {
             if (userStatus.banned !== null)

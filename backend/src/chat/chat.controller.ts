@@ -162,7 +162,6 @@ export class ChatController
     @Get('/userstatus/:name')
     async getUserStatus(@Param('name') name: string, @User() user)
     {
-        console.log("controler");
         return this.chatUtilService.getStatus(name, user);
     }
 }
