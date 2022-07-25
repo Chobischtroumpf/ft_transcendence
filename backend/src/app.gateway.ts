@@ -252,10 +252,14 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const user = client.data.user;
       // const user = await this.authService.getUserFromSocket(client);
       const game = this.games.find(e => e.name === room);
+      if (game.winner !== undefined)
+        return ;
       if (game.players[0].player.username === user.username)
         game.winner = game.players[1];
       else if (game.players[1].player.username === user.username)
         game.winner = game.players[0];
+      else
+        return ;
       // end game and leave
       game.sounds.win === true;
       this.endGame(game);
@@ -401,6 +405,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const index = this.games.findIndex(e => e.id === game.id);
       this.games.splice(index, 1);
     }, 10000);
+    
   }
 
   addPlayersToGame(player1: UserEntity, player2: UserEntity, room: string)

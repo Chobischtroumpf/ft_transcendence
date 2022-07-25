@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
@@ -15,14 +15,27 @@ type Props = {
 
 const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
 {
+    var oldURL = window.location.href;
+
     const style = {
         border: '1px solid black',
     };
 
-    const leave = async (e: SyntheticEvent) => {
-        e.preventDefault();
-        socket?.emit('leaveGameToServer', gameUpdate?.name);
-    }
+    // const leave = () => {
+    //     socket?.emit('leaveGameToServer', gameUpdate?.name);
+    // }
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            if(window.location.href != oldURL){
+                var url_string = oldURL;
+                var url = new URL(url_string);
+                const temp = url.searchParams.get('gamename');
+                socket?.emit('leaveGameToServer', temp);
+                clearInterval(intervalId);
+            }
+        }, 1000);
+    }, []);
 
     window.addEventListener("keydown", function(event) {
         if (event.defaultPrevented)
@@ -69,7 +82,7 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
                 <Card.Body>
                 <div className="col-md-12 text-center">
                     <h3>{gameUpdate?.player1.user.username} vs {gameUpdate?.player2.user.username}</h3>
-                    <form onSubmit={leave}>
+                    {/* <form onSubmit={leave}>
                         <button style={{
                                 background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
                                 padding: "13px 0",
@@ -82,7 +95,7 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
                                 fontWeight: "bold",
                                 fontFamily: "Optima, sans-serif"
                         }} type="submit">Leave Game</button>
-                    </form>
+                    </form> */}
                 </div>
                 </Card.Body>
             </Card>
