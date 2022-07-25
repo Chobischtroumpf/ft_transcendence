@@ -3,12 +3,7 @@
     grid-template-columns: 1fr 1fr;
     grid-gap: 10px;
     width: 100%;
-    /* max-height: 90vh; */
     height: 90vh;
-    /* min-height: 70vh; */
-    /* overflow: auto; */
-    /* scrollbar-width: none; */
-    /* background-color: black; */
     margin-bottom: 5px;
 }
 

@@ -10,32 +10,31 @@ const SignIn = () =>
     const [redirectTFA, setRedirectTFA] = useState(false);
     const [redirect, setRedirect] = useState(false);
     const [error, setError] = useState(false);
-    const [myWindow, setMyWindow] = useState<Window | null>(null);
 
     const submit = async (e: SyntheticEvent) => {
       e.preventDefault();
-      setMyWindow(window.open('http://localhost:3000/auth/42'));
-
+      let myWindow = window.open('http://localhost:3000/auth/42');
+      const interval = setInterval(async () => {
+        if (getCookie("access_token") !== null) {   
+          setRedirect(true);
+          // async () => {
+          //   try {
+          //     await axios.get('user');
+          //     setRedirect(true);
+          //   } catch (e) {
+          //     setRedirectTFA(true);
+          //   }
+          // }
+          myWindow?.close();
+          clearInterval(interval);
+          return () => clearInterval(interval);
+        }
+      }, 1000);
+   
       // return () => clearInterval(interval);
     }
 
     useEffect(() => {
-      const interval = setInterval(async () => {
-        if (getCookie("access_token") !== null) {   
-          var tfaEnabled = false;
-          async () => {
-            try {
-              await axios.get('user');
-              setRedirect(true);
-            } catch (e) {
-              setRedirectTFA(true);
-            }
-          }
-          myWindow?.close();
-          clearInterval(interval);
-        }
-      }, 1000);
-      return () => clearInterval(interval);
     }
     , [redirect, redirectTFA]);
 

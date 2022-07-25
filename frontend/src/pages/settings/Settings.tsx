@@ -15,12 +15,12 @@ const Settings = () => {
 
   const [user, setUser] = useState<User>();
   var [username, setUsername] = useState<string>('');
-  var [tfa, setTfa] = useState<boolean>(false);
   var [tfaImage, setTfaImage] = useState<string | null>(null);
   const [picturefile, setPictureFile] = useState<File>();
   var [picture, setPicture] = useState<string | undefined>(undefined);
   var [error, setError] = useState<boolean>(false);
   var [tfaCode, setTfaCode] = useState<string>('');
+  var [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
 
   const [gotUser, setGotUser] = useState<boolean>(false)
   
@@ -30,13 +30,13 @@ const Settings = () => {
     try {
       setUser(data);
       setGotUser(true);
-      // setTfa(data.tfa);
     } catch (e) {
       <Navigate to={'/error500'} />
     }
   }
   )();
-  }, []);
+  setShouldUpdate(false);
+  }, [shouldUpdate]);
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
@@ -53,13 +53,14 @@ const Settings = () => {
     event.preventDefault();
     if (!username && user)
       setUsername(user.username);
-    console.log("into username submit");
       try {
       const { data } = await axios.post("/user/username", { username: username });
     }
     catch (e) {
-      <Navigate to={'/error500'} />
+      setError(true);
     }
+    setUsername('');
+    setShouldUpdate(true);
   }
 
   const handlePictureSubmit = async(event: any) => {
@@ -98,13 +99,8 @@ const Settings = () => {
     }
   }
 
-
   const handleChange = (event: any) => {
     setUsername(event.target.value);
-  }
-
-  const handleTfaChange = (event: any) => {
-    setTfa(event.target.checked);
   }
 
   const handleTfaCodeChange = (event: any) => {
@@ -116,7 +112,10 @@ const Settings = () => {
     setPictureFile(event.target.files[0]);
   }
 
-
+  if (error)
+  {
+    return <Navigate to={'/error500'} />
+  }
 
   return (
     <Wrapper>

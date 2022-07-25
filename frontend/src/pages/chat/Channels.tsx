@@ -50,11 +50,11 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     e.preventDefault();
 
     const data = await axios.get(`chat/${channelName}`);
-    console.log(data.data.status);
+    // console.log(data.data.status);
     if (data.data.status !== "public")
     {
       try {
-        console.log("here");
+        // console.log("here");
         return <ModalPwd chatName={channelName}/>
       }
       catch (e) {

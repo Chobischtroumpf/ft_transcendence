@@ -45,7 +45,12 @@ const Profile = (props: Props) => {
       setError(true);
     })
 
-    getFriends()
+    getFriends().then(friends => {
+      setFriends(friends);
+      setGotFriends(true);
+    }, error => {
+      setError(true);
+    });
 
     setShouldUpdate(false);
   }, [shouldUpdate, error]);
@@ -55,9 +60,8 @@ const Profile = (props: Props) => {
   }
 
   async function getFriends() {
-    axios.get(`/user/friend`).then(answer => {
-      setFriends(friends);
-      setGotFriends(true);
+    return axios.get(`/user/friend`).then(answer => {
+      return answer.data;
     }, error => {
       setError(true);
     });
@@ -87,18 +91,27 @@ const Profile = (props: Props) => {
     setUpdate();
   }
 
-  return (
-    <Wrapper setParentState={setUpdate}>
-      {/* (error === true) ? (<Navigate to="/err500" />) : */}
-      {/* ( */}
-      <div className="profile-container">
-      {(gotUser && gotOwnUser && gotFriends) &&
-        ((user?.id != ownUser?.id) ?
-          (<OtherProfile user={user} friends={friends} socket={props.socket} setParentState={setShouldUpdate} />) :
-          (<UserProfile friends={friends} user={ownUser} socket={props.socket} setParentState={setShouldUpdate}/>))}
-      </div>{/*)*/}
-    </Wrapper>
-  );
+  if (gotUser && gotOwnUser && gotFriends)
+  {
+    return (
+      <Wrapper setParentState={setUpdate}>
+        <div className="profile-container">
+        {((user?.id != ownUser?.id) ?
+            (<OtherProfile user={user} friends={friends} socket={props.socket} setParentState={setShouldUpdate} />) :
+            (<UserProfile friends={friends} user={ownUser} socket={props.socket} setParentState={setShouldUpdate}/>))}
+        </div>{/*)*/}
+      </Wrapper>
+    );
+  }
+  else {
+    return (
+      <Wrapper setParentState={setUpdate}>
+      <div>
+        <h1>Loading...</h1>
+      </div>
+      </Wrapper>
+    );
+  }
 }
 
 export default Profile;

@@ -16,6 +16,8 @@ interface State {
   matchHistory: any[];
   socket: Socket | null;
   error: boolean;
+  redirect: boolean;
+  whichFriend: number;
 }
 
 interface Props {
@@ -33,7 +35,9 @@ export default class UserProfile extends Component<Props, State> {
       friends: this.props.friends,
       matchHistory: [],
       socket: this.props.socket,
-      error: false
+      error: false,
+      whichFriend: 0,
+      redirect: false
     };
     this.componentDidMount = this.componentDidMount.bind(this); 
   }
@@ -53,6 +57,7 @@ export default class UserProfile extends Component<Props, State> {
   async getMatchHistory() {
     const data = await axios.get(`/match/${this.state.user.id}`)
     try {
+      // console.log("matchHistory :",data.data)
       return(data.data);
     } catch (e) {
       this.setState({error: true});
@@ -68,11 +73,35 @@ export default class UserProfile extends Component<Props, State> {
     }
   }
 
+  async directMessage(friendId : number, userId : number){
+
+    try{
+      const {data} = await axios.post(`/chat/direct`, {id: friendId});
+      this.setState({redirect: true, whichFriend: friendId});
+    }
+    catch(e) {
+      console.log("je siis icicici");
+      this.setState({redirect: true});
+      this.setState({whichFriend: friendId})
+      // return <Navigate to={`/chat?chatId=${userId}_${friendId}`} />;
+    }
+    
+    // if (data.code == 403)
+      
+  }
+
   render() {   
     if (this.state.error) {
       return <Navigate to={'/error500'} />;
     }
     console.log(this.state.user)
+    if(this.state.redirect)
+    {
+      let name = `direct_with_${this.state.user.id}_${this.state.whichFriend}`
+      this.state.socket?.emit('joinToServer', {name});
+        // this.state.socket?.emit('joinToServer', { `direct_with_${this.state.user.id}_${this.state.whichFriend} `});
+      return <Navigate to={`/chat?chatId=direct_with_${this.state.user.id}_${this.state.whichFriend}`}/>
+    }
     return (
         <div>
           <div className="user-profile">
@@ -151,10 +180,28 @@ export default class UserProfile extends Component<Props, State> {
             <div className="gameHistory">
               <div className="gameHistory-item">
                 <h2 className="title">Game History</h2>
-                {/* {(user.gameHistory.size() > 0) ? ( */}
-                {/* ) : ( */}
+                {(this.state.matchHistory.length > 0) ? (
+                  <div className="gameHistory-list">
+                    {/* {this.state.matchHistory.map(match => {
+                      return (
+                        <div className="gameHistory-item">
+                          <div className="gameHistory-item-left">
+                            <h5>{match.winner.username}</h5>
+                            <p>{match.winner.level}</p>
+                          </div>
+                          <div className="gameHistory-item-right">
+                            <h5>{match.loser.username}</h5>
+                            <p>{match.loser.level}</p>
+                          </div>
+                        </div>
+                      )
+                    }
+                    )} */}
+                  </div>
+                ) : (
                 <p className="">{this.state.user.username} has not played any games yet.</p>
-                {/* ) */}
+                )
+                }
               </div>
             </div>
           </div>
@@ -168,7 +215,21 @@ export default class UserProfile extends Component<Props, State> {
                       {this.state.friends.map((friend:User) => (
                         <li key={friend.id}>
                           <Link to={`/profile?userId=${friend.id}`} onClick={this.props.setParentState}> {friend.username} </Link>
-                        {/* <a href={`/profile/removefriend?userId=${friend.id}`}>Remove</a> */}
+                          <button onClick={() => this.directMessage(friend.id, this.state.user.id)}>direct message</button>
+                         {(
+                          <button className="btn" onClick={
+                            async () => {
+                              try {
+                                await axios.delete(`/user/friend/${friend.id}`)
+                                let friends = await axios.get(`/user/friend`)
+                                this.setState({friends: friends.data})
+                              } catch (e) {
+                                this.setState({error: true});
+                              }
+                              this.setState
+                            }
+                          }> remove friend</button>
+                          )}
                         </li>
                       ))}
                     </ul>

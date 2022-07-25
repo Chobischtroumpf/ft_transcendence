@@ -120,9 +120,9 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               <li style={{ listStyleType : 'none' }} key={index}>
                 <h6 style={{ padding: '1px', color: 'green' }}>
                   {onlineUser} 
-                  <button onClick={e => setName(onlineUser)} type="submit">
-                    Invite to play Pong
-                  </button>
+                  <form onSubmit={pongGame}>
+                    <input type="submit" value="Invite to game" />
+                  </form>
                 </h6>
               </li>
               );
@@ -143,13 +143,11 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               {
                 return (
                   <li style={{listStyleType: 'none' }} key={message.id}>
-                    <form onSubmit={pongGame}>
                       <h5 style={{textAlign: 'right', padding: '10px' }}>
                         <span style={{backgroundColor: '#f1f1f1', borderRadius: '20px', padding: '10px' }}>
                           {message.content}
                         </span>
                       </h5>
-                    </form>
                   </li>
                 );
               }
@@ -157,9 +155,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               {
                 return (
                   <li style={{listStyleType: 'none' }} key={message.id}>
-                    <form onSubmit={pongGame}>
                       <h5 style={{ padding: '10px' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px'}}><b>{message.author.username}:</b> {message.content}</span></h5>
-                        </form>
                   </li>
                 );
               }

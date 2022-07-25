@@ -138,7 +138,7 @@ const AdminUser = (ChatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			console.log("here")
+			// console.log("here")
 		}
 	};
 
@@ -216,7 +216,7 @@ const BanUser = (ChatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			console.log("here")
+			// console.log("here")
 		}
 	};
 
@@ -463,7 +463,7 @@ const MuteUser = (ChatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			console.log("here")
+			// console.log("here")
 		}
 	};
 
@@ -541,7 +541,7 @@ const UnmuteUser = (ChatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			console.log("here")
+			// console.log("here")
 		}
 	};
 
