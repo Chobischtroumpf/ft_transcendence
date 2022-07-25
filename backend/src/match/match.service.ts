@@ -70,21 +70,25 @@ export class MatchService
         console.log("matchData : ",matchData);
         console.log("match : ", match);
         
-        let temp = this.matchRepository.save(match);
+        let temp = await this.matchRepository.save(match);
         await this.addNewStats(match.homePlayer, match.awayPlayer, match.winner);
         await this.addNewLevel(match.homePlayer);
         await this.addNewLevel(match.awayPlayer);
         await this.addUserRank(match.homePlayer);
         await this.addUserRank(match.awayPlayer);
+        // homePlayer.homeMatches.push(temp);
+        // await this.userRepository.save(homePlayer);
+        // console.log()
         // console.log("match : ", temp);
         return temp;
     }
 
-    async getHomeMatches(UserId: number): Promise<MatchEntity[]>
+    async getHomeMatches(id: number): Promise<MatchEntity[]>
     {
-        let user: UserEntity = await this.userService.getUserById(UserId);
+        // return await this.matchRepository.find({ where: { id } });
+        let user: UserEntity = await this.userService.getUserById(id);
         // console.log("user : ",user);
-        let temp = await this.matchRepository.find({});
+        let temp = await this.matchRepository.find({}); // where: { homePlayer: user }
         console.log("all matches : ",temp);
         return temp;
 

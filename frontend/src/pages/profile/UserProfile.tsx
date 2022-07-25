@@ -55,9 +55,9 @@ export default class UserProfile extends Component<Props, State> {
   }
 
   async getMatchHistory() {
-    const data = await axios.get(`/match/${this.state.user.id}`)
+    const data = await axios.get(`/match/${this.state.user.id}`);
     try {
-      // console.log("matchHistory :",data.data)
+      console.log("matchHistory :",data.data)
       return(data.data);
     } catch (e) {
       this.setState({error: true});
@@ -182,21 +182,21 @@ export default class UserProfile extends Component<Props, State> {
                 <h2 className="title">Game History</h2>
                 {(this.state.matchHistory.length > 0) ? (
                   <div className="gameHistory-list">
-                    {/* {this.state.matchHistory.map(match => {
+                    {this.state.matchHistory.map(match => {
                       return (
                         <div className="gameHistory-item">
                           <div className="gameHistory-item-left">
-                            <h5>{match.winner.username}</h5>
-                            <p>{match.winner.level}</p>
+                            <h5>{match.homePlayer.username}</h5>
+                            <p>{match.homeScore}</p>
                           </div>
                           <div className="gameHistory-item-right">
-                            <h5>{match.loser.username}</h5>
-                            <p>{match.loser.level}</p>
+                            <h5>{match.awayPlayer.username}</h5>
+                            <p>{match.awayScore}</p>
                           </div>
                         </div>
                       )
                     }
-                    )} */}
+                    )}
                   </div>
                 ) : (
                 <p className="">{this.state.user.username} has not played any games yet.</p>

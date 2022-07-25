@@ -11,6 +11,7 @@ import { User } from 'src/decorators/user.decorator';
 import { UserEntity, UserStatus } from './entities/user.entity';
 import { tfaDto } from './dto/new-user.dto';
 import { validate } from 'class-validator';
+import { get } from 'http';
 
 export const storage = {
   storage: diskStorage({
@@ -96,6 +97,13 @@ export class UserController
   {
     return this.userService.getBlockedUsers(user.id);
   }
+
+  // @Get('/match')
+  // async getAllMatch(@User() user)
+  // {
+
+  //   return this.userService.historyMatch(user);
+  // }
   
   @Post('/logout')
   async logOut(@Res({ passthrough: true }) response: Response, @User() user)
@@ -161,5 +169,6 @@ export class UserController
   {
     return this.userService.getUserById(user.id);
   }
+
 }
 
