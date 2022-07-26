@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { SetPasswordDto } from "./chatSettings.dto";
 import axios from "axios";
-
+import { Navigate } from "react-router";
 
 interface prop {
 	chatName: string,
@@ -11,6 +11,7 @@ interface prop {
 
 function ModalPwd(prop:prop) {
   const [show, setShow] = useState(true);
+  const [goodPwd, setGoodPwd] = useState(0);
 
   const handleClose = () => setShow(false);
 
@@ -18,14 +19,34 @@ function ModalPwd(prop:prop) {
 			const newpwd = (document.getElementById("new password") as HTMLInputElement).value;
 
 			const adminForm : SetPasswordDto = { name : prop.chatName!, password : newpwd }
-			const data = await axios({
-					method: 'post',
-					url: "chat/join",
-					data: adminForm,
-					headers: {'content-type': 'application/json'}
-				});
-				handleClose();
+      try {
+        const data = await axios({
+            method: 'post',
+            url: "chat/join",
+            data: adminForm,
+            headers: {'content-type': 'application/json'}
+          });
+        setGoodPwd(1);
+      }
+      catch (e) {
+        console.log("wrong pwd")
+        setGoodPwd(2);
+      }
 	};
+
+  if (goodPwd === 1)
+  {
+    return (
+      <Navigate to={`/chat?chatId=${prop.chatName}`} />
+    )
+  }
+
+  if (goodPwd === 2)
+  {
+    return (
+      <Navigate to={`/channels`} />
+      )
+  }
 
   return (
     <>
@@ -42,6 +63,7 @@ function ModalPwd(prop:prop) {
           </Button>
         </Modal.Footer>
       </Modal>
+      {/* <Navigate to={'/channels'} />; */}
     </>
   );
 }
