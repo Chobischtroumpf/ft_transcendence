@@ -17,7 +17,7 @@ interface State {
   socket: Socket | null;
   error: boolean;
   redirect: boolean;
-  whichFriend: number;
+  chatName: string;
 }
 
 interface Props {
@@ -36,8 +36,8 @@ export default class UserProfile extends Component<Props, State> {
       matchHistory: [],
       socket: this.props.socket,
       error: false,
-      whichFriend: 0,
-      redirect: false
+      redirect: false,
+      chatName: ''
     };
     this.componentDidMount = this.componentDidMount.bind(this); 
   }
@@ -77,30 +77,34 @@ export default class UserProfile extends Component<Props, State> {
 
     try{
       const {data} = await axios.post(`/chat/direct`, {id: friendId});
-      this.setState({redirect: true, whichFriend: friendId});
+      // this.setState({redirect: true});
+      let channelName = await axios.get(`/chat/direct/${friendId}`);
+      console.log("channelName :",channelName.data);
+      this.setState({chatName: channelName.data});
     }
     catch(e) {
-      console.log("je siis icicici");
-      this.setState({redirect: true});
-      this.setState({whichFriend: friendId})
-      // return <Navigate to={`/chat?chatId=${userId}_${friendId}`} />;
+      // console.log("je siis icicici");
+      // this.setState({redirect: true});
+      let channelName = await axios.get(`/chat/direct/${friendId}`);
+      console.log("channelName :",channelName.data);
+      this.setState({chatName: channelName.data});
     }
-    
-    // if (data.code == 403)
-      
   }
 
   render() {   
+    if (this.state.chatName != '')
+    {
+      this.setState({redirect: true});
+    }
     if (this.state.error) {
       return <Navigate to={'/error500'} />;
     }
     console.log(this.state.user)
     if(this.state.redirect)
     {
-      let name = `direct_with_${this.state.user.id}_${this.state.whichFriend}`
-      this.state.socket?.emit('joinToServer', {name});
+      this.state.socket?.emit('joinToServer', {name: this.state.chatName});
         // this.state.socket?.emit('joinToServer', { `direct_with_${this.state.user.id}_${this.state.whichFriend} `});
-      return <Navigate to={`/chat?chatId=direct_with_${this.state.user.id}_${this.state.whichFriend}`}/>
+      return <Navigate to={`/chat?chatId=${this.state.chatName}`}/>
     }
     return (
         <div>
