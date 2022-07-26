@@ -36,13 +36,6 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       console.log(name);
       e.preventDefault();
       const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${name}`);
-      // const resp = await axios.get('/user');
-      // if (data === '' || data.username === resp.data.username)
-      // {
-      //     window.alert(`User: (${name}) doesn't exists or you invited yourself, try again!`);
-      //     setGame(false);
-      //     return ;
-      // }
       const id = data.id;
       socket?.emit('addInviteToServer', {id, paddleSize: 40, paddleSpeed: 6, ballSpeed: 3});
       setGame(true);

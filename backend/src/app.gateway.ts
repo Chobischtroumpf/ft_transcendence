@@ -115,7 +115,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
           chatUsers.push(socket.data.user.username);
         }
       }
-      this.wss.to(name).emit('leaveToClient', { msg: `User: ${user.username} left from the channel`, onlineUsers: chatUsers })
+      this.wss.to(name).emit('leaveToClient', { msg: `${user.username} left from the channel`, onlineUsers: chatUsers })
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -138,7 +138,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       }
       const allMessages = await this.chatService.getMessagesFromChannel(channelData.name, user);
       // client.emit('joinToClient', { channel: channelData.name });
-      this.wss.to(channelData.name).emit('joinToClient', { msg: `${user.username} joined to channel at ${new Date}`, channel: channelData.name, messages: allMessages, onlineUsers: chatUsers });
+      this.wss.to(channelData.name).emit('joinToClient', { msg: `${user.username} joined to channel`, channel: channelData.name, messages: allMessages, onlineUsers: chatUsers });
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -152,7 +152,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const channel = await this.chatUtilService.getChannelByName(name);
       await this.chatService.leaveChannel(channel.id, user);
       client.leave(name);
-      this.wss.to(name).emit('leaveToClient', `User: ${user.username} left from the channel`);
+      this.wss.to(name).emit('leaveToClient', `${user.username} left from the channel`);
     }
     catch { throw new WsException('Something went wrong'); }
   }
