@@ -78,16 +78,12 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
   const join = async (e: SyntheticEvent, channel:Channel) =>
   {
-    console.log("hey")
     e.preventDefault();
     setCheckPwd(0);
 
     const data = await axios.get(`chat/${name}`);
     setCurrentChannel(data.data);
     setChatStatus(data.data.status);
-
-    console.log(chatStatus);
-    console.log(currentChannel);
 
     setCheckPwd(1);
   }
@@ -138,7 +134,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     if (page >= 2)
       setPage(page - 1);
   }
-
   
   const channelHasMember = (channel: Channel) =>
   {
@@ -155,11 +150,11 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
   if (checkPwd == 1)
   {
-    socket?.emit('joinToServer', { name });
-    if (chatStatus === "protected" && channelHasMember(currentChannel) === false)
+    if (currentChannel.status === "protected" && channelHasMember(currentChannel) === false)
       setCheckPwd(2);
     else
     {
+      socket?.emit('joinToServer', { name });
       return (<Navigate to={`/chat?chatId=${name}`} />);
     }
   }
@@ -236,7 +231,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
               </li>
           </ul>
         </nav>		
-        { checkPwd == 2 && <ModalPwd chatName={name} socket={socket!}/>}
+        { checkPwd == 2 && <ModalPwd socket={socket} chatName={name} />}
         { popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
       </Wrapper>
     );
@@ -249,7 +244,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
 interface prop {
 	chatName: string,
-  socket: Socket
+  socket: Socket | null
 }
 
 function ModalPwd({chatName, socket}:prop) {
@@ -270,8 +265,7 @@ function ModalPwd({chatName, socket}:prop) {
             data: adminForm,
             headers: {'content-type': 'application/json'}
           });
-        socket.emit('joinToServer', { chatName, adminForm });
-        console.log("hehiw");
+        socket?.emit('joinToServer', adminForm);
         setGoodPwd(1);
       }
       catch (e) {
