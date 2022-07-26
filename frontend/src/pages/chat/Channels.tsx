@@ -35,7 +35,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   const [checkPwd, setCheckPwd ] = useState(0);
 
   useEffect(() => {
-    console.log("here");
     socket?.emit('getChannelsToServer', page);
     getUser().then((username) => {
       setUsername(username);
@@ -48,7 +47,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
   const getUser = async () => {
       try {
-        console.log("here");
         let temp = await axios.get('/user');
         return temp.data.username;
       }catch (e) {
@@ -80,13 +78,16 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
   const join = async (e: SyntheticEvent) =>
   {
+    console.log("hey")
     e.preventDefault();
     setCheckPwd(0);
 
     const data = await axios.get(`chat/${name}`);
     setMembers(data.data.members);
-    console.log(members);
     setChatStatus(data.data.status);
+
+    console.log(chatStatus);
+    console.log(members);
 
     setCheckPwd(1);
   }
@@ -151,8 +152,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   {
     if (channel.members.length > 0)
     {
-      console.log(channel.members);
-      console.log (username);
       for (let i = 0; i < channel.members.length; i++)
       {
         if (channel.members[i].username === username)
@@ -204,7 +203,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                           <td>{channel.name}</td>
                           <td>{channel.status}</td>
                           <td>
-                            <form onSubmit={e => join}>
+                            <form onSubmit={join}>
                               <button onClick={e => setName(channel.name)} type="submit">Join</button>
                             </form>
                           </td>
