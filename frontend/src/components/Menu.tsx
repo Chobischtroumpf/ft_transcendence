@@ -6,7 +6,8 @@ import { User, UserLevel, UserStatus } from "../models/user";
 
 export const Menu = (props: any) => {
 
-  const [user, setUser] = React.useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  const [user, setUser] = React.useState<User>(new User(0, '', '', false, '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  
 
   async function getUser() {
     const response = await axios.get("/user");
@@ -21,7 +22,7 @@ export const Menu = (props: any) => {
     getUser().then(user => {
       setUser(user);
     } , error => {
-      console.log(error);
+
     });
   },[]);
   
@@ -32,22 +33,22 @@ export const Menu = (props: any) => {
         <ul className="nav flex-column">
         <li className="nav-item">
             <NavLink to={'/game'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
-              <h2>Game</h2>
+              <h2 style={{backgroundColor: '#ddd', borderRadius: '5px', paddingLeft: '20px', paddingBottom: '5px', paddingTop: '2px'}}>Game</h2>
             </NavLink>
           </li>
           <li className="nav-item">
             <NavLink to={`/profile`} key={1} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")} onClick={props.setParentState}>
-              <h2>Profile</h2>
+              <h2 style={{backgroundColor: '#ddd', borderRadius: '5px', paddingLeft: '20px', paddingBottom: '5px', paddingTop: '2px'}}>Profile</h2>
             </NavLink>
           </li>
           <li className="nav-item">
             <NavLink to={'/users'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
-              <h2>Users</h2>
+              <h2 style={{backgroundColor: '#ddd', borderRadius: '5px', paddingLeft: '20px', paddingBottom: '5px', paddingTop: '2px'}}>Users</h2>
             </NavLink>
           </li>
           <li className="nav-item">
             <NavLink to={'/channels'} className={({isActive}) => (isActive ? "nav-link active" : "nav-link")}>
-              <h2>Channels</h2>
+              <h2 style={{backgroundColor: '#ddd', borderRadius: '5px', paddingLeft: '20px', paddingBottom: '5px', paddingTop: '2px'}}>Channels</h2>
             </NavLink>
           </li>
         </ul>

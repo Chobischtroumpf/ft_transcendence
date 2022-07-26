@@ -121,8 +121,11 @@ export class ChatService
             throw new WsException('you dont have acceess to join here');
         // if (await this.chatUtilService.clientIsMember(user, channel) === true)
         //     return ;
-        const userStatus = await this.joinedUserStatusRepository.findOneBy({ user, channel });
-        console.log(userStatus)
+        // const userStatus = await this.joinedUserStatusRepository.findOneBy({ user, channel });
+        // console.log(userStatus)
+        if (await this.chatUtilService.clientIsMember(user, channel) === true)
+            return ;
+        const userStatus = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
         if (userStatus)
         {
             if (userStatus.banned !== null)

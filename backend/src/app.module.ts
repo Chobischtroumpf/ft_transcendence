@@ -8,10 +8,13 @@ import { ChatModule } from './chat/chat.module';
 // import { ChatGateway } from './chat.gateway';
 import { GameModule } from './game/game.module';
 import { AppGateway } from './app.gateway';
+import { getEnvPath } from './common/helper/env.helper';
+
+const envFilePath: string = getEnvPath(`${__dirname}/common/envs/`);
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({envFilePath, isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',

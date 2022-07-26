@@ -19,8 +19,6 @@ export class ChatUtilsService
 
     async createNewJoinedUserStatus(owner: boolean, admin: boolean, muted: Date, banned: Date, channel: ChannelEntity, user: UserEntity)
     {
-        // console.log("channel : " + channel);
-        // console.log("user : " + user);
         const newUserStatus = await this.joinedUserStatusRepository.create({
             owner,
             admin,
@@ -29,8 +27,6 @@ export class ChatUtilsService
             channel,
             user
         });
-        console.log("newUserStatus");
-        console.log(newUserStatus);
         await this.joinedUserStatusRepository.save(newUserStatus);
         return newUserStatus;
     }
@@ -75,11 +71,12 @@ export class ChatUtilsService
       }
     }
 
+    
     userIsOwner(userStatus: JoinedUserStatus) {
         if (userStatus.owner === false)
-            throw new HttpException('You dont have access, you are not owner of this channel', HttpStatus.FORBIDDEN);
+        throw new HttpException('You dont have access, you are not owner of this channel', HttpStatus.FORBIDDEN);
     }
-
+    
     channelIsPrivate(channel: ChannelEntity) {
         if (channel.status === ChannelStatus.private)
             throw new HttpException({status: HttpStatus.FORBIDDEN, error: 'This is a private channel, you dont have access to join here'}, HttpStatus.FORBIDDEN);
@@ -88,11 +85,24 @@ export class ChatUtilsService
     checkIfPassword(password: string) {
         if (!password)
             throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Please insert a password'}, HttpStatus.BAD_REQUEST);
-    }
-
-    checkClientIsMember(user: UserEntity, channel: ChannelEntity) {
-        if (this.clientIsMember(user, channel) === false)
+        }
+        
+        checkClientIsMember(user: UserEntity, channel: ChannelEntity) {
+            if (this.clientIsMember(user, channel) === false)
             throw new HttpException('You are not member of this channel', HttpStatus.FORBIDDEN);
+    }
+    
+    async getDirectChannelName(friendId: number, userId: number)
+    {
+        var channelName = "direct_with_" + friendId + "_" + userId;
+        var channel = await this.chatRepository.findOne({where: {name: channelName}});
+        if (channel)
+            return channelName;
+        var channelName = "direct_with_" + userId + "_" + friendId;
+        var channel = await this.chatRepository.findOne({where: {name: channelName}});
+        if (channel)
+            return channelName;
+        throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Channel does not exist'}, HttpStatus.BAD_REQUEST);
     }
 
     async paginate(page: number = 1): Promise<any>
@@ -228,7 +238,6 @@ export class ChatUtilsService
             author: user,
             channel: channel
         });
-        console.log(message);
         try {
             message = await this.messageRepository.save(message);
         } catch (e) {

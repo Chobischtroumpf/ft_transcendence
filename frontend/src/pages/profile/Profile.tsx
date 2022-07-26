@@ -11,18 +11,11 @@ interface Props {
   socket: Socket | null;
 }
 
-interface State {
-  user: User;
-  urlParam: string | null;
-}
-
-
 const Profile = (props: Props) => {
-  const [user, setUser] = React.useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
-  const [ownUser, setOwnUser] = React.useState<User>(new User(0, '', '', '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  const [user, setUser] = React.useState<User>(new User(0, '', '',false, '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
+  const [ownUser, setOwnUser] = React.useState<User>(new User(0, '', '', false, '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
   const [friends, setFriends] = React.useState<User[]>([]);
   var urlParam: string | null = '';
-  // const url = window.location.pathname;
   const [gotUser, setGotUser] = React.useState<boolean>(false);
   const [gotOwnUser, setGotOwnUser] = React.useState<boolean>(false);
   const [gotFriends, setGotFriends] = React.useState<boolean>(false);
@@ -67,19 +60,16 @@ const Profile = (props: Props) => {
   }
 
   async function getFriends() {
-     return axios.get(`/user/friend`).then(answer => {
+    return axios.get(`/user/friend`).then(answer => {
       return answer.data;
     }, error => {
       setError(true);
-      return [];
     });
   }
 
   async function getUserById(userId: string | null) {
     if (userId) {
-      console.log("getUserById", userId);
       return axios.get(`/user/${userId}`).then(user =>{
-        console.log("after axios : ", user);
         return user.data;
       }, error => {
         setError(true);
@@ -98,22 +88,30 @@ const Profile = (props: Props) => {
   }
 
   window.onpopstate = function(event) {
-    console.log("onpopstate");
     setUpdate();
   }
 
-  return (
-    <Wrapper setParentState={setUpdate}>
-      {/* (error === true) ? <Navigate to="/err500" /> : */}
-      {/* ( */}
-      <div className="profile-container">
-      {(gotUser && gotOwnUser && gotFriends) &&
-        ((user.id != ownUser.id) ?
-          (<OtherProfile user={user} friends={friends} socket={props.socket} />) :
-          (<UserProfile friends={friends} user={ownUser} socket={props.socket} setParentState={setShouldUpdate}/>))}
-      </div>{/*)*/}
-    </Wrapper>
-  );
+  if (gotUser && gotOwnUser && gotFriends)
+  {
+    return (
+      <Wrapper setParentState={setUpdate}>
+        <div className="profile-container">
+        {((user?.id != ownUser?.id) ?
+            (<OtherProfile user={user} friends={friends} socket={props.socket} setParentState={setShouldUpdate} />) :
+            (<UserProfile friends={friends} user={ownUser} socket={props.socket} setParentState={setShouldUpdate}/>))}
+        </div>{/*)*/}
+      </Wrapper>
+    );
+  }
+  else {
+    return (
+      <Wrapper setParentState={setUpdate}>
+      <div>
+        <h1>Loading...</h1>
+      </div>
+      </Wrapper>
+    );
+  }
 }
 
 export default Profile;

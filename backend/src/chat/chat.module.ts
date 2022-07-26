@@ -11,9 +11,13 @@ import { ChatUtilsService } from './service/chatUtils.service';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { getEnvPath } from '../common/helper/env.helper';
+
+const envFilePath: string = getEnvPath(`${__dirname}/common/envs/`);
 
 @Module({
   imports: [
+    
     TypeOrmModule.forFeature([ChannelEntity, MessageEntity, JoinedUserStatus, UserEntity]),
     AuthModule, PassportModule.register({ defaultStrategy: 'jwt' }), JwtModule.register({
       secret: process.env.JWT_SECRET,

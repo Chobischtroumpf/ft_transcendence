@@ -21,6 +21,7 @@ interface Props {
   socket: Socket | null;
   user: User;
   friends: User[];
+  setParentState: any;
 }
 
 export default class OtherProfile extends Component<Props, State> {
@@ -93,8 +94,7 @@ export default class OtherProfile extends Component<Props, State> {
                     )();
                     this.setState({showAddFriend: false});
                   }
-                }
-                >Send friend request</button>
+                }>Add friend</button>
                 )
             }
           </div>
@@ -126,47 +126,47 @@ export default class OtherProfile extends Component<Props, State> {
               </div>
             </div>
             {
-            (this.state.user.wins + this.state.user.losses) === 0 ? (
-              <div className="win-loss-ratio">
-                <div className="win-loss-ratio-item">
-                    <h2 className="title">Win/Loss Ratio</h2>
-                    <p>0</p>
-                </div>
-              </div>
-            ) : (
-              ((this.state.user.wins / (this.state.user.wins + this.state.user.losses)) > 0.5) ? (
-                <div className="win-loss-ratio positive">
+              (this.state.user.wins + this.state.user.losses) === 0 ? (
+                <div className="win-loss-ratio">
                   <div className="win-loss-ratio-item">
-                    <h2 className="title">Win/Loss Ratio</h2>
-                    <p className="">
-                    {(this.state.user.wins / (this.state.user.wins + this.state.user.losses)).toFixed(2)}
-                    </p>
+                      <h2 className="title">Win/Loss Ratio</h2>
+                      <p>0</p>
                   </div>
                 </div>
               ) : (
-                <div className="win-loss-ratio negative">
-                  <div className="win-loss-ratio-item">
-                    <h2 className="title">Win/Loss Ratio</h2>
-                    <p className="">
-                        {(this.state.user.wins / (this.state.user.wins + this.state.user.losses)).toFixed(2)}  
-                    </p>
+                ((this.state.user.wins / (this.state.user.wins + this.state.user.losses)) > 0.5) ? (
+                  <div className="win-loss-ratio positive">
+                    <div className="win-loss-ratio-item">
+                      <h2 className="title">Win/Loss Ratio</h2>
+                      <p className="">
+                      {(this.state.user.wins / (this.state.user.wins + this.state.user.losses)).toFixed(2)}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="win-loss-ratio negative">
+                    <div className="win-loss-ratio-item">
+                      <h2 className="title">Win/Loss Ratio</h2>
+                      <p className="">
+                          {(this.state.user.wins / (this.state.user.wins + this.state.user.losses)).toFixed(2)}  
+                      </p>
+                    </div>
+                  </div>
+                )
               )
-            )
-          }
-        </div>
-        <div className="gameHistory">
-          <div className="gameHistory-item">
-            <h2 className="title">Game History</h2>
-            {/* {(user.gameHistory.size() > 0) ? ( */}
-            {/* ) : ( */}
-            <p className="">{this.state.user.username} has not played any games yet.</p>
-            {/* ) */}
+            }
+          </div>
+          <div className="gameHistory">
+            <div className="gameHistory-item">
+              <h2 className="title">Game History</h2>
+              {/* {(user.gameHistory.size() > 0) ? ( */}
+              {/* ) : ( */}
+              <p className="">{this.state.user.username} has not played any games yet.</p>
+              {/* ) */}
+            </div>
           </div>
         </div>
       </div>
-    </div>
     );
   }
 }

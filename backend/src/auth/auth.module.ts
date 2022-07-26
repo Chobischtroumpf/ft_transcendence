@@ -15,15 +15,17 @@ import { AuthService } from './auth.service';
 import { FtStrategy } from './strategies/ft.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TfaStrategy } from './strategies/tfa.strategy';
+import { getEnvPath } from '../common/helper/env.helper';
+
+const envFilePath: string = getEnvPath(`${__dirname}/common/envs/`);
 
 @Module({
   imports: [
-    ConfigModule.forRoot(), //isGlobal ne marche pas !!??
+    ConfigModule.forRoot({envFilePath, isGlobal: true }),
     UserModule, TypeOrmModule.forFeature([UserEntity, ChannelEntity, MessageEntity, JoinedUserStatus]), PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: 3600 }
-    })
+    JwtModule.registerAsync({
+      useFactory: () => {return {secret: process.env.JWT_SECRET, signOptions: { expiresIn: 86400 }}}
+    }),
   ],
   exports: [AuthService, JwtStrategy, PassportModule],
   controllers: [AuthController],

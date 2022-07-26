@@ -58,24 +58,40 @@ export class MatchService
     async saveMatch(matchData: MatchDto) {
         const match = this.matchRepository.create();
 
-        match.homePlayer = await this.userService.getUserById(matchData.homePlayerId);
-        match.awayPlayer = await this.userService.getUserById(matchData.awayPlayerId);
-        match.winner = await this.userService.getUserById(matchData.winnerId);
+        let homePlayer = await this.userService.getUserById(matchData.homePlayerId);
+        let awayPlayer = await this.userService.getUserById(matchData.awayPlayerId);
+        let winner = await this.userService.getUserById(matchData.winnerId);
+        match.homePlayer = homePlayer;
+        match.awayPlayer = awayPlayer;
+        match.winner = winner
         match.homeScore = matchData.homeScore;
         match.awayScore = matchData.awayScore;
 
+        console.log("matchData : ",matchData);
+        console.log("match : ", match);
+        
+        let temp = await this.matchRepository.save(match);
         await this.addNewStats(match.homePlayer, match.awayPlayer, match.winner);
         await this.addNewLevel(match.homePlayer);
         await this.addNewLevel(match.awayPlayer);
         await this.addUserRank(match.homePlayer);
         await this.addUserRank(match.awayPlayer);
-
-        return this.matchRepository.save(match);
+        // homePlayer.homeMatches.push(temp);
+        // await this.userRepository.save(homePlayer);
+        // console.log()
+        // console.log("match : ", temp);
+        return temp;
     }
 
     async getHomeMatches(id: number): Promise<MatchEntity[]>
     {
-        return await this.matchRepository.find({ where: { id } });
+        // return await this.matchRepository.find({ where: { id } });
+        let user: UserEntity = await this.userService.getUserById(id);
+        // console.log("user : ",user);
+        let temp = await this.matchRepository.find({}); // where: { homePlayer: user }
+        console.log("all matches : ",temp);
+        return temp;
+
     }
 
     async getAwayMatches(id: number): Promise<MatchEntity[]>
@@ -85,6 +101,8 @@ export class MatchService
 
     async getMatches(id: number): Promise<MatchEntity[]>
     {
-        return (await this.getHomeMatches(id)).concat(await this.getAwayMatches(id));
+        let temp = (await this.getHomeMatches(id)).concat(await this.getAwayMatches(id));
+        // console.log(temp);
+        return temp;
     }
 }

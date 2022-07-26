@@ -20,7 +20,6 @@ export class GameService
             direction = Math.floor(Math.random() * 3) + 4;
         if (x === 2) // away player
             direction = Math.floor(Math.random() * 3) + 1;
-        console.log("dir: " + direction + " x: " + x);    
         return direction;
     }
 
@@ -157,7 +156,6 @@ export class GameService
 
     moveBall(ball: Ball)
     {
-        // console.log(ball.direction);
         switch (ball.direction)
         {
             case Dir.STOP:

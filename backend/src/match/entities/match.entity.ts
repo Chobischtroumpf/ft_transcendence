@@ -7,13 +7,13 @@ export class MatchEntity extends TimestampEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => UserEntity, (user) => user.homeMatches)
+    @ManyToOne(() => UserEntity, (user) => user.homeMatches, {eager: true})
     homePlayer: UserEntity;
 
-    @ManyToOne(() => UserEntity, (user) => user.awayMatches)
+    @ManyToOne(() => UserEntity, (user) => user.awayMatches, {eager: true})
     awayPlayer: UserEntity;
 
-    @ManyToOne(() => UserEntity, (user) => user.wonMatches)
+    @ManyToOne(() => UserEntity, (user) => user.wonMatches, {eager: true})
     winner: UserEntity;
 
     @Column()

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Wrapper from "../../components/Wrapper";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Card } from 'react-bootstrap';
 import winnerImage from '../../assets/winner.png';
+import { Navigate } from "react-router";
 
 type Props = {
     winner: string,
@@ -10,6 +11,11 @@ type Props = {
 
 const GameFinished = ({winner}: Props) =>
 {
+
+    if (winner === '') {
+        return <Navigate to={'/'} />
+    }
+
     return(
         <Wrapper>
             <Card>

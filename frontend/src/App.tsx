@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Users from './pages/users/Users';
-import SingIn from './pages/SignIn';
+import SingIn from './pages/auth/SignIn';
+import Auth from './pages/auth/Auth';
 import Profile from './pages/profile/Profile';
 import Channels from './pages/chat/Channels';
 import Game from './pages/game/Game';
@@ -30,6 +31,7 @@ function App() {
   const [invites, setInvites] = useState<any[]>([]);
   const [channels, setChannels] = useState([]);
   const [lastPage, setLastPage] = useState(0);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
@@ -37,9 +39,11 @@ function App() {
       setJoinMsg(data.msg);
       setChannelName(data.channel);
       setMessages(data.messages);
+      setOnlineUsers(data.onlineUsers);
     });
     newSocket.on('leaveToClient', (data) => {
-      console.log(data);
+      setJoinMsg(data.msg);
+      setOnlineUsers(data.onlineUsers);
     });
     newSocket.on('msgToClient', (data) => {
       setMessages(data);
@@ -91,8 +95,9 @@ function App() {
           <Route path="/profile/settings" element={<Settings/>}></Route>
           <Route path="/users" element={<Users />}></Route>
           <Route path="/signin" element={<SingIn />}></Route>
+          <Route path="/auth/tfa" element={<Auth />}></Route>
           <Route path="/channels" element={<Channels socket={socket} channels={channels} lastPage={lastPage} />}></Route>
-          <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages}/>}></Route>
+          <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages} onlineUsers={onlineUsers}/>}></Route>
           <Route path="chat/chatSettings" element={<ChatSettings socket={socket}/>}></Route>
           <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>
           <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
