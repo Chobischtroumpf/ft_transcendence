@@ -116,7 +116,7 @@ export class ChatService
     {
 
         const channel = await this.chatUtilService.getChannelByName(channelData.name);
-        this.chatUtilService.channelIsPrivate(channel);
+        this.chatUtilService.channelIsPrivate(channel, user);
         if (channel.status === ChannelStatus.direct && (channel.name.includes("direct_with_") === false || channel.name.includes(`${user.id}`) === false))
             throw new WsException('you dont have acceess to join here');
         // if (await this.chatUtilService.clientIsMember(user, channel) === true)
