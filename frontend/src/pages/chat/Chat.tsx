@@ -33,15 +33,9 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
 
   const pongGame = async (e: SyntheticEvent) =>
   {
+      console.log(name);
       e.preventDefault();
       const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${name}`);
-      const resp = await axios.get('/user');
-      if (data === '' || data.username === resp.data.username)
-      {
-          window.alert(`User: (${name}) doesn't exists or you invited yourself, try again!`);
-          setGame(false);
-          return ;
-      }
       const id = data.id;
       socket?.emit('addInviteToServer', {id, paddleSize: 40, paddleSpeed: 6, ballSpeed: 3});
       setGame(true);
@@ -119,9 +113,8 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               return (
               <li style={{ listStyleType : 'none' }} key={index}>
                 <h6 style={{ padding: '1px', color: 'green' }}>
-                  {onlineUser} 
                   <form onSubmit={pongGame}>
-                    <input type="submit" value="Invite to game" />
+                    {onlineUser} <button onClick={e => setName(onlineUser)} type="submit" >Invite to game</button>
                   </form>
                 </h6>
               </li>
