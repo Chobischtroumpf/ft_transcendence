@@ -141,11 +141,13 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
   if (checkPwd == 1)
   {
-    socket?.emit('joinToServer', { name });
-    if (chatStatus !== "public")
+    if (chatStatus === "protected")
       setCheckPwd(2);
     else
+    {
+      socket?.emit('joinToServer', { name });
       return (<Navigate to={`/chat?chatId=${name}`} />);
+    }
   }
   
   const channelHasMember = (channel: Channel) =>
@@ -233,7 +235,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
               </li>
           </ul>
         </nav>		
-        { checkPwd == 2 && <ModalPwd chatName={name} />}
+        { checkPwd == 2 && <ModalPwd socket={socket} chatName={name} />}
         { popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
       </Wrapper>
     );
@@ -246,6 +248,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
 interface prop {
 	chatName: string,
+  socket: Socket | null
 }
 
 function ModalPwd(prop:prop) {
@@ -260,12 +263,7 @@ function ModalPwd(prop:prop) {
 
 			const adminForm : SetPasswordDto = { name : prop.chatName!, password : newpwd }
       try {
-        const data = await axios({
-            method: 'post',
-            url: "chat/join",
-            data: adminForm,
-            headers: {'content-type': 'application/json'}
-          });
+        prop.socket?.emit('joinToServer', adminForm);
         setGoodPwd(1);
       }
       catch (e) {
