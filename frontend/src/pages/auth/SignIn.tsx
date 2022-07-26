@@ -16,15 +16,12 @@ const SignIn = () =>
       let myWindow = window.open('http://localhost:3000/auth/42');
       const interval = setInterval(async () => {
         if (getCookie("access_token") !== null) {   
-          setRedirect(true);
-          // async () => {
-          //   try {
-          //     await axios.get('user');
-          //     setRedirect(true);
-          //   } catch (e) {
-          //     setRedirectTFA(true);
-          //   }
-          // }
+          try {
+            await axios.get('user');
+            setRedirect(true);
+          } catch (e) {
+            setRedirectTFA(true);
+          }
           myWindow?.close();
           clearInterval(interval);
           return () => clearInterval(interval);
