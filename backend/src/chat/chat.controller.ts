@@ -5,7 +5,8 @@ import { ChatUtilsService } from './service/chatUtils.service';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/decorators/user.decorator';
-import { UserEntity } from 'src/user/entities/user.entity';
+import * as bcrypt from 'bcrypt';
+import { channel } from 'diagnostics_channel';
 
 @UseGuards(JwtGuard)
 @Controller('chat')
@@ -22,130 +23,130 @@ export class ChatController
     //    return this.chatUtilService.getAllChannels();
     }
 
-    
     @Get(':name')
     getChannelByName(@Param('name') name: string)
     {
         return this.chatUtilService.getChannelByName(name);
     }
-    
+
     @Post('/invite')
-    async inviteUserToPrivateChannel(@Body() data: JoinedUserStatusDto, @User() user: UserEntity)
+    async inviteUserToPrivateChannel(@Body() data: JoinedUserStatusDto, @User() user)
     {
         return this.chatService.inviteUserToPrivateChannel(data, user);
     }
-    
+
     @Post('/public')
-    async createPublicChannel(@Body('name') channelName: string, @User() user: UserEntity)
+    async createPublicChannel(@Body('name') channelName: string, @User() user)
     {
         return this.chatService.createPublicChannel(channelName, user);
     }
-    
+
     @Post('/private')
-    async createPrivateChannel(@Body('name') channelName: string, @User() user: UserEntity)
+    async createPrivateChannel(@Body('name') channelName: string, @User() user)
     {
         return this.chatService.createPrivateChannel(channelName, user);
     }
-    
+
     @Post('/protected')
-    async createProtectedChannel(@Body() channelData: SetPasswordDto, @User() user: UserEntity)
+    async createProtectedChannel(@Body() channelData: SetPasswordDto, @User() user)
     {
+
+        const saltOrRounds = 10;
+        channelData.password = await bcrypt.hash(channelData.password, saltOrRounds);
         return this.chatService.createProtectedChannel(channelData, user);
     }
-    
+
     @Delete('/delete/:id')
-    async deleteChannel(@Param('id') id: number, @User() user: UserEntity)
+    async deleteChannel(@Param('id') id: number, @User() user)
     {
         return this.chatService.deleteChannel(id, user);
     }
-    
-    @Get('/direct/:id')
-    getDirectChannelName(@Param('id') friendId: number, @User() user: UserEntity)
-    {
-        return this.chatUtilService.getDirectChannelName(friendId, user.id);
-    } 
 
     @Delete('/kick')
-    async kickUserFromChannel(@Body() data: JoinedUserStatusDto, @User() user: UserEntity)
+    async kickUserFromChannel(@Body() data: JoinedUserStatusDto, @User() user)
     {
         return this.chatService.kickUserFromChannel(data, user);
     }
-    
+
     @Delete('/leave/:id')
-    async leaveChannel(@Param('id') id: number, @User() user: UserEntity)
+    async leaveChannel(@Param('id') id: number, @User() user)
     {
         return this.chatService.leaveChannel(id, user);
     }
-    
+
     @Post('/join')
-    async joinChannel(@Body() channelData: SetPasswordDto, @User() user: UserEntity)
+    async joinChannel(@Body() channelData: SetPasswordDto, @User() user)
     {
+        const saltOrRounds = 10;
+        channelData = await bcrypt.hash(channelData.password, saltOrRounds);
         return this.chatService.joinChannel(channelData, user);
     }
 
     @Patch('/mute')
-    async muteUser(@Body() data: JoinedUserStatusDto, @User() user: UserEntity)
+    async muteUser(@Body() data: JoinedUserStatusDto, @User() user)
     {
         return this.chatService.muteUser(data, user);
     }
 
     @Patch('/unmute')
-    async unMuteUser(@Body() data: JoinedUserStatusDto, @User() user: UserEntity)
+    async unMuteUser(@Body() data: JoinedUserStatusDto, @User() user)
     {
         return this.chatService.unMuteUser(data, user);
     }
 
     @Patch('/ban')
-    async banUser(@Body() data: JoinedUserStatusDto, @User() user: UserEntity)
+    async banUser(@Body() data: JoinedUserStatusDto, @User() user)
     {
         return this.chatService.banUser(data, user);
     }
 
     @Patch('/unban')
-    async unBanUser(@Body() data: JoinedUserStatusDto, @User() user: UserEntity)
+    async unBanUser(@Body() data: JoinedUserStatusDto, @User() user)
     {
         return this.chatService.unBanUser(data, user);
     }
 
     @Post('/admin')
-    async giveAdmin(@Body() adminData: AdminUserDto, @User() user: UserEntity)
+    async giveAdmin(@Body() adminData: AdminUserDto, @User() user)
     {
         return this.chatService.giveAdmin(adminData, user);
     }
 
     @Patch('/unadmin')
-    async unAdmin(@Body() adminData: AdminUserDto, @User() user: UserEntity)
+    async unAdmin(@Body() adminData: AdminUserDto, @User() user)
     {
         return this.chatService.unAdmin(adminData, user);
     }
 
     @Patch('/password')
-    async setPassword(@Body() passwordData: SetPasswordDto, @User() user: UserEntity)
+    async setPassword(@Body() passwordData: SetPasswordDto, @User() user)
     {
+        const saltOrRounds = 10;
+        passwordData.password = await bcrypt.hash(passwordData.password, saltOrRounds);
         return this.chatService.setPassword(passwordData, user);
     }
 
     @Patch('/removepassword')
-    async removePassword(@Body('name') name: string, @User() user: UserEntity)
+    async removePassword(@Body('name') name: string, @User() user)
     {
         return this.chatService.removePassword(name, user);
     }
 
     @Post('/direct')
-    async createDirectChannel(@Body('id') id: number, @User() user: UserEntity)
+    async createDirectChannel(@Body('id') id: number, @User() user)
     {
         // console.log(id);
         return this.chatService.createDirectChannel(user, await this.userService.getUserById(id));
     }
 
     @Post('/createmessage')
-    async createMessageToChannel(@Body() data: CreateMessageToChatDto, @User() user: UserEntity)
+    async createMessageToChannel(@Body() data: CreateMessageToChatDto, @User() user)
     {
         return this.chatService.createMessageToChannel(data, user);
     }
 
     @Get('/messages/:name')
-    async getMessagesFromChannel(@Param('name') name: string, @User() user: UserEntity)
+    async getMessagesFromChannel(@Param('name') name: string, @User() user)
     {
         return this.chatService.getMessagesFromChannel(name, user);
     }
@@ -169,7 +170,7 @@ export class ChatController
     }
     
     @Get('/userstatus/:name')
-    async getUserStatus(@Param('name') name: string, @User() user: UserEntity)
+    async getUserStatus(@Param('name') name: string, @User() user)
     {
         return this.chatUtilService.getStatus(name, user);
     }

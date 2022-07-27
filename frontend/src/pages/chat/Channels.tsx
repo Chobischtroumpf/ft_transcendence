@@ -6,7 +6,12 @@ import io, { Socket } from 'socket.io-client';
 import {Link} from "react-router-dom"
 import { Navigate } from "react-router";
 import ModalMessage from "./ModalMessage"
-import ModalPwd from "./ModalPwd"
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import { SetPasswordDto } from "./chatSettings.dto";
+import { User } from "../../models/user"
+import { wait } from "@testing-library/user-event/dist/types/utils";
+import { waitFor } from "@testing-library/react";
 
 type Props = {
   socket: Socket | null,
@@ -20,15 +25,16 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState(ChannelStatus.public);
-  const [place, setPlace] = useState(false);
+  // const [place, setPlace] = useState(false);
 	const [popupMessage, setPopupMessage] = useState("");
 	const [actionSuccess, setActionSuccess] = useState(false);
   const [username, setUsername] = useState('');
   const [gotUsername, setGotUsername] = useState(false);
+  const [chatStatus, setChatStatus] = useState("");
+  const [currentChannel, setCurrentChannel] = useState<any>("");
+  const [checkPwd, setCheckPwd ] = useState(0);
 
-  console.log("place: ",place);
   useEffect(() => {
-    console.log("here");
     socket?.emit('getChannelsToServer', page);
     getUser().then((username) => {
       setUsername(username);
@@ -41,7 +47,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
   const getUser = async () => {
       try {
-        console.log("here");
         let temp = await axios.get('/user');
         return temp.data.username;
       }catch (e) {
@@ -71,23 +76,16 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     }
   }
 
-  const join = async (e: SyntheticEvent, channelName: string) =>
+  const join = async (e: SyntheticEvent, channel:Channel) =>
   {
     e.preventDefault();
+    setCheckPwd(0);
 
-    const data = await axios.get(`chat/${channelName}`);
-    // console.log(data.data.status);
-    if (data.data.status !== "public")
-    {
-      try {
-        // console.log("here");
-        return <ModalPwd chatName={channelName}/>
-      }
-      catch (e) {
-        return ;
-      }
-    }
-    setPlace(true);
+    const data = await axios.get(`chat/${name}`);
+    setCurrentChannel(data.data);
+    setChatStatus(data.data.status);
+
+    setCheckPwd(1);
   }
 
   const leave = async (e: SyntheticEvent, channelId: number) =>
@@ -136,13 +134,11 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     if (page >= 2)
       setPage(page - 1);
   }
-
+  
   const channelHasMember = (channel: Channel) =>
   {
     if (channel.members.length > 0)
     {
-      console.log(channel.members);
-      console.log (username);
       for (let i = 0; i < channel.members.length; i++)
       {
         if (channel.members[i].username === username)
@@ -152,10 +148,15 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     return false;
   }
 
-  if (place === true)
+  if (checkPwd == 1)
   {
+    if (currentChannel.status === "protected" && channelHasMember(currentChannel) === false)
+      setCheckPwd(2);
+    else
+    {
       socket?.emit('joinToServer', { name });
-      return <Navigate to={`/chat?chatId=${name}`} />;
+      return (<Navigate to={`/chat?chatId=${name}`} />);
+    }
   }
 
   if (gotUsername)
@@ -201,7 +202,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                           <td>{channel.status}</td>
                           {/* {(console.log(channel.owner))} */}
                           <td>
-                            <form onSubmit={e => join(e, channel.name)}>
+                            <form onSubmit={e => join(e, channel)}>
                               <button onClick={e => setName(channel.name)} type="submit">Join</button>
                             </form>
                           </td>
@@ -231,6 +232,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
               </li>
           </ul>
         </nav>		
+        { checkPwd == 2 && <ModalPwd socket={socket} chatName={name} />}
         { popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
       </Wrapper>
     );
@@ -239,6 +241,63 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   {
     return <div>Loading...</div>
   }
+}
+
+interface prop {
+	chatName: string,
+  socket: Socket | null
+}
+
+function ModalPwd({chatName, socket}:prop) {
+  const [show, setShow] = useState(true);
+  const [goodPwd, setGoodPwd] = useState(0);
+
+  const handleClose = () => setShow(false);
+
+  const handleConfirm = async() => {
+      setGoodPwd(0);
+			const newpwd = (document.getElementById("new password") as HTMLInputElement).value;
+
+			const adminForm : SetPasswordDto = { name : chatName!, password : newpwd }
+      try {
+        const data = await axios({
+            method: 'post',
+            url: "chat/join",
+            data: adminForm,
+            headers: {'content-type': 'application/json'}
+          });
+        socket?.emit('joinToServer', adminForm);
+        setGoodPwd(1);
+      }
+      catch (e) {
+        console.log("wrong pwd")
+        setGoodPwd(2);
+      }
+	};
+
+  if (goodPwd === 1)
+  {
+      return (<Navigate to={`/chat?chatId=${chatName}`} />);
+  }
+
+  return (
+    <>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Please enter password</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+					<input id='new password' type="text" placeholder="Enter the new password"></input>
+				</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleConfirm}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {goodPwd == 2 && <ModalMessage message="Wrong password" success={false}/>}
+    </>
+  );
 }
 
 export default Channels;

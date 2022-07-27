@@ -116,7 +116,7 @@ export class ChatService
     {
 
         const channel = await this.chatUtilService.getChannelByName(channelData.name);
-        this.chatUtilService.channelIsPrivate(channel);
+        this.chatUtilService.channelIsPrivate(channel, user);
         if (channel.status === ChannelStatus.direct && (channel.name.includes("direct_with_") === false || channel.name.includes(`${user.id}`) === false))
             throw new WsException('you dont have acceess to join here');
         const userStatus = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
@@ -142,7 +142,7 @@ export class ChatService
             await this.chatRepository.save(channel);
             return ;
         }
-        throw new WsException('wrong password, try again');
+        throw new HttpException('wrong password, try again', HttpStatus.FORBIDDEN);
     }
 
     async muteUser(data: JoinedUserStatusDto, user: UserEntity)

@@ -77,8 +77,8 @@ export class ChatUtilsService
         throw new HttpException('You dont have access, you are not owner of this channel', HttpStatus.FORBIDDEN);
     }
     
-    channelIsPrivate(channel: ChannelEntity) {
-        if (channel.status === ChannelStatus.private)
+    channelIsPrivate(channel: ChannelEntity, user: UserEntity) {
+        if (channel.status === ChannelStatus.private && this.clientIsMember(user, channel) === false)
             throw new HttpException({status: HttpStatus.FORBIDDEN, error: 'This is a private channel, you dont have access to join here'}, HttpStatus.FORBIDDEN);
     }
 
