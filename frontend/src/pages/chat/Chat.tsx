@@ -44,9 +44,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
   const newMsg = async (e: SyntheticEvent) =>
   {
       e.preventDefault();
-      
       socket?.emit('msgToServer', { name: channelName, message: newMessage });
-      
       setNewMessage("");
       window.scrollTo(0,document.body.scrollHeight);
   }
@@ -135,7 +133,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               if (myName === message.author.username)
               {
                 return (
-                  <li style={{listStyleType: 'none' }} key={message.id}>
+                  <li style={{listStyleType: 'none', zIndex: '1' }} key={message.id}>
                       <h5 style={{textAlign: 'right', padding: '10px' }}>
                         <span style={{backgroundColor: '#f1f1f1', borderRadius: '20px', padding: '10px' }}>
                           {message.content}
@@ -147,8 +145,8 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               else
               {
                 return (
-                  <li style={{listStyleType: 'none' }} key={message.id}>
-                      <h5 style={{ padding: '10px' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px'}}><b>{message.author.username}:</b> {message.content}</span></h5>
+                  <li style={{listStyleType: 'none', zIndex: '1' }} key={message.id}>
+                      <h5 style={{ padding: '10px', zIndex: '1' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}><b>{message.author.username}:</b> {message.content}</span></h5>
                   </li>
                 );
               }

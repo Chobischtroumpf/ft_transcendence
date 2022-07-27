@@ -67,8 +67,8 @@ export class MatchService
         match.homeScore = matchData.homeScore;
         match.awayScore = matchData.awayScore;
 
-        console.log("matchData : ",matchData);
-        console.log("match : ", match);
+        // console.log("matchData : ",matchData);
+        // console.log("match : ", match);
         
         let temp = await this.matchRepository.save(match);
         await this.addNewStats(match.homePlayer, match.awayPlayer, match.winner);
@@ -88,15 +88,19 @@ export class MatchService
         // return await this.matchRepository.find({ where: { id } });
         let user: UserEntity = await this.userService.getUserById(id);
         // console.log("user : ",user);
-        let temp = await this.matchRepository.find({}); // where: { homePlayer: user }
-        console.log("all matches : ",temp);
+        let temp = await this.matchRepository.find({ where: { homePlayer: {id: user.id} }}); 
+        // console.log("all matches : ",temp);
         return temp;
 
     }
 
     async getAwayMatches(id: number): Promise<MatchEntity[]>
     {
-        return await this.matchRepository.find({ where: { id } });
+        let user: UserEntity = await this.userService.getUserById(id);
+        // console.log("user : ",user);
+        let temp = await this.matchRepository.find({ where: { awayPlayer: {id: user.id} }}); 
+        // console.log("all matches : ",temp);
+        return temp;
     }
 
     async getMatches(id: number): Promise<MatchEntity[]>

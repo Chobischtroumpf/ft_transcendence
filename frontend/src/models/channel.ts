@@ -8,6 +8,16 @@ export enum ChannelStatus
     direct = 'direct',
 }
 
+export class JoinedUserStatus
+{
+    constructor(
+    public id: number,
+    owner: boolean,
+    admin: boolean,
+
+    ) {}
+}
+
 export class Channel
 {
     constructor(
@@ -15,5 +25,6 @@ export class Channel
         public name: string,
         public status: ChannelStatus,
         public members: User[]
+        // public 
     ) {}
 }

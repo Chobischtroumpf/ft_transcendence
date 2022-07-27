@@ -134,7 +134,7 @@ export class ChatController
     @Post('/direct')
     async createDirectChannel(@Body('id') id: number, @User() user: UserEntity)
     {
-        console.log(id);
+        // console.log(id);
         return this.chatService.createDirectChannel(user, await this.userService.getUserById(id));
     }
 

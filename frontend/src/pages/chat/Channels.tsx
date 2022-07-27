@@ -35,7 +35,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
       setGotUsername(true);
     }, (error) => {
       console.log(error);
-    }
+    } 
     );
   }, [page, socket, username]);
 
@@ -84,7 +84,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
         return <ModalPwd chatName={channelName}/>
       }
       catch (e) {
-        return
+        return ;
       }
     }
     setPlace(true);
@@ -199,6 +199,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                           <td>{channel.id}</td>
                           <td>{channel.name}</td>
                           <td>{channel.status}</td>
+                          {/* {(console.log(channel.owner))} */}
                           <td>
                             <form onSubmit={e => join(e, channel.name)}>
                               <button onClick={e => setName(channel.name)} type="submit">Join</button>
