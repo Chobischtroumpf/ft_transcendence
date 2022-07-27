@@ -146,12 +146,12 @@ export class UserController
     return this.userService.blockUser(user, id);
   }
   
-  @Delete('block/:id')
+  @Post('unblock/:id')
   async unblockUser(@User() user, @Param('id', ParseIntPipe) id)
   {
     return this.userService.unblockUser(user, id);
   }
-  
+
   @Get('/picture/:imagename')
   async findPicture(@Param('imagename') imagename, @Res() response: Response)
   {

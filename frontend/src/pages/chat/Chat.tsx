@@ -23,10 +23,8 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
   const [infoMsg, setInfoMsg] = useState(joinMsg);
   const [game, setGame] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  const [base64, setBase64] = useState();
   const [name, setName] = useState('');
   const [myName, setMyName] = useState('');
-  const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
   const [blockUser, setBlockuser] = useState('');
   var oldURL = window.location.href;
 
@@ -39,12 +37,25 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       setGame(true);
   }
 
+  const blockUserFunc = async (e: SyntheticEvent) =>
+  {
+    e.preventDefault();
+    try {
+      const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
+      console.log(data);
+      await axios.post(`/user/block/${data.id}`);
+      setBlockuser('');
+    } catch (error) {
+      // console.log(error);
+    }
+  }
+
   const newMsg = async (e: SyntheticEvent) =>
   {
-      e.preventDefault();
-      socket?.emit('msgToServer', { name: channelName, message: newMessage });
-      setNewMessage("");
-      window.scrollTo(0,document.body.scrollHeight);
+    e.preventDefault();
+    socket?.emit('msgToServer', { name: channelName, message: newMessage });
+    setNewMessage("");
+    window.scrollTo(0,document.body.scrollHeight);
   }
    
   useEffect(() => {
@@ -122,7 +133,9 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
                   <form onSubmit={pongGame}>
                     {onlineUser} <button onClick={e => setName(onlineUser)} type="submit" >Invite to game</button>
                   </form>
-                  
+                  <form onSubmit={blockUserFunc}>
+                    <button onClick={e => setBlockuser(onlineUser)} type="submit" >Block</button>
+                  </form>
                 </h6>
               </li>
               );
@@ -156,7 +169,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               {
                 return (
                   <li style={{listStyleType: 'none', zIndex: '1' }} key={message.id}>
-                      <h5 style={{ padding: '10px', zIndex: '1' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}> <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile?userId=?${message.author.id}`}> <b>{message.author.username}</b> </Link> : {message.content}</span></h5>
+                      <h5 style={{ padding: '10px', zIndex: '1' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}> <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile?userId=${message.author.id}`}> <b>{message.author.username}</b> </Link> : {message.content}</span></h5>
                   </li>
                 );
               }

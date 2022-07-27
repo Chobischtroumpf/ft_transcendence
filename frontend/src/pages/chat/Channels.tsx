@@ -9,8 +9,6 @@ import ModalMessage from "./ModalMessage"
 import { Button, Card, Form, Table } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import { SetPasswordDto } from "./chatSettings.dto";
-import { User } from "../../models/user"
-import chatImage from "../../assets/chatImage.png";
 import liveChat from "../../assets/liveChat.png";
 
 type Props = {

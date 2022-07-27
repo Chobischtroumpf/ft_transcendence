@@ -127,9 +127,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     {
       
       const user = client.data.user;
-      console.log(channelData.name);
       await this.chatService.joinChannel(channelData, user);
-      console.log('lol');
       client.join(channelData.name);
       const chatUsers = [];
       for (const socket of this._sockets)
@@ -169,13 +167,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const channel = await this.chatUtilService.getChannelByName(data.name);
       const message = await this.chatService.createMessageToChannel(data, user);
       const allMessages = await this.chatService.getMessagesFromChannel(data.name, user);
-      // this.wss.to(data.name).emit('msgToClient', allMessages);
+      this.wss.to(data.name).emit('msgToClient', allMessages);
       // PUT THIS BACK ON SOMEPOINT !!!! IT CHECKS BLOCKED USERS
-      for (const member of channel.members)
-        if (await this.userService.isblocked_true(user, member) === false)
-          for (var i = 0; i < this._sockets.length; i++)
-            // if (this._sockets[i].data.user.username === user.username)
-            this._sockets[i].to(data.name).emit('msgToClient', allMessages);
     }
     catch { throw new WsException('Something went wrong'); }
   }
