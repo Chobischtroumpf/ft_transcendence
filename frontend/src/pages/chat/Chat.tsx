@@ -41,7 +41,10 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
   {
     e.preventDefault();
     try {
-    const {data} = await axios.post(`/block/${blockUser}`);
+      const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
+      console.log(data);
+      await axios.post(`/user/block/${data.id}`);
+      setBlockuser('');
     } catch (error) {
       // console.log(error);
     }
