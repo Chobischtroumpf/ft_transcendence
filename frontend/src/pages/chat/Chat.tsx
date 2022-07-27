@@ -6,7 +6,7 @@ import { MessageI } from "../../models/Chat";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import chatImage from '../../assets/chat2.png';
-import './chat.css' 
+import './Chat.css' 
 
 
 type Props = {

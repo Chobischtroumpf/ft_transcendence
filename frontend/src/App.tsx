@@ -15,6 +15,7 @@ import { gameUpdate } from './models/game';
 import GameArea from './pages/game/GameArea';
 import GameFinished from './pages/game/GameFinished';
 import GameWaitingRoom from './pages/game/GameWaitingRoom';
+import Error404 from './pages/errors/Error404';
 
 export const TodoContext = React.createContext<any>(null);
 
@@ -109,6 +110,7 @@ function App() {
           <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>
           <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
           <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator} socket={socket}/>}></Route>
+          <Route path="*" element={<Error404></Error404>}></Route>
         </Routes>
       </BrowserRouter>
     </div>
