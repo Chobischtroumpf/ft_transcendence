@@ -6,12 +6,14 @@ import io, { Socket } from 'socket.io-client';
 import {Link} from "react-router-dom"
 import { Navigate } from "react-router";
 import ModalMessage from "./ModalMessage"
-import Button from 'react-bootstrap/Button';
+import { Button, Card, Form, Table } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import { SetPasswordDto } from "./chatSettings.dto";
 import { User } from "../../models/user"
 import { wait } from "@testing-library/user-event/dist/types/utils";
 import { waitFor } from "@testing-library/react";
+import chatImage from "../../assets/chatImage.png";
+import liveChat from "../../assets/liveChat.png";
 
 type Props = {
   socket: Socket | null,
@@ -163,22 +165,30 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   {
     return (
       <Wrapper>
-          <div className="table-responsive">
-            <form onSubmit={submit}>
-              <h4>Create a channel</h4>
-              <input placeholder="name" size={19} required onChange={e => setName(e.target.value)}/>
-              <br />
-              <input placeholder="password" size={19} onChange={e => setPassword(e.target.value)}/>
-              <br />
-              <input type={"radio"} name="radio" onChange={e => setStatus(ChannelStatus.public)}/> public <br/>
-              <input type={"radio"} name="radio" onChange={e => setStatus(ChannelStatus.protected)}/> protected <br/>
-              <input type={"radio"} name="radio" onChange={e => setStatus(ChannelStatus.private)}/> private <br/>
-              <button type="submit">Create</button>
-            </form>
-            <br/>
-            <br/>
-            <table className="table table-striped table-sm">
-              
+        <br />
+        <Card className="card flex-row" border="dark" bg="light" style={{ height: '22rem' }}>
+          <div className="card-body">
+            <Form onSubmit={submit}>
+                <Form.Group className="mb-3" controlId="formBasicName">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control placeholder="Enter channel name" required onChange={e => setName(e.target.value)}/>
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
+                </Form.Group>
+                <input type={"radio"} name="radio" onChange={e => setStatus(ChannelStatus.public)}/> public <br/>
+                <input type={"radio"} name="radio" onChange={e => setStatus(ChannelStatus.protected)}/> protected <br/>
+                <input type={"radio"} name="radio" onChange={e => setStatus(ChannelStatus.private)}/> private <br/><br />
+                <Button variant="primary" type="submit">
+                  Create
+                </Button>
+              </Form>
+          </div><img className="card-img-sm-right example-card-img-responsive" src={liveChat}/>
+        </Card>
+        <Card border="dark" bg="light">
+          <Card.Body>
+            <Table striped bordered hover variant="light">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -220,18 +230,19 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                 )
               }
               </tbody>
-            </table>
-          </div>
-        <nav>
-          <ul className="pagination">
-              <li className="page-item">
-                <a href="#" className="page-link" onClick={prev}>Previous</a>
-              </li>
-              <li className="page-item">
-                <a href="#" className="page-link" onClick={next}>Next</a>
-              </li>
-          </ul>
-        </nav>		
+            </Table>
+            <nav>
+              <ul className="pagination">
+                  <li className="page-item">
+                    <a href="#" className="page-link" onClick={prev}>Previous</a>
+                  </li>
+                  <li className="page-item">
+                    <a href="#" className="page-link" onClick={next}>Next</a>
+                  </li>
+              </ul>
+            </nav>
+          </Card.Body>    
+        </Card>   		
         { checkPwd == 2 && <ModalPwd socket={socket} chatName={name} />}
         { popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
       </Wrapper>
