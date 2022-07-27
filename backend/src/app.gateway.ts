@@ -229,6 +229,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       }
       const gameOptions = this.invites[index].gameOptions;
       // remove invited user from invites
+      for (var i = 0; i < this._sockets.length; i++)
+        if (this._sockets[i].data.user.username === invitedUser.username)
+          this._sockets[i].emit('updateInviteToClient', { username: sender.username, id: sender.id });
       this.invites.splice(index, 1);
       const player1: Player = { player: sender };
       const player2: Player = { player: invitedUser };

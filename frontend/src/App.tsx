@@ -55,6 +55,13 @@ function App() {
       invites.splice(data, 1);
       setInvites(invites);
     });
+    newSocket.on('updateInviteToClient', (data) => {
+      const index = invites.findIndex(function (Invite) {
+        return Invite.sender === data.username;
+      });
+      invites.splice(index, 1);
+      setInvites(invites);
+    });
     newSocket.on('addInviteToClient', (data) => {
       window.alert(`${data.username} invited you to play pong! Good luck!`);
       setInvites(invites => [...invites, data]);

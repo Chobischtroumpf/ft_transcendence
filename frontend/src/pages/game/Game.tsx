@@ -14,6 +14,10 @@ type Props = {
     invites: any[],
 };
 
+// 40
+// 6
+// 3
+
 const Game = ({socket, games, invites}: Props) =>
 {
     const [place, setPlace] = useState<string | null>(null);
@@ -137,84 +141,43 @@ const Game = ({socket, games, invites}: Props) =>
                 <Card bg="light" className="mb-3" style={{ color: '#000' }}>
                     <Card.Img src={pongImage} />
                         <Form>
-                            <Form.Group>
-                                <Stack direction="horizontal" gap={4}>
+                            <Stack direction="horizontal" gap={4}>
                                 <div>
-                                <Form.Label style={{ color: 'black'}}>Paddle size:</Form.Label>
-                                <Form.Control style={{
-                                    background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                    // margin: '250px 30px',
-                                    padding: "13px 0",
-                                    width: "100px",
-                                    height: "50px",
-                                    border: "ridge",
-                                    borderColor: "gray",
-                                    borderRadius: "20px",
-                                    color: "white",
-                                    fontSize: "18px",
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    fontFamily: "Optima, sans-serif"
-                                }} placeholder="paddleSize" required defaultValue={40} onChange={e => setPaddleSize(parseInt(e.target.value))} />
+                                    <Form.Label><h5 style={{backgroundColor: '#ddd', borderRadius: '5px', paddingLeft: '5px', paddingRight: '5px', paddingBottom: '5px', paddingTop: '2px'}}>Paddle size:</h5></Form.Label> <br />
+                                    <input type={"radio"} name="radio" onChange={e => setPaddleSize(30)}/> small <br/>
+                                    <input type={"radio"} name="radio" onChange={e => setPaddleSize(40)}/> medium <br/>
+                                    <input type={"radio"} name="radio" onChange={e => setPaddleSize(50)}/> large <br/><br />
                                 </div>
                                 <div>
-                                <Form.Label style={{ color: 'black'}}>Paddle speed:</Form.Label>
-                                <Form.Control style={{
-                                    background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                    padding: "13px 0",
-                                    width: "100px",
-                                    height: "50px",
-                                    border: "ridge",
-                                    borderColor: "gray",
-                                    borderRadius: "20px",
-                                    color: "white",
-                                    fontSize: "18px",
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    fontFamily: "Optima, sans-serif"
-                                }} placeholder="paddleSpeed" required defaultValue={6} onChange={e => setPaddleSpeed(parseInt(e.target.value))} />
+                                    <Form.Label><h5 style={{backgroundColor: '#ddd', borderRadius: '5px', paddingLeft: '5px', paddingRight: '5px', paddingBottom: '5px', paddingTop: '2px'}}>Paddle speed:</h5></Form.Label> <br />
+                                    <input type={"radio"} name="lol" onChange={e => setPaddleSpeed(4)}/> slow <br/>
+                                    <input type={"radio"} name="lol" onChange={e => setPaddleSpeed(6)}/> medium <br/>
+                                    <input type={"radio"} name="lol" onChange={e => setPaddleSpeed(9)}/> fast <br/><br />
                                 </div>
                                 <div>
-                                <Form.Label style={{ color: 'black'}}>Ball speed:</Form.Label>
-                                <Form.Control style={{
-                                    background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                    // margin: '150px 30px',
-                                    padding: "13px 0",
-                                    width: "100px",
-                                    height: "50px",
-                                    border: "ridge",
-                                    borderColor: "gray",
-                                    borderRadius: "20px",
-                                    color: "white",
-                                    fontSize: "18px",
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    fontFamily: "Optima, sans-serif"
-                                }} placeholder="BallSpeed" required defaultValue={3} onChange={e => setBallSpeed(parseInt(e.target.value))} />
+                                    <Form.Label><h5 style={{backgroundColor: '#ddd', borderRadius: '5px', paddingLeft: '5px', paddingRight: '5px', paddingBottom: '5px', paddingTop: '2px'}}>Ball speed:</h5></Form.Label> <br />
+                                    <input type={"radio"} name="boom" onChange={e => setBallSpeed(2)}/> slow <br/>
+                                    <input type={"radio"} name="boom" onChange={e => setBallSpeed(3)}/> medium <br/>
+                                    <input type={"radio"} name="boom" onChange={e => setBallSpeed(6)}/> fast <br/><br />
                                 </div>
                                 <div>
-                                <Form.Label style={{ color: 'black'}}>Invited User:</Form.Label>
-                                <Form.Control style={{
-                                    background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                    // margin: '250px 30px',
-                                    padding: "13px 0",
-                                    width: "100px",
-                                    height: "50px",
-                                    border: "ridge",
-                                    borderColor: "gray",
-                                    borderRadius: "20px",
-                                    color: "white",
-                                    fontSize: "18px",
-                                    textAlign: "center",
-                                    fontWeight: "bold",
-                                    fontFamily: "Optima, sans-serif"
-                                }} placeholder="invitedUser" onChange={e => setInvitedUser(e.target.value)} />
+                                    <Form.Control style={{
+                                        background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
+                                        padding: "13px 0",
+                                        width: "100px",
+                                        height: "50px",
+                                        border: "ridge",
+                                        borderColor: "gray",
+                                        borderRadius: "20px",
+                                        color: "white",
+                                        fontSize: "18px",
+                                        textAlign: "center",
+                                        fontWeight: "bold",
+                                        fontFamily: "Optima, sans-serif"
+                                    }} placeholder="invitedUser" onChange={e => setInvitedUser(e.target.value)} />
                                 </div>
-                                </Stack>
-                                
-                            </Form.Group>
+                            </Stack>
                         </Form>
-                        <br />
                         <Stack direction="horizontal" gap={3}>
                         <div>
                             <form onSubmit={options}>
