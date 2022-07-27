@@ -9,8 +9,6 @@ import ModalMessage from "./ModalMessage"
 import { Button, Card, Form, Table } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import { SetPasswordDto } from "./chatSettings.dto";
-import { User } from "../../models/user"
-import chatImage from "../../assets/chatImage.png";
 import liveChat from "../../assets/liveChat.png";
 
 type Props = {
@@ -85,17 +83,17 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     setCurrentChannel(data.data);
     setChatStatus(data.data.status);
     // console.log(data.data);
-    for ( let i = 0; i < data.data.joinedUserStatus.length; i++) { 
-      console.log(data.data.joinedUserStatus[i].user.username);
-      if (data.data.joinedUserStatus[i].user.username === username) {
-        console.log("found:", data.data.joinedUserStatus[i].user.username);
-        if (data.data.joinedUserStatus[i].banned !== null) {
-          setPopupMessage("You are banned from this channel");
-          setActionSuccess(false);
-          return;
-        } 
-      }
-    }
+    // for ( let i = 0; i < data.data.joinedUserStatus.length; i++) { 
+    //   console.log(data.data.joinedUserStatus[i].user.username);
+    //   if (data.data.joinedUserStatus[i].user.username === username) {
+    //     console.log("found:", data.data.joinedUserStatus[i].user.username);
+    //     if (data.data.joinedUserStatus[i].banned !== null) {
+    //       setPopupMessage("You are banned from this channel");
+    //       setActionSuccess(false);
+    //       return;
+    //     } 
+    //   }
+    // }
 
     setCheckPwd(1);
   }
