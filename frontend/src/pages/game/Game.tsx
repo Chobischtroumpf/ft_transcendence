@@ -30,7 +30,8 @@ const Game = ({socket, games, invites}: Props) =>
 
     const spectatorJoin = async (e: SyntheticEvent) => {
       e.preventDefault();
-      socket?.emit('newSpectatorToServer', { room: name });
+      console.log(name);
+      socket?.emit('newSpectatorToServer', name );
       setPlace("queue");
     }
 
@@ -104,7 +105,7 @@ const Game = ({socket, games, invites}: Props) =>
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">name</th>
-                            <th scope="col">join</th>
+                            <th scope="col">test</th>
                         </tr>
                         </thead>
                         <tbody>

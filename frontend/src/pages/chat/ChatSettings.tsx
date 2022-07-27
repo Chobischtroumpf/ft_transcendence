@@ -19,18 +19,18 @@ import { data } from "autoprefixer";
 
 
 type Props = {
-    socket: Socket | null,
-};
+	  socket: Socket | null,
+}
 
 // 1 = owner 2 = admin 3 = password=true 4 = channel=private
 
-const ChatSettings = (socket:Props) =>{
+const ChatSettings = ({socket}:Props) =>{
 	const queryParams = new URLSearchParams(useLocation().search);
 	const chatName = queryParams.get("ChatSettingsId");
     const [redirect, setRedirect] = useState(false);
+	const [redirectToChat, setRedirectToChat] = useState(false);
 	const [currentChatStatus, setCurrentChatStatus] = useState("");
-	// const [UserStatus, setUserStatus] = useState('');
-	// const [currentChannel, setCurrentChannel] = useState('');
+	
 
 	
 	useEffect(() => {
@@ -42,16 +42,18 @@ const ChatSettings = (socket:Props) =>{
 			setCurrentChatStatus(Status);
 		});
 
-		if (socket.socket === null)
+		if (socket === null)
 			setRedirect(true);
-	})
-
-
-
+	}, [])
 
     if (redirect === true)
     {
         return <Navigate to={'/channels'} />;
+    }
+
+	if (redirectToChat === true)
+    {
+        return <Navigate to={`/chat?chatId=${chatName}`} />;
     }
 
     return (
@@ -71,7 +73,10 @@ const ChatSettings = (socket:Props) =>{
 			{ (1 || 2) && (<MuteUser chatName={chatName}/>)}
 			{ (1 || 2) && (<UnmuteUser chatName={chatName}/>)}
 		</div>
-		<Link to={`/chat?chatId=${chatName}`} className="button-return" type="submit">Return</Link>
+		<button className='back-button' onClick={() => {
+			      socket?.emit('joinToServer', { name: chatName });
+				  setRedirectToChat(true);
+		}}>Return</button>
     </Wrapper>
     );
 }

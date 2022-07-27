@@ -3,10 +3,8 @@ import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { MessageI } from "../../models/Chat";
-import styled from "styled-components"
 import { Link } from 'react-router-dom';
 import axios from "axios";
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import chatImage from '../../assets/chat2.png';
 import './chat.css' 
 
@@ -51,7 +49,9 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
    
   useEffect(() => {
       const intervalId = setInterval(() => {
-          if(window.location.href != oldURL){
+        if(window.location.href != oldURL){
+            // console.log("oldURL: " + oldURL);
+            // console.log("window.location.href: " + window.location.href);
               var url_string = oldURL;
               var url = new URL(url_string);
               const temp = url.searchParams.get('chatId');
@@ -59,9 +59,14 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               clearInterval(intervalId);
           }
       }, 1000);
+
   }, []);
 
   useEffect(() => {
+    // if (socket){  
+    //   socket?.connect();
+    //   socket?.emit('joinToServer', channelName);
+    // }
       (async () => {
           const {data} = await axios.get('user');
           setMyName(data.username);
@@ -73,6 +78,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       return () => {
 
         }
+      // if ()
   }, [joinMsg, socket]);
 
 

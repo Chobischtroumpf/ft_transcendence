@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
 import { Channel, ChannelStatus } from "../../models/channel";
-import io, { Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import {Link} from "react-router-dom"
 import { Navigate } from "react-router";
 import ModalMessage from "./ModalMessage"
@@ -10,8 +10,6 @@ import { Button, Card, Form, Table } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import { SetPasswordDto } from "./chatSettings.dto";
 import { User } from "../../models/user"
-import { wait } from "@testing-library/user-event/dist/types/utils";
-import { waitFor } from "@testing-library/react";
 import chatImage from "../../assets/chatImage.png";
 import liveChat from "../../assets/liveChat.png";
 
@@ -86,6 +84,18 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     const data = await axios.get(`chat/${name}`);
     setCurrentChannel(data.data);
     setChatStatus(data.data.status);
+    // console.log(data.data);
+    for ( let i = 0; i < data.data.joinedUserStatus.length; i++) { 
+      console.log(data.data.joinedUserStatus[i].user.username);
+      if (data.data.joinedUserStatus[i].user.username === username) {
+        console.log("found:", data.data.joinedUserStatus[i].user.username);
+        if (data.data.joinedUserStatus[i].banned !== null) {
+          setPopupMessage("You are banned from this channel");
+          setActionSuccess(false);
+          return;
+        } 
+      }
+    }
 
     setCheckPwd(1);
   }

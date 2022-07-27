@@ -24,6 +24,6 @@ export class JoinedUserStatus extends TimestampEntity
     @ManyToOne(() => ChannelEntity, (channel: ChannelEntity) => channel.joinedUserStatus)
     channel: ChannelEntity;
 
-    @ManyToOne(() => UserEntity, (user: UserEntity) => user.joinedUserStatus)
+    @ManyToOne(() => UserEntity, (user: UserEntity) => user.joinedUserStatus, {eager: true})
     user: UserEntity;
 }

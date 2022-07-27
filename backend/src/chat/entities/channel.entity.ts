@@ -29,7 +29,7 @@ export class ChannelEntity extends TimestampEntity {
     @Exclude({ toPlainOnly: true })
     password: string;
 
-    @OneToMany(() => JoinedUserStatus, (joinedUserStatus: JoinedUserStatus) => joinedUserStatus.channel)
+    @OneToMany(() => JoinedUserStatus, (joinedUserStatus: JoinedUserStatus) => joinedUserStatus.channel, {eager: true})
     joinedUserStatus: JoinedUserStatus[];
 
     @ManyToMany(() => UserEntity, { eager: true })
