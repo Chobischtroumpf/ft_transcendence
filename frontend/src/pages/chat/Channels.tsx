@@ -259,18 +259,23 @@ function ModalPwd({chatName, socket}:prop) {
 			const newpwd = (document.getElementById("new password") as HTMLInputElement).value;
 
 			const adminForm : SetPasswordDto = { name : chatName!, password : newpwd }
-      const data = await axios({
-          method: 'post',
-          url: "chat/join",
-          data: adminForm,
-          headers: {'content-type': 'application/json'}
-        });
-      if (data.data === "")
+      try {
+        const data = await axios({
+            method: 'post',
+            url: "chat/join",
+            data: adminForm,
+            headers: {'content-type': 'application/json'}
+          });
+        console.log(data);
+        if (data.data === "success")
+        {
+          socket?.emit('joinToServer', adminForm);
+          setGoodPwd(1);
+        }
+        else
+          setGoodPwd(2);
+      } catch (e) {
         setGoodPwd(2);
-      else
-      {
-        socket?.emit('joinToServer', adminForm);
-        setGoodPwd(1);
       }
 	};
 
