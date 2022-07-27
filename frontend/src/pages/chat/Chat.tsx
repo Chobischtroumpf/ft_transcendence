@@ -150,7 +150,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               {
                 return (
                   <li style={{listStyleType: 'none', zIndex: '1' }} key={message.id}>
-                      <h5 style={{ padding: '10px', zIndex: '1' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}> <Link to={`/profile?userId=?${message.author.id}`}> <b>{message.author.username}</b> </Link> : {message.content}</span></h5>
+                      <h5 style={{ padding: '10px', zIndex: '1' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}> <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile?userId=?${message.author.id}`}> <b>{message.author.username}</b> </Link> : {message.content}</span></h5>
                   </li>
                 );
               }

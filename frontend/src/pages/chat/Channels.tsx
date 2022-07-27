@@ -266,14 +266,8 @@ function ModalPwd({chatName, socket}:prop) {
             data: adminForm,
             headers: {'content-type': 'application/json'}
           });
-        console.log(data);
-        if (data.data === "success")
-        {
-          socket?.emit('joinToServer', adminForm);
-          setGoodPwd(1);
-        }
-        else
-          setGoodPwd(2);
+        socket?.emit('joinToServer', adminForm);
+        setGoodPwd(1);
       } catch (e) {
         setGoodPwd(2);
       }
