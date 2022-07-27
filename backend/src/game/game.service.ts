@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from 'src/user/entities/user.entity';
-import { Ball, Canvas, Dir, Game, GameOptions, Paddle, Player, Sound } from './game.class';
+import { Ball, Canvas, Dir, Game, GameOptions, Paddle, Player, Sound, Vector } from './game.class';
 
 @Injectable()
 export class GameService
@@ -13,33 +13,40 @@ export class GameService
     };
 
     // when player hits the ball
-    setRandomBallDirection(x: number)
+    setRandomBallDirection(game: Game, x: number)
     {
-        var direction: Dir;
-        if (x === 1) // home player
-            direction = Math.floor(Math.random() * 3) + 4;
+        var angle = Math.random() * Math.PI / 2 - Math.PI / 5;
+        game.ball.vx = Math.cos(angle);
+        game.ball.vy = Math.sin(angle);
+        if (x === 1)
+        {
+            if (game.players[0].y + game.options.paddleSize / 2 > game.ball.y && game.ball.vy > 0)
+                game.ball.vy = game.ball.vy * (-1);
+            if (game.players[0].y + game.options.paddleSize / 2 < game.ball.y && game.ball.vy < 0)
+                game.ball.vy = game.ball.vy * (-1);
+        }
         if (x === 2) // away player
-            direction = Math.floor(Math.random() * 3) + 1;
-        return direction;
+        {
+            game.ball.vx = game.ball.vx * (-1);
+            if (game.players[1].y + game.options.paddleSize / 2 > game.ball.y && game.ball.vy > 0)
+                game.ball.vy = game.ball.vy * (-1);
+            if (game.players[1].y + game.options.paddleSize / 2 < game.ball.y && game.ball.vy < 0)
+                game.ball.vy = game.ball.vy * (-1);
+        }
+        return game.ball;
     }
 
     // when ball hits top or bottom
-    changeBallDirection(direction: Dir)
+    changeBallDirection(ball: Ball)
     {
-        if (direction === Dir.DOWNLEFT)
-            direction = Dir.UPLEFT;
-        else if (direction === Dir.UPLEFT)
-            direction = Dir.DOWNLEFT;
-        else if (direction === Dir.DOWNRIGHT)
-            direction = Dir.UPRIGHT;
-        else if (direction === Dir.UPRIGHT)
-            direction = Dir.DOWNRIGHT;
-        return direction;
+        ball.vy = ball.vy * (-1);
+        return ball;
     }
 
     resetBall(ball: Ball)
     {
-        ball.direction = Dir.STOP;
+        ball.vx = 0;
+        ball.vy = 0;
         ball.x = this.defaultCanvas.w / 2;
         ball.y = this.defaultCanvas.h / 2;
         return ball;
@@ -65,7 +72,7 @@ export class GameService
         var size = game.players[0].paddle.h;
         if (game.ball.x <= 20 && game.ball.x >= 10)
             while (--size >= 0)
-                if (game.players[0].y + size === game.ball.y)
+                if (game.players[0].y + size <= game.ball.y && game.players[0].y + size >= game.ball.y - 1)
                     return true;
         return false;
     }
@@ -76,7 +83,7 @@ export class GameService
         var size = game.players[1].paddle.h;
         if (game.ball.x >= this.defaultCanvas.w - 30 && game.ball.x <= this.defaultCanvas.w - 20)
             while (--size >= 0)
-                if (game.players[1].y + size === game.ball.y)
+                if (game.players[1].y + size <= game.ball.y && game.players[1].y + size >= game.ball.y -1)
                     return true;
         return false;
     }
@@ -89,7 +96,7 @@ export class GameService
             if (this.checkIfHomePlayerHitsBall(game) === true)
             {
                 game.sounds.hit = true;
-                game.ball.direction = this.setRandomBallDirection(1);
+                game.ball = this.setRandomBallDirection(game, 1);
             }
             else if (game.ball.x < 10)
                 return this.goal(2, game);
@@ -99,15 +106,15 @@ export class GameService
             if (this.checkIfAwayPlayerHitsBall(game) === true)
             {
                 game.sounds.hit = true;
-                game.ball.direction = this.setRandomBallDirection(2);
+                game.ball = this.setRandomBallDirection(game, 2);
             }
             else if (game.ball.x > this.defaultCanvas.w - 20)
                 return this.goal(1, game);
         }
-        else if (game.ball.y > this.defaultCanvas.h - 1 || game.ball.y < 1)
+        else if (game.ball.y > this.defaultCanvas.h - 5 || game.ball.y < 5)
         {
             game.sounds.wall = true;
-            game.ball.direction = this.changeBallDirection(game.ball.direction);
+            game.ball = this.changeBallDirection(game.ball);
         }
         game.ball = this.moveBall(game.ball);
         return game;
@@ -156,36 +163,8 @@ export class GameService
 
     moveBall(ball: Ball)
     {
-        switch (ball.direction)
-        {
-            case Dir.STOP:
-                break;
-            case Dir.LEFT:
-                ball.x -= ball.speed;
-                ball.x -= ball.speed;
-                break;
-            case Dir.RIGHT:
-                ball.x += ball.speed;
-                ball.x += ball.speed;
-                break;
-            case Dir.UPLEFT:
-                ball.x -= (ball.speed * 1,5);
-                ball.y += (ball.speed * 1,5);
-                break;
-            case Dir.DOWNLEFT:
-                ball.x -= (ball.speed * 1,5);
-                ball.y -= (ball.speed * 1,5);
-                break;
-            case Dir.UPRIGHT:
-                ball.x += (ball.speed * 1,5);
-                ball.y += (ball.speed * 1,5);
-                break;
-            case Dir.DOWNRIGHT:
-                ball.x += (ball.speed * 1,5);
-                ball.y -= (ball.speed * 1,5);
-            default:
-                break;
-        }
+        ball.x = ball.x + ball.vx * ball.speed;
+        ball.y = ball.y + ball.vy * ball.speed;
         return ball;
     }
 
@@ -230,7 +209,8 @@ export class GameService
         const ball: Ball = {
             x: this.defaultCanvas.w / 2,
             y: this.defaultCanvas.h / 2,
-            direction: Dir.STOP,
+            vx: 0,
+            vy: 0,
             speed: gameOptions.ballSpeed,
             size: 5,
             color: 'green'

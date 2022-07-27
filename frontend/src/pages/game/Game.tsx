@@ -14,16 +14,12 @@ type Props = {
     invites: any[],
 };
 
-// 40
-// 6
-// 3
-
 const Game = ({socket, games, invites}: Props) =>
 {
     const [place, setPlace] = useState<string | null>(null);
     const [paddleSize, setPaddleSize] = useState(40);
     const [paddleSpeed, setPaddleSpeed] = useState(6);
-    const [ballSpeed, setBallSpeed] = useState(3);
+    const [ballSpeed, setBallSpeed] = useState(4);
     const [invitedUser, setInvitedUser] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [inviter, setInviter] = useState<string | null>(null);
@@ -156,9 +152,9 @@ const Game = ({socket, games, invites}: Props) =>
                                 </div>
                                 <div>
                                     <Form.Label><h5 style={{backgroundColor: '#ddd', borderRadius: '5px', paddingLeft: '5px', paddingRight: '5px', paddingBottom: '5px', paddingTop: '2px'}}>Ball speed:</h5></Form.Label> <br />
-                                    <input type={"radio"} name="boom" onChange={e => setBallSpeed(2)}/> slow <br/>
-                                    <input type={"radio"} name="boom" onChange={e => setBallSpeed(3)}/> medium <br/>
-                                    <input type={"radio"} name="boom" onChange={e => setBallSpeed(6)}/> fast <br/><br />
+                                    <input type={"radio"} name="boom" onChange={e => setBallSpeed(3)}/> slow <br/>
+                                    <input type={"radio"} name="boom" onChange={e => setBallSpeed(4)}/> medium <br/>
+                                    <input type={"radio"} name="boom" onChange={e => setBallSpeed(5)}/> fast <br/><br />
                                 </div>
                                 <div>
                                     <Form.Control style={{

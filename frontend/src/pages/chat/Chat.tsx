@@ -6,7 +6,7 @@ import { MessageI } from "../../models/Chat";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import chatImage from '../../assets/chat2.png';
-import './Chat.css' 
+import './chat.css' 
 
 
 type Props = {
@@ -33,7 +33,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       e.preventDefault();
       const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${name}`);
       const id = data.id;
-      socket?.emit('addInviteToServer', {id, paddleSize: 40, paddleSpeed: 6, ballSpeed: 3});
+      socket?.emit('addInviteToServer', {id, paddleSize: 40, paddleSpeed: 6, ballSpeed: 4});
       setGame(true);
   }
 

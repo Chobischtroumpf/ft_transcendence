@@ -39,10 +39,17 @@ export class Ball
 {
     x: number;
     y: number;
-    direction: Dir;
+    vx: number;
+    vy: number;
     speed: number;
     size: number;
     color: string;
+}
+
+export class Vector
+{
+    x: any;
+    y: any;
 }
 
 export class Paddle
