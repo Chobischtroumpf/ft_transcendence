@@ -15,6 +15,7 @@ import Wrapper from "../../components/Wrapper";
 import { AdminUserDto, JoinedUserStatusDto, SetPasswordDto } from "./chatSettings.dto";
 import ModalMessage from "./ModalMessage"
 import { Socket } from "socket.io-client";
+import { data } from "autoprefixer";
 
 
 type Props = {
@@ -27,14 +28,25 @@ const ChatSettings = (socket:Props) =>{
 	const queryParams = new URLSearchParams(useLocation().search);
 	const ChatName = queryParams.get("ChatSettingsId");
     const [redirect, setRedirect] = useState(false);
-
+	const [currentChatStatus, setCurrentChatStatus] = useState("");
 	// const [UserStatus, setUserStatus] = useState('');
 	// const [currentChannel, setCurrentChannel] = useState('');
 
+	
 	useEffect(() => {
+		const chatStatus = async () => {
+		  const data = await axios.get(`chat/${ChatName}`);
+			return data.data.status;
+		}
+		chatStatus().then(Status => {
+			setCurrentChatStatus(Status);
+		});
+
 		if (socket.socket === null)
 			setRedirect(true);
 	})
+
+
 
 
     if (redirect === true)
@@ -59,8 +71,8 @@ const ChatSettings = (socket:Props) =>{
 					SETTINGS : <p/>
 				</u> 
 			</h1>
-			{/* { 4 && <AddUser chatName={ChatName}/>} */}
-			{ 1 && <AdminUser chatName={ChatName}/>} 
+			{ currentChatStatus == "private" && <AddUser chatName={ChatName}/>}
+			{ 1 && <AdminUser chatName={ChatName}/>}
 			{ (1 || 2) && (<BanUser chatName={ChatName}/>)}
 			{ 1 && 3 && (<AddPassword chatName={ChatName}/>)}
 			{ 1 && 3 && (<ModifyPassword chatName={ChatName}/>)}
@@ -77,52 +89,53 @@ interface prop {
 	chatName: string | null
 }
 
-// const AddUser = (ChatName:prop) => {
-// 	const [state, setState] = useState(false); 
-// 	const handleOpen = () => {setState(true);}
-// 	const handleClose = () => {setState(false);}
-// 	const [userToAdd, setUserToAdd] = useState('');
+const AddUser = (ChatName:prop) => {
+	const [state, setState] = useState(false); 
+	const handleOpen = () => {setState(true);}
+	const handleClose = () => {setState(false);}
+	const [userToAdd, setUserToAdd] = useState('');
 
-// 	const handleClick = async() => {
-// 		try {
-// 			const username = (document.getElementById("add user") as HTMLInputElement).value;
-// 			const {data} = await axios.get(`user/get/user?username=${username}`)
-// 			setUserToAdd(data);
-// 			if (data == "")
-// 				window.alert("Wrong username");
-// 			// await axios.post('chat/add', { ChatName, '' })
-// 		} catch (e) {
-// 			console.log("here");
-// 		}
-// 	};
+	const handleClick = async() => {
+		try {
+			const username = (document.getElementById("add user") as HTMLInputElement).value;
+			const {data} = await axios.get(`user/get/user?username=${username}`)
+			setUserToAdd(data);
+			if (data == "")
+				window.alert("Wrong username");
+			console.log("ADD USER");
+			// await axios.post('chat/add', { ChatName, '' })
+		} catch (e) {
+			console.log("here");
+		}
+	};
 
-// 	return (
-// 	<h2>
-// 		Add user : &nbsp;&nbsp;
-// 		<Popup
-// 			trigger={<button><AiOutlineUserAdd/></button>}
-// 			on='click'
-// 			open={state}
-// 			onClose={handleClose}
-// 			onOpen={handleOpen}
-// 			position='top right' modal nested>
-// 			<div className="modal2">
-// 				<button className="close" onClick={handleClose}>&times;</button>
-// 				<div className="header"> Add user</div>
-// 				<div className="content">
-// 				{' '}
-// 				<pre>      Select user to add      </pre>
-// 				</div>
-// 				<div className="actions">
-// 					<div className="actions">
-// 						<input className="input-width" id='add user' type="text" placeholder="Enter the user name"></input>
-// 						<button className="button-return" onClick={() => handleClick()}>Invite user</button>
-// 					</div>
-// 				</div>
-// 			</div>
-// 		</Popup>
-// 	</h2>)
-// }
+	return (
+	<h2>
+		Add user : &nbsp;&nbsp;
+		<Popup
+			trigger={<button><AiOutlineUserAdd/></button>}
+			on='click'
+			open={state}
+			onClose={handleClose}
+			onOpen={handleOpen}
+			position='top right' modal nested>
+			<div className="modal2">
+				<button className="close" onClick={handleClose}>&times;</button>
+				<div className="header"> Add user</div>
+				<div className="content">
+				{' '}
+				<pre>      Select user to add      </pre>
+				</div>
+				<div className="actions">
+					<div className="actions">
+						<input className="input-width" id='add user' type="text" placeholder="Enter the user name"></input>
+						<button className="button-return" onClick={() => handleClick()}>Invite user</button>
+					</div>
+				</div>
+			</div>
+		</Popup>
+	</h2>)
+}
 
 const AdminUser = (ChatName:prop) => {
 	const [state, setState] = useState(false); 
