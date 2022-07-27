@@ -127,7 +127,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     {
       
       const user = client.data.user;
+      console.log(channelData.name);
       await this.chatService.joinChannel(channelData, user);
+      console.log('lol');
       client.join(channelData.name);
       const chatUsers = [];
       for (const socket of this._sockets)
