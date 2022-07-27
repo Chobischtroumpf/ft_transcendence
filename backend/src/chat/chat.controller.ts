@@ -168,8 +168,6 @@ export class ChatController
     @Get('/getchannels')
     async getChannelsFromUser(@Body('userId') userId: number)
     {
-        console.log(userId);
-        console.log("user is :")
         return this.chatService.getChannelsFromUser(userId);
     }
     
