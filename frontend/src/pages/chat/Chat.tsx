@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import axios from "axios";
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import chatImage from '../../assets/chat2.png';
-import './chat.css' 
+import './Chat.css' 
 
 
 type Props = {
