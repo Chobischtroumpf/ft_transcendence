@@ -70,7 +70,7 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
                             width="400px"
                             height="200px"
                         >
-                            <line x1="200" y1="400" x2="200" y2="0" stroke="red" stroke-dasharray="6" />
+                            <line x1="200" y1="400" x2="200" y2="0" stroke="red" strokeDasharray="6" />
                             <rect x={10} y={gameUpdate?.player1.y} width={10} height={gameUpdate?.options.paddleSize} stroke="red" />
                             <rect x={370} y={gameUpdate?.player2.y} width={10} height={gameUpdate?.options.paddleSize} stroke="red" />
                             <circle cx={gameUpdate?.ball.x} cy={gameUpdate?.ball.y} r={gameUpdate?.ball.size} />
