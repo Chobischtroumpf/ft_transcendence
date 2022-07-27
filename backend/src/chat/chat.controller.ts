@@ -20,13 +20,11 @@ export class ChatController
     getAllChannels(@Query('page') page: number)
     {
         return this.chatUtilService.paginate(page);
-    //    return this.chatUtilService.getAllChannels();
     }
 
     @Get(':name')
     getChannelByName(@Param('name') name: string)
     {
-        console.log(name);
         return this.chatUtilService.getChannelByName(name);
     }
 
@@ -78,9 +76,6 @@ export class ChatController
     @Post('/join')
     async joinChannel(@Body() channelData: SetPasswordDto, @User() user)
     {
-        const saltOrRounds = 10;
-        console.log(channelData.name);
-        channelData = await bcrypt.hash(channelData.password, saltOrRounds);
         return this.chatService.joinChannel(channelData, user);
     }
 
