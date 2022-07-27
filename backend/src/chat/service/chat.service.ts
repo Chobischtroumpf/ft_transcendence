@@ -120,16 +120,23 @@ export class ChatService
         if (channel.status === ChannelStatus.direct && (channel.name.includes("direct_with_") === false || channel.name.includes(`${user.id}`) === false))
             throw new WsException('you dont have acceess to join here');
         const userStatus = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
-        console.log(userStatus);
+        // console.log(userStatus);
         if (userStatus)
         {
+            // console.log('user has status');
             if (userStatus.banned !== null)
             {
+                // console.log('user has ban');
                 const time = new Date;
-                if (userStatus.banned < time)
-                throw new WsException('you dont have acceess to join here');
-                userStatus.banned = null;
-                await this.joinedUserStatusRepository.save(userStatus);
+                if (userStatus.banned > time)
+                  throw new WsException('you dont have acceess to join here');
+                else
+                {
+                //   console.log('ban expired');
+                  userStatus.banned = null;
+                  await this.joinedUserStatusRepository.save(userStatus);
+                  return ;
+                }
             }
         }
         if (await this.chatUtilService.clientIsMember(user, channel) === true)

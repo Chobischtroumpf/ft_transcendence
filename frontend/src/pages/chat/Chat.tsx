@@ -33,7 +33,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
 
   const pongGame = async (e: SyntheticEvent) =>
   {
-      console.log(name);
+      // console.log(name);
       e.preventDefault();
       const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${name}`);
       const id = data.id;
@@ -51,7 +51,9 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
    
   useEffect(() => {
       const intervalId = setInterval(() => {
-          if(window.location.href != oldURL){
+        if(window.location.href != oldURL){
+            // console.log("oldURL: " + oldURL);
+            // console.log("window.location.href: " + window.location.href);
               var url_string = oldURL;
               var url = new URL(url_string);
               const temp = url.searchParams.get('chatId');
@@ -59,9 +61,14 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               clearInterval(intervalId);
           }
       }, 1000);
+
   }, []);
 
   useEffect(() => {
+    // if (socket){  
+    //   socket?.connect();
+    //   socket?.emit('joinToServer', channelName);
+    // }
       (async () => {
           const {data} = await axios.get('user');
           setMyName(data.username);
@@ -73,6 +80,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       return () => {
 
         }
+      // if ()
   }, [joinMsg, socket]);
 
   if (redirect === true)

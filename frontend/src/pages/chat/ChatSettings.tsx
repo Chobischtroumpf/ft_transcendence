@@ -19,49 +19,42 @@ import { data } from "autoprefixer";
 
 
 type Props = {
-    socket: Socket | null,
-};
+	  socket: Socket | null,
+}
 
 // 1 = owner 2 = admin 3 = password=true 4 = channel=private
 
-const ChatSettings = (socket:Props) =>{
+const ChatSettings = ({socket}:Props) =>{
 	const queryParams = new URLSearchParams(useLocation().search);
-	const ChatName = queryParams.get("ChatSettingsId");
+	const chatName = queryParams.get("ChatSettingsId");
     const [redirect, setRedirect] = useState(false);
+	const [redirectToChat, setRedirectToChat] = useState(false);
 	const [currentChatStatus, setCurrentChatStatus] = useState("");
-	// const [UserStatus, setUserStatus] = useState('');
-	// const [currentChannel, setCurrentChannel] = useState('');
+	
 
 	
 	useEffect(() => {
 		const chatStatus = async () => {
-		  const data = await axios.get(`chat/${ChatName}`);
+		  const data = await axios.get(`chat/${chatName}`);
 			return data.data.status;
 		}
 		chatStatus().then(Status => {
 			setCurrentChatStatus(Status);
 		});
 
-		if (socket.socket === null)
+		if (socket === null)
 			setRedirect(true);
-	})
-
-
-
+	}, [])
 
     if (redirect === true)
     {
         return <Navigate to={'/channels'} />;
     }
-	// useEffect(() => {
-	// 	(
-	// 	  async () => {
-	// 		const {data} = await axios.get(`chat/${ChatName}`);
-	// 		console.log(data);
-	// 		setCurrentChannel(data);
-	// 	  }
-	// 	)();
-	//   }, []);
+
+	if (redirectToChat === true)
+    {
+        return <Navigate to={`/chat?chatId=${chatName}`} />;
+    }
 
     return (
 	<Wrapper>
@@ -71,16 +64,19 @@ const ChatSettings = (socket:Props) =>{
 					SETTINGS : <p/>
 				</u> 
 			</h1>
-			{ currentChatStatus == "private" && <AddUser chatName={ChatName}/>}
-			{ 1 && <AdminUser chatName={ChatName}/>}
-			{ (1 || 2) && (<BanUser chatName={ChatName}/>)}
-			{ 1 && 3 && (<AddPassword chatName={ChatName}/>)}
-			{ 1 && 3 && (<ModifyPassword chatName={ChatName}/>)}
-			{ 1 && 3 && (<RemovePassword chatName={ChatName}/>)}
-			{ (1 || 2) && (<MuteUser chatName={ChatName}/>)}
-			{ (1 || 2) && (<UnmuteUser chatName={ChatName}/>)}
+			{ currentChatStatus == "private" && <AddUser chatName={chatName}/>}
+			{ 1 && <AdminUser chatName={chatName}/>}
+			{ (1 || 2) && (<BanUser chatName={chatName}/>)}
+			{ 1 && 3 && (<AddPassword chatName={chatName}/>)}
+			{ 1 && 3 && (<ModifyPassword chatName={chatName}/>)}
+			{ 1 && 3 && (<RemovePassword chatName={chatName}/>)}
+			{ (1 || 2) && (<MuteUser chatName={chatName}/>)}
+			{ (1 || 2) && (<UnmuteUser chatName={chatName}/>)}
 		</div>
-		<Link to={`/chat?chatId=${ChatName}`} className="button-return" type="submit">Return</Link>
+		<button className='back-button' onClick={() => {
+			      socket?.emit('joinToServer', { name: chatName });
+				  setRedirectToChat(true);
+		}}>Return</button>
     </Wrapper>
     );
 }
@@ -89,7 +85,7 @@ interface prop {
 	chatName: string | null
 }
 
-const AddUser = (ChatName:prop) => {
+const AddUser = (chatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true);}
 	const handleClose = () => {setState(false);}
@@ -103,7 +99,7 @@ const AddUser = (ChatName:prop) => {
 			if (data == "")
 				window.alert("Wrong username");
 			console.log("ADD USER");
-			// await axios.post('chat/add', { ChatName, '' })
+			// await axios.post('chat/add', { chatName, '' })
 		} catch (e) {
 			console.log("here");
 		}
@@ -137,7 +133,7 @@ const AddUser = (ChatName:prop) => {
 	</h2>)
 }
 
-const AdminUser = (ChatName:prop) => {
+const AdminUser = (chatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true); onModalOpen()};
 	const handleClose = () => {setState(false);}
@@ -148,7 +144,7 @@ const AdminUser = (ChatName:prop) => {
 	const onModalOpen = async() => {
 	try {
 		setPopupMessage("");
-		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
+		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
 			// console.log("here")
@@ -157,7 +153,7 @@ const AdminUser = (ChatName:prop) => {
 
 	const handleClick = async( userId:number ) => {
 		try {
-			const name = ChatName.chatName!;
+			const name = chatName.chatName!;
 			const adminForm : AdminUserDto = { name : name, adminId : userId }
 			const data = await axios({
 					method: 'post',
@@ -215,7 +211,7 @@ const AdminUser = (ChatName:prop) => {
 	</h2>)
 }
 
-const BanUser = (ChatName:prop) => {
+const BanUser = (chatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
@@ -226,7 +222,7 @@ const BanUser = (ChatName:prop) => {
 	const onModalOpen = async() => {
 	try {
 		setPopupMessage("");
-		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
+		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
 			// console.log("here")
@@ -235,7 +231,7 @@ const BanUser = (ChatName:prop) => {
 
 	const handleClick = async( userId:number ) => {
 		try {
-			const name = ChatName.chatName!;
+			const name = chatName.chatName!;
 			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
 			const data = await axios({
 					method: 'patch',
@@ -294,7 +290,7 @@ const BanUser = (ChatName:prop) => {
 	</h2>)
 }
 
-const AddPassword = (ChatName:prop) => {
+const AddPassword = (chatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setPopupMessage(""); setState(true);}
 	const handleClose = () => {setState(false);}
@@ -306,7 +302,7 @@ const AddPassword = (ChatName:prop) => {
 		try {
 			const newpwd = (document.getElementById("new password") as HTMLInputElement).value;
 
-			const adminForm : SetPasswordDto = { name : ChatName.chatName!, password : newpwd }
+			const adminForm : SetPasswordDto = { name : chatName.chatName!, password : newpwd }
 			const data = await axios({
 					method: 'patch',
 					url: "chat/password",
@@ -352,7 +348,7 @@ const AddPassword = (ChatName:prop) => {
 	</h2>)
 }
 
-const ModifyPassword = (ChatName:prop) => {
+const ModifyPassword = (chatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setPopupMessage(""); setState(true);}
 	const handleClose = () => {setState(false);}
@@ -363,7 +359,7 @@ const ModifyPassword = (ChatName:prop) => {
 		try {
 			const newpwd = (document.getElementById("modify password") as HTMLInputElement).value;
 
-			const adminForm : SetPasswordDto = { name : ChatName.chatName!, password : newpwd }
+			const adminForm : SetPasswordDto = { name : chatName.chatName!, password : newpwd }
 			const data = await axios({
 					method: 'patch',
 					url: "chat/password",
@@ -409,7 +405,7 @@ const ModifyPassword = (ChatName:prop) => {
 	</h2>)
 }
 
-const RemovePassword = (ChatName:prop) => {
+const RemovePassword = (chatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setPopupMessage(""); setState(true);}
 	const handleClose = () => {setState(false);}
@@ -421,7 +417,7 @@ const RemovePassword = (ChatName:prop) => {
 			const data = await axios({
 					method: 'patch',
 					url: "chat/removepassword",
-					data: {name:ChatName.chatName},
+					data: {name:chatName.chatName},
 					headers: {'content-type': 'application/json'}
 				})
 				setPopupMessage("Password successfully removed");
@@ -462,7 +458,7 @@ const RemovePassword = (ChatName:prop) => {
 	</h2>)
 }
 
-const MuteUser = (ChatName:prop) => {
+const MuteUser = (chatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
@@ -473,7 +469,7 @@ const MuteUser = (ChatName:prop) => {
 	const onModalOpen = async() => {
 	try {
 		setPopupMessage("");
-		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
+		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
 			// console.log("here")
@@ -482,7 +478,7 @@ const MuteUser = (ChatName:prop) => {
 
 	const handleClick = async( userId:number ) => {
 		try {
-			const name = ChatName.chatName!;
+			const name = chatName.chatName!;
 			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
 			const data = await axios({
 					method: 'patch',
@@ -540,7 +536,7 @@ const MuteUser = (ChatName:prop) => {
 	</h2>)
 }
 
-const UnmuteUser = (ChatName:prop) => {
+const UnmuteUser = (chatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
@@ -551,7 +547,7 @@ const UnmuteUser = (ChatName:prop) => {
 	const onModalOpen = async() => {
 	try {
 		setPopupMessage("");
-		const {data} = await axios.get(`chat/getusers/${ChatName.chatName}`);
+		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
 			// console.log("here")
@@ -560,7 +556,7 @@ const UnmuteUser = (ChatName:prop) => {
 
 	const handleClick = async( userId:number ) => {
 		try {
-			const name = ChatName.chatName!;
+			const name = chatName.chatName!;
 			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
 			handleClose();
 			const data = await axios({
