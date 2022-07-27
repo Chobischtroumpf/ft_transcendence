@@ -133,7 +133,7 @@ export class ChatService
         }
         if (await this.chatUtilService.clientIsMember(user, channel) === true)
             return "success";
-        if (await bcrypt.compare(channelData.password, channel.password) || channel.status === ChannelStatus.public)
+        if (channel.status === ChannelStatus.public || await bcrypt.compare(channelData.password, channel.password))
         {
             if (!userStatus)
                 await this.chatUtilService.createNewJoinedUserStatus(false, false, null, null, channel, user);

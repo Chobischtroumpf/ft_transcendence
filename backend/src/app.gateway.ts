@@ -125,6 +125,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   {
     try
     {
+      
       const user = client.data.user;
       await this.chatService.joinChannel(channelData, user);
       client.join(channelData.name);
@@ -137,7 +138,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         }
       }
       const allMessages = await this.chatService.getMessagesFromChannel(channelData.name, user);
-      // client.emit('joinToClient', { channel: channelData.name });
       this.wss.to(channelData.name).emit('joinToClient', { msg: `${user.username} joined to channel`, channel: channelData.name, messages: allMessages, onlineUsers: chatUsers });
     }
     catch { throw new WsException('Something went wrong'); }
@@ -167,13 +167,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const channel = await this.chatUtilService.getChannelByName(data.name);
       const message = await this.chatService.createMessageToChannel(data, user);
       const allMessages = await this.chatService.getMessagesFromChannel(data.name, user);
-      this.wss.to(data.name).emit('msgToClient', allMessages);
+      // this.wss.to(data.name).emit('msgToClient', allMessages);
       // PUT THIS BACK ON SOMEPOINT !!!! IT CHECKS BLOCKED USERS
-      // for (const member of channel.members)
-      //   if (await this.userService.isblocked_true(user, member) === false)
-      //     for (var i = 0; i < this._sockets.length; i++)
-      //       // if (this._sockets[i].data.user.username === user.username)
-      //       this._sockets[i].emit('msgToClient', allMessages);
+      for (const member of channel.members)
+        if (await this.userService.isblocked_true(user, member) === false)
+          for (var i = 0; i < this._sockets.length; i++)
+            // if (this._sockets[i].data.user.username === user.username)
+            this._sockets[i].to(data.name).emit('msgToClient', allMessages);
     }
     catch { throw new WsException('Something went wrong'); }
   }
