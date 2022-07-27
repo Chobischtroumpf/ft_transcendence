@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ChatService } from './service/chat.service';
 import { AdminUserDto, CreateMessageToChatDto, JoinedUserStatusDto, SetPasswordDto } from './dto/chat.dto';
 import { ChatUtilsService } from './service/chatUtils.service';
@@ -20,7 +20,6 @@ export class ChatController
     getAllChannels(@Query('page') page: number)
     {
         return this.chatUtilService.paginate(page);
-    //    return this.chatUtilService.getAllChannels();
     }
 
     @Get(':name')
@@ -69,7 +68,7 @@ export class ChatController
     }
 
     @Delete('/leave/:id')
-    async leaveChannel(@Param('id') id: number, @User() user)
+    async leaveChannel(@Param('id', ParseIntPipe) id: number, @User() user)
     {
         return this.chatService.leaveChannel(id, user);
     }
@@ -77,8 +76,6 @@ export class ChatController
     @Post('/join')
     async joinChannel(@Body() channelData: SetPasswordDto, @User() user)
     {
-        const saltOrRounds = 10;
-        channelData = await bcrypt.hash(channelData.password, saltOrRounds);
         return this.chatService.joinChannel(channelData, user);
     }
 
@@ -133,7 +130,7 @@ export class ChatController
     }
 
     @Post('/direct')
-    async createDirectChannel(@Body('id') id: number, @User() user)
+    async createDirectChannel(@Body('id', ParseIntPipe) id: number, @User() user)
     {
         return this.chatService.createDirectChannel(user, await this.userService.getUserById(id));
     }

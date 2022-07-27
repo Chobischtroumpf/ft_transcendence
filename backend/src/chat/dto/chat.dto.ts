@@ -63,3 +63,4 @@ export class InvitePlayerOptions
     @IsNumber()
     ballSpeed: number;
 }
+

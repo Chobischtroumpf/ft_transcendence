@@ -89,19 +89,36 @@ const AddUser = (chatName:prop) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true);}
 	const handleClose = () => {setState(false);}
-	const [userToAdd, setUserToAdd] = useState('');
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
 
 	const handleClick = async() => {
 		try {
+			setPopupMessage("");
 			const username = (document.getElementById("add user") as HTMLInputElement).value;
 			const {data} = await axios.get(`user/get/user?username=${username}`)
-			setUserToAdd(data);
 			if (data == "")
-				window.alert("Wrong username");
+			{
+				setPopupMessage("User not found");
+				setActionSuccess(false);
+				return ;
+			}
+			const adminForm : JoinedUserStatusDto = { name : chatName.chatName!, targetId : data.id }
 			console.log("ADD USER");
-			// await axios.post('chat/add', { chatName, '' })
-		} catch (e) {
-			console.log("here");
+			await axios({
+				method: 'post',
+				url: "chat/invite",
+				data: adminForm,
+				headers: {'content-type': 'application/json'}
+			})
+			setPopupMessage("User added");
+			setActionSuccess(true);
+			handleClose();
+		} catch (e:any) {
+			console.log(e);
+			setPopupMessage(e.response.data.message);
+			setActionSuccess(false);
+			handleClose();
 		}
 	};
 
@@ -130,6 +147,7 @@ const AddUser = (chatName:prop) => {
 				</div>
 			</div>
 		</Popup>
+		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
 	</h2>)
 }
 

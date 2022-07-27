@@ -10,6 +10,7 @@ import { ChannelEntity, ChannelStatus } from '../entities/channel.entity';
 import { JoinedUserStatus } from '../entities/joinedUserStatus.entity';
 import { MessageEntity } from '../entities/message.entity';
 import { ChatUtilsService } from './chatUtils.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChatService
@@ -31,7 +32,7 @@ export class ChatService
         this.chatUtilService.checkClientIsMember(user, channel);
         this.chatUtilService.userIsOwner(userStatus);
         if (await this.chatUtilService.clientIsMember(friend, channel) === true)
-            throw new HttpException({status: HttpStatus.FORBIDDEN, error: 'User is already in this chat'}, HttpStatus.FORBIDDEN);
+            throw new HttpException({status: HttpStatus.FORBIDDEN, message: 'User is already in this chat'}, HttpStatus.FORBIDDEN);
         if (!friendUserStatus)
             await this.chatUtilService.createNewJoinedUserStatus(false, false, null, null, channel, friend); 
         channel.members.push(friend);
@@ -114,13 +115,11 @@ export class ChatService
 
     async joinChannel(channelData: SetPasswordDto, user: UserEntity)
     {
-
         const channel = await this.chatUtilService.getChannelByName(channelData.name);
         this.chatUtilService.channelIsPrivate(channel, user);
         if (channel.status === ChannelStatus.direct && (channel.name.includes("direct_with_") === false || channel.name.includes(`${user.id}`) === false))
             throw new WsException('you dont have acceess to join here');
         const userStatus = await this.joinedUserStatusRepository.findOne({ where: { channel: { name: channel.name }, user: { username: user.username } } });
-        // console.log(userStatus);
         if (userStatus)
         {
             // console.log('user has status');
@@ -140,14 +139,14 @@ export class ChatService
             }
         }
         if (await this.chatUtilService.clientIsMember(user, channel) === true)
-            return ;
-        if (channelData.password === channel.password || channel.status === ChannelStatus.public)
+            return "success";
+        if (await bcrypt.compare(channelData.password, channel.password) || channel.status === ChannelStatus.public)
         {
             if (!userStatus)
                 await this.chatUtilService.createNewJoinedUserStatus(false, false, null, null, channel, user);
             channel.members.push(user);
             await this.chatRepository.save(channel);
-            return ;
+            return "success";
         }
         throw new HttpException('wrong password, try again', HttpStatus.FORBIDDEN);
     }
