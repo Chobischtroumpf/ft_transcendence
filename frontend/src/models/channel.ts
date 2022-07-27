@@ -12,9 +12,11 @@ export class JoinedUserStatus
 {
     constructor(
     public id: number,
-    owner: boolean,
-    admin: boolean,
-
+    public owner: boolean,
+    public admin: boolean,
+    public muted: boolean,
+    public banned: boolean,
+    public user: User,
     ) {}
 }
 
@@ -24,7 +26,7 @@ export class Channel
         public id: number,
         public name: string,
         public status: ChannelStatus,
-        public members: User[]
-        // public 
+        public members: User[],
+        public userStatus: JoinedUserStatus[],
     ) {}
 }

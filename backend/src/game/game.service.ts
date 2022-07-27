@@ -47,14 +47,14 @@ export class GameService
 
     resetPlayer1(player: Player)
     {
-        player.x = 3;
+        player.x = 20;
         player.y = this.defaultCanvas.h / 2;
         return player;
     }
 
     resetPlayer2(player: Player)
     {
-        player.x = this.defaultCanvas.w - 3;
+        player.x = this.defaultCanvas.w - 30;
         player.y = this.defaultCanvas.h / 2;
         return player;
     }
@@ -74,7 +74,7 @@ export class GameService
     checkIfAwayPlayerHitsBall(game: Game)
     {
         var size = game.players[1].paddle.h;
-        if (game.ball.x >= this.defaultCanvas.w - 20 && game.ball.x <= this.defaultCanvas.w - 10)
+        if (game.ball.x >= this.defaultCanvas.w - 30 && game.ball.x <= this.defaultCanvas.w - 20)
             while (--size >= 0)
                 if (game.players[1].y + size === game.ball.y)
                     return true;
@@ -94,14 +94,14 @@ export class GameService
             else if (game.ball.x < 10)
                 return this.goal(2, game);
         }
-        else if (game.ball.x > this.defaultCanvas.w - 20)
+        else if (game.ball.x > this.defaultCanvas.w - 30)
         {
             if (this.checkIfAwayPlayerHitsBall(game) === true)
             {
                 game.sounds.hit = true;
                 game.ball.direction = this.setRandomBallDirection(2);
             }
-            else if (game.ball.x > this.defaultCanvas.w - 10)
+            else if (game.ball.x > this.defaultCanvas.w - 20)
                 return this.goal(1, game);
         }
         else if (game.ball.y > this.defaultCanvas.h - 1 || game.ball.y < 1)
@@ -206,7 +206,7 @@ export class GameService
     {
         const player: Player = {
             player: user,
-            x: this.defaultCanvas.w - 20,
+            x: this.defaultCanvas.w - 30,
             y: this.defaultCanvas.h / 2 - gameOptions.paddleSize / 2,
             paddle: this.initPaddle(gameOptions),
             color: 'blue',

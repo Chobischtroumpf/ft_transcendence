@@ -3,10 +3,8 @@ import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { MessageI } from "../../models/Chat";
-import styled from "styled-components"
 import { Link } from 'react-router-dom';
 import axios from "axios";
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import chatImage from '../../assets/chat2.png';
 import './Chat.css' 
 
@@ -25,10 +23,8 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
   const [infoMsg, setInfoMsg] = useState(joinMsg);
   const [game, setGame] = useState(false);
   const [redirect, setRedirect] = useState(false);
-  const [base64, setBase64] = useState();
   const [name, setName] = useState('');
   const [myName, setMyName] = useState('');
-  const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
   const [blockUser, setBlockuser] = useState('');
   var oldURL = window.location.href;
 
@@ -41,17 +37,32 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       setGame(true);
   }
 
+  const blockUserFunc = async (e: SyntheticEvent) =>
+  {
+    e.preventDefault();
+    try {
+      const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
+      console.log(data);
+      await axios.post(`/user/block/${data.id}`);
+      setBlockuser('');
+    } catch (error) {
+      // console.log(error);
+    }
+  }
+
   const newMsg = async (e: SyntheticEvent) =>
   {
-      e.preventDefault();
-      socket?.emit('msgToServer', { name: channelName, message: newMessage });
-      setNewMessage("");
-      window.scrollTo(0,document.body.scrollHeight);
+    e.preventDefault();
+    socket?.emit('msgToServer', { name: channelName, message: newMessage });
+    setNewMessage("");
+    window.scrollTo(0,document.body.scrollHeight);
   }
    
   useEffect(() => {
       const intervalId = setInterval(() => {
-          if(window.location.href != oldURL){
+        if(window.location.href != oldURL){
+            // console.log("oldURL: " + oldURL);
+            // console.log("window.location.href: " + window.location.href);
               var url_string = oldURL;
               var url = new URL(url_string);
               const temp = url.searchParams.get('chatId');
@@ -59,9 +70,14 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               clearInterval(intervalId);
           }
       }, 1000);
+
   }, []);
 
   useEffect(() => {
+    // if (socket){  
+    //   socket?.connect();
+    //   socket?.emit('joinToServer', channelName);
+    // }
       (async () => {
           const {data} = await axios.get('user');
           setMyName(data.username);
@@ -73,6 +89,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       return () => {
 
         }
+      // if ()
   }, [joinMsg, socket]);
 
 
@@ -116,7 +133,9 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
                   <form onSubmit={pongGame}>
                     {onlineUser} <button onClick={e => setName(onlineUser)} type="submit" >Invite to game</button>
                   </form>
-                  
+                  <form onSubmit={blockUserFunc}>
+                    <button onClick={e => setBlockuser(onlineUser)} type="submit" >Block</button>
+                  </form>
                 </h6>
               </li>
               );
@@ -150,7 +169,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               {
                 return (
                   <li style={{listStyleType: 'none', zIndex: '1' }} key={message.id}>
-                      <h5 style={{ padding: '10px', zIndex: '1' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}> <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile?userId=?${message.author.id}`}> <b>{message.author.username}</b> </Link> : {message.content}</span></h5>
+                      <h5 style={{ padding: '10px', zIndex: '1' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}> <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile?userId=${message.author.id}`}> <b>{message.author.username}</b> </Link> : {message.content}</span></h5>
                   </li>
                 );
               }

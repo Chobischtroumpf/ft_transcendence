@@ -246,9 +246,10 @@ export class UserService
 
     async isblocked_true(user: UserEntity, friend: UserEntity)
     {
-      friend.blockedUsers = await this.getBlockedUsers(friend.id);
+      friend.blockedUsers = await this.getBlockedUsers(user.id);
+      
       for (const x of friend.blockedUsers)
-        if (x.id === user.id)
+        if (x.id === friend.id)
             return true;
       return false;
     }

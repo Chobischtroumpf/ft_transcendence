@@ -125,19 +125,23 @@ export class ChatService
             if (userStatus.banned !== null)
             {
                 const time = new Date;
-                if (userStatus.banned < time)
-                throw new WsException('you dont have acceess to join here');
-                userStatus.banned = null;
-                await this.joinedUserStatusRepository.save(userStatus);
+                if (userStatus.banned > time)
+                  throw new WsException('you dont have acceess to join here');
+                else
+                {
+                  userStatus.banned = null;
+                  await this.joinedUserStatusRepository.save(userStatus);
+                }
             }
         }
         if (await this.chatUtilService.clientIsMember(user, channel) === true)
             return "success";
-        if (await bcrypt.compare(channelData.password, channel.password) || channel.status === ChannelStatus.public)
+        if (channel.status === ChannelStatus.public || await bcrypt.compare(channelData.password, channel.password))
         {
             if (!userStatus)
                 await this.chatUtilService.createNewJoinedUserStatus(false, false, null, null, channel, user);
             channel.members.push(user);
+
             await this.chatRepository.save(channel);
             return "success";
         }
