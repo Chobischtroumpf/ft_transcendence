@@ -31,7 +31,7 @@ export class ChatService
         this.chatUtilService.checkClientIsMember(user, channel);
         this.chatUtilService.userIsOwner(userStatus);
         if (await this.chatUtilService.clientIsMember(friend, channel) === true)
-            throw new HttpException({status: HttpStatus.FORBIDDEN, error: 'User is already in this chat'}, HttpStatus.FORBIDDEN);
+            throw new HttpException({status: HttpStatus.FORBIDDEN, message: 'User is already in this chat'}, HttpStatus.FORBIDDEN);
         if (!friendUserStatus)
             await this.chatUtilService.createNewJoinedUserStatus(false, false, null, null, channel, friend); 
         channel.members.push(friend);
