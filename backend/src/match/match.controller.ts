@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { User } from 'src/decorators/user.decorator';
 import { UserEntity } from 'src/user/entities/user.entity';
@@ -20,7 +20,7 @@ export class MatchController
 
     @Get("/:id")
     @UseGuards(JwtGuard)
-    getMatches(@Param('id') id: number)
+    getMatches(@Param('id', ParseIntPipe) id: number)
     {
         return this.matchService.getMatches(id);
     }
