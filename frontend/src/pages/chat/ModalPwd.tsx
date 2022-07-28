@@ -29,7 +29,6 @@ function ModalPwd(prop:prop) {
         setGoodPwd(1);
       }
       catch (e) {
-        console.log("wrong pwd")
         setGoodPwd(2);
       }
 	};
@@ -63,7 +62,6 @@ function ModalPwd(prop:prop) {
           </Button>
         </Modal.Footer>
       </Modal>
-      {/* <Navigate to={'/channels'} />; */}
     </>
   );
 }

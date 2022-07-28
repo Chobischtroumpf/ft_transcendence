@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Injectable, Param, ParseIntPipe, Patch, Post, Query, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Query, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { join } from 'path';
@@ -8,10 +8,7 @@ import { diskStorage } from 'multer';
 import { of } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/decorators/user.decorator';
-import { UserEntity, UserStatus } from './entities/user.entity';
-import { tfaDto } from './dto/new-user.dto';
-import { validate } from 'class-validator';
-import { get } from 'http';
+import { UserEntity } from './entities/user.entity';
 
 export const storage = {
   storage: diskStorage({
@@ -53,9 +50,9 @@ export class UserController
   @Post('tfa/secret')
   async register(@Res() response: Response, @User() user)
   {
-    if (!user.tfa_enabled){
-    const { otpauthUrl } = await this.userService.generateTfaSecret(user);
-    return this.userService.pipeQrCodeStream(response, otpauthUrl);
+    if (!user.tfa_enabled) {
+      const { otpauthUrl } = await this.userService.generateTfaSecret(user);
+      return this.userService.pipeQrCodeStream(response, otpauthUrl);
     }
   }
 
@@ -68,9 +65,7 @@ export class UserController
       throw new UnauthorizedException('Wrong authentication code');
     }
     await this.userService.turnOnTfa(user);
-    
     const jwt = this.authService.treatTfa(user.id, true);
-
 		res.clearCookie('access_token');
 		res.cookie('access_token', jwt);
   }
@@ -95,13 +90,6 @@ export class UserController
   {
     return this.userService.getBlockedUsers(user.id);
   }
-
-  // @Get('/match')
-  // async getAllMatch(@User() user)
-  // {
-
-  //   return this.userService.historyMatch(user);
-  // }
   
   @Post('/logout')
   async logOut(@Res({ passthrough: true }) response: Response, @User() user)

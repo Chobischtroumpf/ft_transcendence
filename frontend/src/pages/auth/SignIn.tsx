@@ -38,26 +38,7 @@ const SignIn = () =>
     }
 
   useEffect(() => {
-    // async () => {
-    //   if (getCookie("access_token") !== null) {   
-    //     try {
-    //       const {data} = await axios.get('user');
-    //       if (data.tfaEnabled !== undefined)
-    //       {
-    //         if (data.tfaEnabled === false)
-    //           setRedirect(true);
-    //       }
-    //     }
-    //     catch (e:any) {
-    //       if (e.response.status === 401)
-    //         setRedirectTFA(true);
-    //       else
-    //         setRedirect(true);
-    //       }
-    //   }
-    // }
-  }
-    , []);
+  }, []);
 
   function getCookie(name: string): string | null {
     const nameLenPlus = (name.length + 1);

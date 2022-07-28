@@ -1,22 +1,16 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router";
-import io, { Socket } from "socket.io-client";
-import { User, UserLevel, UserStatus } from "../models/user";
+import { Socket } from "socket.io-client";
 import { Menu } from "./Menu";
 import Nav from "./Nav";
-
-type Props = {
-    children: JSX.Element | JSX.Element[] | string,
-};
 
 export var sockets: Socket[] = [];
 
 const Wrapper = (props: any) =>
 {
     const [redirect, setRedirect] = useState(false);
-
-    
+ 
     useEffect(() => {
         (
             async () => {

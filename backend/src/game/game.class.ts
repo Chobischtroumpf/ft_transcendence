@@ -1,16 +1,5 @@
 import { UserEntity } from "src/user/entities/user.entity";
 
-export enum Dir
-{
-    STOP = 0,
-    LEFT = 1,
-    UPLEFT = 2,
-    DOWNLEFT = 3,
-    RIGHT = 4,
-    UPRIGHT = 5,
-    DOWNRIGHT = 6
-}
-
 export class Game
 {
     id: number;
@@ -46,12 +35,6 @@ export class Ball
     color: string;
 }
 
-export class Vector
-{
-    x: any;
-    y: any;
-}
-
 export class Paddle
 {
     h: number;
@@ -64,7 +47,6 @@ export class GameOptions
     paddleSize: number;
     paddleSpeed: number;
     ballSpeed: number;
-    // map:
 }
 
 export class Sound

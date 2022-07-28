@@ -9,16 +9,16 @@ import axios from "axios";
 import chatImage from '../../assets/chat2.png';
 import './chat.css' 
 
-
 type Props = {
     socket: Socket | null,
     joinMsg: string,
     channelName: string,
     messages: MessageI[],
     onlineUsers: string[],
+    banned: string,
 };
 
-const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
+const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Props) =>
 {
   const [newMessage, setNewMessage] = useState('');
   const [infoMsg, setInfoMsg] = useState(joinMsg);
@@ -50,9 +50,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
           setMyBlockedUsers(data);
         });
     } catch (error) {
-      // console.log(error);
-      // if error.response.status === 500 {
-
+      
     }
   }
 
@@ -67,7 +65,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
           setMyBlockedUsers(data);
         });
         } catch (error) {
-      // console.log(error);
+      
     }
   }
 
@@ -75,10 +73,9 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
   {
     try {
       const {data} = await axios.get(`/user/get/blocked`);
-      // console.log(data);
       return data;
     } catch (error) {
-      // console.log(error);
+      
     }
   }
 
@@ -109,7 +106,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       getBlockedUsers().then((blockedUsers) => {
         setMyBlockedUsers(blockedUsers);
       }, (error) => {
-        // console.log(error);
+        
       });
   }, []);
 
@@ -118,10 +115,13 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
           const {data} = await axios.get('user');
           setMyName(data.username);
       }) ()
-      if (socket === null)
-          setRedirect(true);
+      if (socket === null || banned === "banned")
+      {
+        socket?.emit('unBanToServer', myName);
+        setRedirect(true);
+      }
       setInfoMsg(joinMsg);
-  }, [joinMsg, socket]);
+  }, [joinMsg, socket, banned]);
 
   const findUser = (username: string) =>
   {

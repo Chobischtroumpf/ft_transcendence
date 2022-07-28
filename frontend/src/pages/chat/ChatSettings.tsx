@@ -17,8 +17,6 @@ type Props = {
 	  socket: Socket | null,
 }
 
-// 1 = owner 2 = admin 3 = password=true 4 = channel=private
-
 const ChatSettings = ({socket}:Props) =>{
 	const queryParams = new URLSearchParams(useLocation().search);
 	const chatName = queryParams.get("ChatSettingsId");
@@ -59,7 +57,7 @@ const ChatSettings = ({socket}:Props) =>{
 			</h1>
 			{ currentChatStatus == "private" && <AddUser chatName={chatName}/>}
 			{ 1 && <AdminUser chatName={chatName}/>}
-			{ (1 || 2) && (<BanUser chatName={chatName}/>)}
+			{ (1 || 2) && (<BanUser chatName={chatName} socket={socket}/>)}
 			{ (1 || 2) && (<UnbanUser chatName={chatName}/>)}
 			{ 1 && 3 && (<AddPassword chatName={chatName}/>)}
 			{ 1 && 3 && (<ModifyPassword chatName={chatName}/>)}
@@ -98,7 +96,6 @@ const AddUser = (chatName:prop) => {
 				return ;
 			}
 			const adminForm : JoinedUserStatusDto = { name : chatName.chatName!, targetId : data.id }
-			console.log("ADD USER");
 			await axios({
 				method: 'post',
 				url: "chat/invite",
@@ -109,7 +106,6 @@ const AddUser = (chatName:prop) => {
 			setActionSuccess(true);
 			handleClose();
 		} catch (e:any) {
-			console.log(e);
 			setPopupMessage(e.response.data.message);
 			setActionSuccess(false);
 			handleClose();
@@ -159,7 +155,7 @@ const AdminUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 
@@ -223,7 +219,12 @@ const AdminUser = (chatName:prop) => {
 	</h2>)
 }
 
-const BanUser = (chatName:prop) => {
+type Props2 = {
+	socket: Socket | null,
+	chatName: string | null,
+}
+
+const BanUser = ({chatName, socket}: Props2) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
@@ -234,23 +235,24 @@ const BanUser = (chatName:prop) => {
 	const onModalOpen = async() => {
 	try {
 		setPopupMessage("");
-		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
+		const {data} = await axios.get(`chat/getusers/${chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 
 	const handleClick = async( userId:number ) => {
 		try {
-			const name = chatName.chatName!;
+			const name = chatName!;
 			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
 			const data = await axios({
 					method: 'patch',
 					url: "chat/ban",
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
-				})
+				});
+				socket?.emit('isBannedToServer', userId);
 				setPopupMessage("User successfully banned");
 				setActionSuccess(true);
 				handleClose();
@@ -317,7 +319,7 @@ const UnbanUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 
@@ -388,7 +390,6 @@ const AddPassword = (chatName:prop) => {
 	const handleClose = () => {setState(false);}
 	const [popupMessage, setPopupMessage] = useState("");
 	const [actionSuccess, setActionSuccess] = useState(false);
-	// const [newPassword, setNewPassword] = useState('');
 
 	const handleClick = async() => {
 		try {
@@ -564,7 +565,7 @@ const MuteUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 
@@ -642,7 +643,7 @@ const UnmuteUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 

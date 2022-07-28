@@ -4,10 +4,9 @@ import React from "react";
 import { NavLink, Navigate } from "react-router-dom";
 import { User, UserLevel, UserStatus } from "../models/user";
 
-export const Menu = (props: any) => {
-
+export const Menu = (props: any) => 
+{
   const [user, setUser] = React.useState<User>(new User(0, '', '', false, '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
-  
 
   async function getUser() {
     const response = await axios.get("/user");
@@ -25,7 +24,6 @@ export const Menu = (props: any) => {
 
     });
   },[]);
-  
 
   return (
     <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">

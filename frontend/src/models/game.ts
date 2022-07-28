@@ -1,16 +1,5 @@
 import { User } from "./user";
 
-export enum Dir
-{
-    STOP = 0,
-    LEFT = 1,
-    UPLEFT = 2,
-    DOWNLEFT = 3,
-    RIGHT = 4,
-    UPRIGHT = 5,
-    DOWNRIGHT = 6
-}
-
 export class Invite
 {
     constructor(
@@ -54,14 +43,14 @@ export class GameClass
 {
     constructor(
         public id: number,
-        public options: GameOptions, //
-        public players: Player[], //
+        public options: GameOptions,
+        public players: Player[],
         public spectators: User,
         public finished: boolean,
         public winner: Player,
-        public name: string, //
-        public ball: Ball, //
-        public sounds: Sound, //
+        public name: string,
+        public ball: Ball,
+        public sounds: Sound,
     ){}
 }
 
@@ -82,7 +71,6 @@ export class Ball
     constructor(
         public x: number,
         public y: number,
-        public direction: Dir,
         public speed: number,
         public size: number,
         public color: string,
@@ -104,7 +92,6 @@ export class GameOptions
         public paddleSize: number,
         public paddleSpeed: number,
         public ballSpeed: number,
-        // map:
     ) {}
 }
 

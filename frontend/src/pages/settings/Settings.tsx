@@ -40,7 +40,6 @@ const Settings = () => {
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
-    console.log("into handleTfaSubmit");
     const data = await axios({
       method: 'post',
       url: "/user/tfa/secret/",
@@ -83,7 +82,7 @@ const Settings = () => {
       const { data } = await axios.post("/user/tfa/turn-on", { tfaCode: tfaCode });
     }
     catch (e) {
-      console.log(e);
+
     }
   }
 
@@ -95,7 +94,7 @@ const Settings = () => {
       setUser(data);
     }
     catch (e) {
-      console.log(e);
+
     }
   }
 
