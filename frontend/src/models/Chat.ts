@@ -13,7 +13,7 @@ export class MessageI
     constructor(
         public id: number,
         public content: string,
-        public author: any,
+        public author: User,
     ) {}
 }
 

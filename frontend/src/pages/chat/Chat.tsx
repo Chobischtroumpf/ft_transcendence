@@ -3,6 +3,7 @@ import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
 import { MessageI } from "../../models/Chat";
+import { User } from "../../models/user";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import chatImage from '../../assets/chat2.png';
@@ -26,6 +27,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
   const [name, setName] = useState('');
   const [myName, setMyName] = useState('');
   const [blockUser, setBlockuser] = useState('');
+  const [myBlockedUsers, setMyBlockedUsers] = useState<User[]>([]);
   var oldURL = window.location.href;
 
   const pongGame = async (e: SyntheticEvent) =>
@@ -41,14 +43,44 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
   {
     e.preventDefault();
     try {
-      const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
-      console.log(data);
-      await axios.post(`/user/block/${data.id}`);
-      setBlockuser('');
+        const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
+        await axios.post(`/user/block/${data.id}`);
+        setBlockuser('');
+        getBlockedUsers().then(data => {
+          setMyBlockedUsers(data);
+        });
+    } catch (error) {
+      // console.log(error);
+      // if error.response.status === 500 {
+
+    }
+  }
+
+  const unblockUserFunc = async (e: SyntheticEvent) =>
+  {
+    e.preventDefault();
+    try {
+        const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
+        await axios.post(`/user/unblock/${data.id}`);
+        setBlockuser('');
+        getBlockedUsers().then(data => {
+          setMyBlockedUsers(data);
+        });
+        } catch (error) {
+      // console.log(error);
+    }
+  }
+
+  const getBlockedUsers = async () =>
+  {
+    try {
+      const {data} = await axios.get(`/user/get/blocked`);
+      return data;
     } catch (error) {
       // console.log(error);
     }
   }
+
 
   const newMsg = async (e: SyntheticEvent) =>
   {
@@ -70,26 +102,21 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               clearInterval(intervalId);
           }
       }, 1000);
-
+      getBlockedUsers().then(() => {
+        setMyBlockedUsers(myBlockedUsers);
+      }, (error) => {
+        // console.log(error);
+      });
   }, []);
 
   useEffect(() => {
-    // if (socket){  
-    //   socket?.connect();
-    //   socket?.emit('joinToServer', channelName);
-    // }
       (async () => {
           const {data} = await axios.get('user');
           setMyName(data.username);
       }) ()
-      // window.scrollTo(0,document.body.scrollHeight);
       if (socket === null)
           setRedirect(true);
       setInfoMsg(joinMsg);
-      return () => {
-
-        }
-      // if ()
   }, [joinMsg, socket]);
 
 
@@ -167,11 +194,22 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               }
               else
               {
-                return (
-                  <li style={{listStyleType: 'none', zIndex: '1' }} key={message.id}>
-                      <h5 style={{ padding: '10px', zIndex: '1' }}><span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}> <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile?userId=${message.author.id}`}> <b>{message.author.username}</b> </Link> : {message.content}</span></h5>
-                  </li>
-                );
+                if (myBlockedUsers.includes(message.author))
+                {
+                  return (
+                    <li style={{listStyleType: 'none', zIndex: '1' }} key={message.id}>
+                      <h5 style={{ padding: '10px', zIndex: '1' }}>
+                        <span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}>
+                          <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile?userId=${message.author.id}`}>
+                            <b>
+                              {message.author.username}
+                            </b>
+                          </Link>: {message.content}
+                        </span>
+                      </h5>
+                    </li>
+                  );
+                }
               }
             })}
           </div>

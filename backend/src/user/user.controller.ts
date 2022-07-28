@@ -78,22 +78,20 @@ export class UserController
   @Post('tfa/turn-off')
   @HttpCode(200)
   @UseGuards(JwtGuard)
-  async turnOffTfa(
-    @User() user,
-    @Body() { tfaCode }
-  ) {
+  async turnOffTfa(@User() user, @Body() { tfaCode })
+  {
     await this.userService.turnOffTfa(user.id);
   }
   
   @Get('friend')
-  async getFriends(@User() user)
+  async getFriends(@User() user): Promise<UserEntity[]>
   {
     const temp = await this.userService.getFriends(user.id);
     return temp;
   }
 
-  @Get('block')
-  async getBlockedUsers(@User() user)
+  @Get('get/blocked')
+  async getBlockedUsers(@User() user): Promise<UserEntity[]>
   {
     return this.userService.getBlockedUsers(user.id);
   }
