@@ -34,7 +34,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   private readonly defaultGameOptions: GameOptions = {
     paddleSize: 40,
     paddleSpeed: 6,
-    ballSpeed: 3
+    ballSpeed: 5
   };
 
   private logger: Logger = new Logger('AppGateway');
@@ -167,13 +167,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const channel = await this.chatUtilService.getChannelByName(data.name);
       const message = await this.chatService.createMessageToChannel(data, user);
       const allMessages = await this.chatService.getMessagesFromChannel(data.name, user);
-      // this.wss.to(data.name).emit('msgToClient', allMessages);
+      this.wss.to(data.name).emit('msgToClient', allMessages);
       // PUT THIS BACK ON SOMEPOINT !!!! IT CHECKS BLOCKED USERS
-      for (const member of channel.members)
-        if (await this.userService.isblocked_true(user, member) === false)
-          for (var i = 0; i < this._sockets.length; i++)
-            // if (this._sockets[i].data.user.username === user.username)
-            this._sockets[i].to(data.name).emit('msgToClient', allMessages);
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -234,6 +229,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       }
       const gameOptions = this.invites[index].gameOptions;
       // remove invited user from invites
+      for (var i = 0; i < this._sockets.length; i++)
+        if (this._sockets[i].data.user.username === invitedUser.username)
+          this._sockets[i].emit('updateInviteToClient', { username: sender.username, id: sender.id });
       this.invites.splice(index, 1);
       const player1: Player = { player: sender };
       const player2: Player = { player: invitedUser };
@@ -444,13 +442,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         ball,
         sounds
     };
-    
     // Wait 5 seconds to start the game
     let pause = true;
     setTimeout(() => {
       pause = false;
     }, 5000);
-    game.ball.direction = this.gameService.setRandomBallDirection(Math.floor(Math.random() * 2) + 1);
+    game.ball = this.gameService.setRandomBallDirection(game, Math.floor(Math.random() * 2) + 1);
     this.games.push(game);
     // create game loop with 60fps
     game.intervalId = setInterval(async () => 
@@ -465,7 +462,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
           pause = true;
           setTimeout(() => {
             pause = false;
-            game.ball.direction = this.gameService.setRandomBallDirection(Math.floor(Math.random() * 2) + 1);
+            game.ball = this.gameService.setRandomBallDirection(game, Math.floor(Math.random() * 2) + 1);
           }, 1000);
           if (game.finished === true)
             this.endGame(game);

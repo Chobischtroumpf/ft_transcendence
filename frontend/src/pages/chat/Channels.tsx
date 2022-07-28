@@ -82,7 +82,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     const data = await axios.get(`chat/${name}`);
     setCurrentChannel(data.data);
     setChatStatus(data.data.status);
-    // console.log(data.data);
+    // // console.log(data.data);
     // for ( let i = 0; i < data.data.joinedUserStatus.length; i++) { 
     //   console.log(data.data.joinedUserStatus[i].user.username);
     //   if (data.data.joinedUserStatus[i].user.username === username) {
