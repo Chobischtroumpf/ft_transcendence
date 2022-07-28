@@ -15,17 +15,20 @@ type Props = {
 
 const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
 {
+    const [redirect, setRedirect] = useState(false);
     var oldURL = window.location.href;
 
     const style = {
         border: '5px solid black',
     };
 
-    // const leave = () => {
-    //     socket?.emit('leaveGameToServer', gameUpdate?.name);
-    // }
-
     useEffect(() => {
+        window.onbeforeunload = function() {
+            var url_string = oldURL;
+            var url = new URL(url_string);
+            const temp = url.searchParams.get('gamename');
+            socket?.emit('leaveGameToServer', temp);
+        };
         const intervalId = setInterval(() => {
             if(window.location.href != oldURL){
                 var url_string = oldURL;
@@ -52,6 +55,16 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
         }
         event.preventDefault();
     }, true);
+
+    useEffect(() => {
+        if (socket === null)
+            setRedirect(true);
+    }, [socket]);
+
+    if (redirect === true)
+    {
+      return <Navigate to={'/game'} />;
+    }
 
     if (gameWinner !== '') {
         return <Navigate to={'/gamefinished'} />
@@ -83,20 +96,6 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
                 <Card.Body>
                 <div className="col-md-12 text-center">
                     <h3>{gameUpdate?.player1.user.username} vs {gameUpdate?.player2.user.username}</h3>
-                    {/* <form onSubmit={leave}>
-                        <button style={{
-                                background: "linear-gradient(81.4deg, #BC8F8F 0%, #CD5C5C 100%)",
-                                padding: "13px 0",
-                                width: "200px",
-                                height: "100px",
-                                border: "ridge",
-                                borderColor: "gray",
-                                borderRadius: "20px",
-                                color: "white",
-                                fontWeight: "bold",
-                                fontFamily: "Optima, sans-serif"
-                        }} type="submit">Leave Game</button>
-                    </form> */}
                 </div>
                 </Card.Body>
             </Card>

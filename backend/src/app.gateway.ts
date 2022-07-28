@@ -104,6 +104,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   {
     try
     {
+      console.log('asdasd');
       const user = client.data.user;
       const channel = await this.chatUtilService.getChannelByName(name);
       client.leave(name);

@@ -91,10 +91,14 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
   }
    
   useEffect(() => {
+      window.onbeforeunload = function() {
+        var url_string = oldURL;
+        var url = new URL(url_string);
+        const temp = url.searchParams.get('chatId');
+        socket?.emit('leaveChannelToServer', temp);
+      };
       const intervalId = setInterval(() => {
         if(window.location.href != oldURL){
-            // console.log("oldURL: " + oldURL);
-            // console.log("window.location.href: " + window.location.href);
               var url_string = oldURL;
               var url = new URL(url_string);
               const temp = url.searchParams.get('chatId');
