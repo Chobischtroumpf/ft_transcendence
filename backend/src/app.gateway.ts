@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from './auth/auth.service';
@@ -128,6 +128,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       
       const user = client.data.user;
       await this.chatService.joinChannel(channelData, user);
+      console.log("here");
       client.join(channelData.name);
       const chatUsers = [];
       for (const socket of this._sockets)
@@ -140,7 +141,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const allMessages = await this.chatService.getMessagesFromChannel(channelData.name, user);
       this.wss.to(channelData.name).emit('joinToClient', { msg: `${user.username} joined to channel`, channel: channelData.name, messages: allMessages, onlineUsers: chatUsers });
     }
-    catch { throw new WsException('Something went wrong'); }
+    catch { throw new HttpException('user is banned', HttpStatus.BAD_REQUEST); }
   }
 
   @SubscribeMessage('leaveToServer')

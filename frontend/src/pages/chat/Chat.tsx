@@ -7,7 +7,7 @@ import { User } from "../../models/user";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import chatImage from '../../assets/chat2.png';
-import './chat.css' 
+import './Chat.css' 
 
 
 type Props = {
@@ -75,12 +75,12 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
   {
     try {
       const {data} = await axios.get(`/user/get/blocked`);
+      // console.log(data);
       return data;
     } catch (error) {
       // console.log(error);
     }
   }
-
 
   const newMsg = async (e: SyntheticEvent) =>
   {
@@ -102,8 +102,8 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               clearInterval(intervalId);
           }
       }, 1000);
-      getBlockedUsers().then(() => {
-        setMyBlockedUsers(myBlockedUsers);
+      getBlockedUsers().then((blockedUsers) => {
+        setMyBlockedUsers(blockedUsers);
       }, (error) => {
         // console.log(error);
       });
@@ -119,6 +119,15 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       setInfoMsg(joinMsg);
   }, [joinMsg, socket]);
 
+  const findUser = (username: string) =>
+  {
+    for (let i = 0; i < myBlockedUsers.length; i++)
+    {
+      if (myBlockedUsers[i].username === username)
+        return true;
+    }
+    return false;
+  }
 
 
   if (redirect === true)
@@ -160,9 +169,13 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
                   <form onSubmit={pongGame}>
                     {onlineUser} <button onClick={e => setName(onlineUser)} type="submit" >Invite to game</button>
                   </form>
+                  {findUser(onlineUser) ?
+                  (<form onSubmit={unblockUserFunc}>
+                    <button onClick={e => setBlockuser(onlineUser)} type="submit" >Unblock</button>
+                  </form>) : (
                   <form onSubmit={blockUserFunc}>
                     <button onClick={e => setBlockuser(onlineUser)} type="submit" >Block</button>
-                  </form>
+                  </form>)}
                 </h6>
               </li>
               );
@@ -182,32 +195,38 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
               if (myName === message.author.username)
               {
                 return (
-
-                  <li style={{listStyleType: 'none', zIndex: '1' }} key={message.id}>
-                      <h5 style={{textAlign: 'right', padding: '10px' }}>
-                        <span style={{backgroundColor: '#f1f1f1', borderRadius: '20px', padding: '10px' }}>
-                          {message.content}
-                        </span>
-                      </h5>
-                  </li>
+                  <div className="own_message_element" key={message.id}>
+                    <h6 className="own_message_content">
+                      {message.content}
+                    </h6>
+                  </div>
                 );
               }
               else
               {
-                if (myBlockedUsers.includes(message.author))
+                if (findUser(message.author.username) === false)
                 {
                   return (
-                    <li style={{listStyleType: 'none', zIndex: '1' }} key={message.id}>
-                      <h5 style={{ padding: '10px', zIndex: '1' }}>
-                        <span style={{backgroundColor: '#ddd', borderRadius: '2px', padding: '10px', zIndex: '1'}}>
-                          <Link style={{ textDecoration: 'none', color: 'black' }} to={`/profile?userId=${message.author.id}`}>
-                            <b>
-                              {message.author.username}
-                            </b>
-                          </Link>: {message.content}
-                        </span>
+                    <div className="message_element" key={message.id}>
+                      <h5 className="message_content">
+                      <Link className="link_to_profile" to={`/profile?userId=${message.author.id}`}>
+                        <h6 className="message_author">
+                          {message.author.username}
+                        </h6>
+                      </Link>
+                          {message.content}
                       </h5>
-                    </li>
+                    </div>
+                  );
+                }
+                else
+                {
+                  return (
+                    <div className="message_element" key={message.id}>
+                      <h5 className="message_content">
+                        message from a blocked user
+                      </h5>
+                    </div>
                   );
                 }
               }

@@ -126,7 +126,7 @@ export class ChatService
             {
                 const time = new Date;
                 if (userStatus.banned > time)
-                  throw new WsException('you dont have acceess to join here');
+                  throw new WsException('you are banned from this channel');
                 else
                 {
                   userStatus.banned = null;
