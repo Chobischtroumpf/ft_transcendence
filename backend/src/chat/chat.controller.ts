@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ChatService } from './service/chat.service';
 import { AdminUserDto, CreateMessageToChatDto, JoinedUserStatusDto, SetPasswordDto } from './dto/chat.dto';
 import { ChatUtilsService } from './service/chatUtils.service';
@@ -6,7 +6,6 @@ import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/decorators/user.decorator';
 import * as bcrypt from 'bcrypt';
-import { channel } from 'diagnostics_channel';
 
 @UseGuards(JwtGuard)
 @Controller('chat')

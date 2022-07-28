@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from './auth/auth.service';
-import { Game, GameOptions, Invites, Paddle, Player, gameNames } from './game/game.class';
+import { Game, GameOptions, Invites, Player, gameNames } from './game/game.class';
 import { MatchDto } from './match/dto/match.dto';
 import { UserEntity, UserStatus } from './user/entities/user.entity';
 import { UserService } from './user/user.service';
@@ -61,7 +61,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   {
     try
     {
-
       const user = client.data.user;
       const user_temp = await this.authService.getUserFromSocket(client);
       this.userService.updateStatus(user_temp, UserStatus.offline);
@@ -132,7 +131,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   {
     try
     {
-      console.log('asdasd');
       const user = client.data.user;
       const channel = await this.chatUtilService.getChannelByName(name);
       client.leave(name);
@@ -157,7 +155,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       
       const user = client.data.user;
       await this.chatService.joinChannel(channelData, user);
-      console.log("here");
       client.join(channelData.name);
       const chatUsers = [];
       for (const socket of this._sockets)
@@ -193,12 +190,10 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       const channel = await this.chatUtilService.getChannelByName(data.name);
       const message = await this.chatService.createMessageToChannel(data, user);
       const allMessages = await this.chatService.getMessagesFromChannel(data.name, user);
       this.wss.to(data.name).emit('msgToClient', allMessages);
-      // PUT THIS BACK ON SOMEPOINT !!!! IT CHECKS BLOCKED USERS
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -227,7 +222,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       const invitedUser = await this.userService.getUserById_2(data.id);
       // add invited user to invites
       this.invites.push({
@@ -247,7 +241,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   {
     try
     {
-      const invitedUser = client.data.user; // await this.authService.getUserFromSocket(client);
+      const invitedUser = client.data.user;
       const sender = await this.userService.getUserByName(sender2);
       const index = this.invites.findIndex(function (Invite) {
         return Invite.sender === sender2 && Invite.invitedUser === invitedUser.username;
@@ -278,7 +272,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     {
       // find the game
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       const game = this.games.find(e => e.name === room);
       if (game.winner !== undefined)
         return ;
@@ -301,7 +294,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       // user joins to queue
       this.queue.push(user);
       // add players to game until there queue has only 0 or 1 users
@@ -322,7 +314,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       // user leaves from queue
       const index = this.queue.findIndex(e => e.id === user.id);
       if (index !== -1)
@@ -344,11 +335,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   @SubscribeMessage('newSpectatorToServer')
   async addSpectator(@ConnectedSocket() client: Socket, @MessageBody() room: string)
   {
-    console.log (room);
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       // user joins to game as a spectator
       client.join(room);
       this.wss.to(room).emit('newSpectatorToClient', { username: user.username, room: room });
@@ -362,7 +351,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       let index;
       index = this.games.findIndex(e => e.players[0].player.id === user.id);
       if (index === -1)
@@ -387,7 +375,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      // const user = await this.authService.getUserFromSocket(client);
       let index;
       index = this.games.findIndex(e => e.players[0].player.id === user.id);
       if (index === -1)

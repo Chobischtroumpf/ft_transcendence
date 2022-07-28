@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
-import { use } from 'passport';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
@@ -141,7 +140,6 @@ export class ChatService
             if (!userStatus)
                 await this.chatUtilService.createNewJoinedUserStatus(false, false, null, null, channel, user);
             channel.members.push(user);
-
             await this.chatRepository.save(channel);
             return "success";
         }

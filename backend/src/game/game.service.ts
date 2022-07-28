@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from 'src/user/entities/user.entity';
-import { Ball, Canvas, Dir, Game, GameOptions, Paddle, Player, Sound, Vector } from './game.class';
+import { Ball, Canvas, Game, GameOptions, Paddle, Player, Sound } from './game.class';
 
 @Injectable()
 export class GameService

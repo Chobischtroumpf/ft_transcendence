@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
 import { ConfigService } from '@nestjs/config';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { Socket } from 'socket.io';
 import { ChatService } from 'src/chat/service/chat.service';
 import { ChatUtilsService } from 'src/chat/service/chatUtils.service';
@@ -61,7 +61,6 @@ export class AuthService
     {
         const cookie = socket.handshake.headers.cookie;
         var temp = cookie.split('=');
-        //const { access_token: authenticationToken } = parse(cookie); //Parse cookie if necessary (https://wanago.io/2021/01/25/api-nestjs-chat-websockets/)
         const user = await this.getUserFromAuthenticationToken(temp[1]);
         if (!user)
             throw new WsException('Invalid credentials.');

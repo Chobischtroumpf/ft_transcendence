@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, Post, Res, UnauthorizedException, UseG
 import { InjectRepository } from '@nestjs/typeorm';
 import { Response } from 'express';
 import { User } from 'src/decorators/user.decorator';
-import { UserEntity, UserStatus } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
@@ -42,12 +42,9 @@ export class AuthController {
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
     	}
-
 		const jwt = this.authService.treatTfa(user.id, true);
-
 		res.clearCookie('access_token');
 		res.cookie('access_token', jwt);
-
 		return user;
   	}
 }
