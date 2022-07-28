@@ -78,6 +78,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   {
     e.preventDefault();
     setCheckPwd(0);
+    setPopupMessage("");
   
     try {
       const data = await axios.get(`chat/${name}`);

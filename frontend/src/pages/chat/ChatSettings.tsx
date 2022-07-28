@@ -1,22 +1,18 @@
 import axios from "axios";
 import { Navigate, useLocation } from "react-router";
-import React, { SyntheticEvent, useEffect, useState } from "react";
-
-import { AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineAudioMuted, } from 'react-icons/ai';
+import React, { useEffect, useState } from "react";
+import { AiOutlineUserAdd, AiOutlineUserDelete, } from 'react-icons/ai';
 import { GoMute, GoUnmute } from 'react-icons/go';
+import { GrAddCircle } from 'react-icons/gr';
 import { RiRotateLockFill, RiAdminLine } from 'react-icons/ri';
 import { GiPadlock, GiPadlockOpen } from 'react-icons/gi';
 import Popup from 'reactjs-popup';
-import { Link } from 'react-router-dom';
 import { User } from "../../models/user";
-import { ChannelEntity } from "../../models/Chat";
 import './SettingsPage.css'
 import Wrapper from "../../components/Wrapper";
 import { AdminUserDto, JoinedUserStatusDto, SetPasswordDto } from "./chatSettings.dto";
 import ModalMessage from "./ModalMessage"
 import { Socket } from "socket.io-client";
-import { data } from "autoprefixer";
-
 
 type Props = {
 	  socket: Socket | null,
@@ -30,9 +26,7 @@ const ChatSettings = ({socket}:Props) =>{
     const [redirect, setRedirect] = useState(false);
 	const [redirectToChat, setRedirectToChat] = useState(false);
 	const [currentChatStatus, setCurrentChatStatus] = useState("");
-	
 
-	
 	useEffect(() => {
 		const chatStatus = async () => {
 		  const data = await axios.get(`chat/${chatName}`);
@@ -67,6 +61,7 @@ const ChatSettings = ({socket}:Props) =>{
 			{ currentChatStatus == "private" && <AddUser chatName={chatName}/>}
 			{ 1 && <AdminUser chatName={chatName}/>}
 			{ (1 || 2) && (<BanUser chatName={chatName}/>)}
+			{ (1 || 2) && (<UnbanUser chatName={chatName}/>)}
 			{ 1 && 3 && (<AddPassword chatName={chatName}/>)}
 			{ 1 && 3 && (<ModifyPassword chatName={chatName}/>)}
 			{ 1 && 3 && (<RemovePassword chatName={chatName}/>)}
@@ -301,6 +296,86 @@ const BanUser = (chatName:prop) => {
 							)
 						})}
 				</Popup>
+				</div>
+			</div>
+		</Popup>
+		{ popupMessage != "" && <ModalMessage message={popupMessage} success={actionSuccess} /> }
+	</h2>)
+}
+
+
+const UnbanUser = (chatName:prop) => {
+	const [state, setState] = useState(false); 
+	const handleOpen = () => {setState(true); onModalOpen();}
+	const handleClose = () => {setState(false);}
+	const [userList, setUserList] = useState([]);
+	const [popupMessage, setPopupMessage] = useState("");
+	const [actionSuccess, setActionSuccess] = useState(false);
+
+	const onModalOpen = async() => {
+	try {
+		setPopupMessage("");
+		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
+		setUserList(data);
+		} catch (e) {
+			// console.log("here")
+		}
+	};
+
+	const handleClick = async( userId:number ) => {
+		try {
+			const name = chatName.chatName!;
+			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
+			handleClose();
+			const data = await axios({
+					method: 'patch',
+					url: "chat/unban",
+					data: adminForm,
+					headers: {'content-type': 'application/json'}
+				});
+				setPopupMessage("User successfully unbanned");
+				setActionSuccess(true);
+				handleClose();
+			} catch (e:any) {
+				setPopupMessage(e.response.data.message);
+				setActionSuccess(false);
+				handleClose();
+		}
+	};
+
+	return (
+	<h2>
+		Unban user : &nbsp;&nbsp;
+		<Popup trigger={<button>
+			<GrAddCircle /></button>}
+			on='click'
+			open={state}
+			onClose={handleClose}
+			onOpen={handleOpen}
+			position='top right' modal nested>
+			<div className='modal2'>
+				<button className="close" onClick={handleClose}>
+				&times;
+				</button>
+				<div className="header"> Unban user</div>
+				<div className="content">
+				{' '}
+				<pre>      Select user to unban      </pre>
+				</div>
+				<div className="actions">
+					<Popup
+						trigger={<button className="button-return"> Select user </button>}
+						modal nested>
+						{userList.map((user: User) => {
+							return (
+								<div key={user.id}>
+									<div className="menu-settings">
+										<div className="menu-item-settings" onClick={() => handleClick(user.id)}>{user.username}</div>
+									</div>
+								</div>
+							)
+						})}
+					</Popup>
 				</div>
 			</div>
 		</Popup>
