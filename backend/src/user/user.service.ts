@@ -209,6 +209,8 @@ export class UserService
       const toBlock = await this.getUserById(id);
       if (!toBlock)
         throw new NotFoundException('User not found');
+      if (this.isblocked_true(toBlock, user))
+      throw new HttpException({status: HttpStatus.FORBIDDEN, message: 'you have already blocked this user'}, HttpStatus.FORBIDDEN);
       user.blockedUsers = await this.getBlockedUsers(user.id);
       user.blockedUsers.push(toBlock);
       return await this.userRepository.save(user);
@@ -241,7 +243,7 @@ export class UserService
       friend.blockedUsers = await this.getBlockedUsers(friend.id);
       for (const x of friend.blockedUsers)
         if (x.id === user.id)
-            throw new HttpException({status: HttpStatus.FORBIDDEN, error: 'User has been blocked you'}, HttpStatus.FORBIDDEN);
+            throw new HttpException({status: HttpStatus.FORBIDDEN, message: 'User blocked you'}, HttpStatus.FORBIDDEN);
     }
 
     async isblocked_true(user: UserEntity, friend: UserEntity)

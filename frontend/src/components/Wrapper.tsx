@@ -5,6 +5,7 @@ import io, { Socket } from "socket.io-client";
 import { User, UserLevel, UserStatus } from "../models/user";
 import { Menu } from "./Menu";
 import Nav from "./Nav";
+import ModalMessage from "../pages/chat/ModalMessage";
 
 type Props = {
     children: JSX.Element | JSX.Element[] | string,
