@@ -3,7 +3,6 @@ import React, { SyntheticEvent, useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
 import { Channel, ChannelStatus } from "../../models/channel";
 import { Socket } from 'socket.io-client';
-import {Link} from "react-router-dom"
 import { Navigate } from "react-router";
 import ModalMessage from "./ModalMessage"
 import { Button, Card, Form, Table } from 'react-bootstrap';
@@ -23,7 +22,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState(ChannelStatus.public);
-  // const [place, setPlace] = useState(false);
 	const [popupMessage, setPopupMessage] = useState("");
 	const [actionSuccess, setActionSuccess] = useState(false);
   const [username, setUsername] = useState('');
@@ -38,7 +36,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
       setUsername(username);
       setGotUsername(true);
     }, (error) => {
-      console.log(error);
+      
     } 
     );
   }, [page, socket, username]);
@@ -48,10 +46,9 @@ const Channels = ({socket, channels, lastPage}: Props) =>
         let temp = await axios.get('/user');
         return temp.data.username;
       }catch (e) {
-        console.log(e);
+        
       }
-    }
-
+  }
 
   const submit = async (e: SyntheticEvent) =>
   {
@@ -98,10 +95,8 @@ const Channels = ({socket, channels, lastPage}: Props) =>
         return ;
       }
     }
-
     setCheckPwd(1);
   }
-
 
   const leave = async (e: SyntheticEvent, channelId: number) =>
   {

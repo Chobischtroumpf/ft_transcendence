@@ -2,11 +2,8 @@ import * as React from "react";
 import { Component } from "react";
 import axios from "axios";
 import {Socket} from "socket.io-client";
-import Wrapper from "../../components/Wrapper";
-import { User, UserLevel, UserStatus } from "../../models/user";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import { faGear } from '@fortawesome/free-solid-svg-icons'
-import { Link, Navigate } from "react-router-dom";
+import { User } from "../../models/user";
+import { Navigate } from "react-router-dom";
 import './Profile.css'
 
 

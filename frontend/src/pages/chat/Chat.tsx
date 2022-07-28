@@ -9,7 +9,6 @@ import axios from "axios";
 import chatImage from '../../assets/chat2.png';
 import './chat.css' 
 
-
 type Props = {
     socket: Socket | null,
     joinMsg: string,
@@ -51,9 +50,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
           setMyBlockedUsers(data);
         });
     } catch (error) {
-      // console.log(error);
-      // if error.response.status === 500 {
-
+      
     }
   }
 
@@ -68,7 +65,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
           setMyBlockedUsers(data);
         });
         } catch (error) {
-      // console.log(error);
+      
     }
   }
 
@@ -76,10 +73,9 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
   {
     try {
       const {data} = await axios.get(`/user/get/blocked`);
-      // console.log(data);
       return data;
     } catch (error) {
-      // console.log(error);
+      
     }
   }
 
@@ -110,7 +106,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
       getBlockedUsers().then((blockedUsers) => {
         setMyBlockedUsers(blockedUsers);
       }, (error) => {
-        // console.log(error);
+        
       });
   }, []);
 

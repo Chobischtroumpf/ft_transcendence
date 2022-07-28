@@ -2,8 +2,7 @@ import * as React from "react";
 import { Component } from "react";
 import axios from "axios";
 import {Socket} from "socket.io-client";
-import Wrapper from "../../components/Wrapper";
-import { User, UserLevel, UserStatus } from "../../models/user";
+import { User } from "../../models/user";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { Link, Navigate } from "react-router-dom";
@@ -57,7 +56,6 @@ export default class UserProfile extends Component<Props, State> {
   async getMatchHistory() {
     const data = await axios.get(`/match/${this.state.user.id}`);
     try {
-      console.log("matchHistory :",data.data)
       return(data.data);
     } catch (e) {
       this.setState({error: true});
@@ -79,14 +77,11 @@ export default class UserProfile extends Component<Props, State> {
       const {data} = await axios.post(`/chat/direct`, {id: friendId});
       // this.setState({redirect: true});
       let channelName = await axios.get(`/chat/direct/${friendId}`);
-      console.log("channelName :",channelName.data);
       this.setState({chatName: channelName.data});
     }
     catch(e) {
-      // console.log("je siis icicici");
       // this.setState({redirect: true});
       let channelName = await axios.get(`/chat/direct/${friendId}`);
-      console.log("channelName :",channelName.data);
       this.setState({chatName: channelName.data});
     }
   }
@@ -99,7 +94,6 @@ export default class UserProfile extends Component<Props, State> {
     if (this.state.error) {
       return <Navigate to={'/error500'} />;
     }
-    console.log(this.state.user)
     if(this.state.redirect)
     {
       this.state.socket?.emit('joinToServer', {name: this.state.chatName});
