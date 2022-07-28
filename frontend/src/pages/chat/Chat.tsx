@@ -120,7 +120,10 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
           setMyName(data.username);
       }) ()
       if (socket === null || banned === "banned")
-          setRedirect(true);
+      {
+        socket?.emit('unBanToServer', myName);
+        setRedirect(true);
+      }
       setInfoMsg(joinMsg);
   }, [joinMsg, socket, banned]);
 
