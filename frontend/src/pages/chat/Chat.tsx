@@ -7,7 +7,7 @@ import { User } from "../../models/user";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import chatImage from '../../assets/chat2.png';
-import './chat.css' 
+import './Chat.css' 
 
 
 type Props = {
@@ -67,7 +67,6 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
           setMyBlockedUsers(data);
         });
         } catch (error) {
-      // console.log(error);
     }
   }
 
@@ -78,7 +77,6 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
       // console.log(data);
       return data;
     } catch (error) {
-      // console.log(error);
     }
   }
 

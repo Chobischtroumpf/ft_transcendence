@@ -6,6 +6,7 @@ import minigames from "../../assets/minigames.png";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Card, Table } from 'react-bootstrap';
 import { Navigate } from "react-router";
+import ModalMessage from "../chat/ModalMessage";
 
 const Users = () =>
 {
@@ -14,6 +15,9 @@ const Users = () =>
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(0);
   const [place, setPlace] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [actionSuccess, setActionSuccess] = useState();
+
 
   useEffect(() => {
     setTimeout(async() => {
@@ -57,6 +61,8 @@ const Users = () =>
                 <th scope="col">wins</th>
                 <th scope="col">losses</th>
                 <th scope="col">rank</th>
+                <th scope="col">block/unblock</th>
+                <th scope="col">add friend</th>
               </tr>
             </thead>
             <tbody>
@@ -74,6 +80,15 @@ const Users = () =>
                     <td>{user.wins}</td>
                     <td>{user.losses}</td>
                     <td>{user.rank}</td>
+                    <td><button className="btn-light" onClick={
+                      async () => {
+                        try {
+                          await axios.post(`user/block?userId=${user.id}`);
+                        }
+                        catch (e) {
+                        }
+                      }
+                    }>block user</button> </td>
                   </tr>  
                 )
               })}
@@ -91,6 +106,7 @@ const Users = () =>
       </nav>
       </Card.Body>
       </Card>
+      <ModalMessage message={popupMessage} success={actionSuccess} />
     </Wrapper>
   );
 }

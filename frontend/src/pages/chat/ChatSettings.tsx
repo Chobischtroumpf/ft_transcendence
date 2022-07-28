@@ -1,21 +1,17 @@
 import axios from "axios";
 import { Navigate, useLocation } from "react-router";
-import React, { SyntheticEvent, useEffect, useState } from "react";
-
-import { AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineAudioMuted, } from 'react-icons/ai';
+import React, { useEffect, useState } from "react";
+import { AiOutlineUserAdd, AiOutlineUserDelete } from 'react-icons/ai';
 import { GoMute, GoUnmute } from 'react-icons/go';
 import { RiRotateLockFill, RiAdminLine } from 'react-icons/ri';
 import { GiPadlock, GiPadlockOpen } from 'react-icons/gi';
 import Popup from 'reactjs-popup';
-import { Link } from 'react-router-dom';
 import { User } from "../../models/user";
-import { ChannelEntity } from "../../models/Chat";
 import './SettingsPage.css'
 import Wrapper from "../../components/Wrapper";
 import { AdminUserDto, JoinedUserStatusDto, SetPasswordDto } from "./chatSettings.dto";
 import ModalMessage from "./ModalMessage"
 import { Socket } from "socket.io-client";
-import { data } from "autoprefixer";
 
 
 type Props = {
