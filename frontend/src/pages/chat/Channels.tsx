@@ -78,25 +78,29 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   {
     e.preventDefault();
     setCheckPwd(0);
-
-    const data = await axios.get(`chat/${name}`);
-    setCurrentChannel(data.data);
-    setChatStatus(data.data.status);
-    console.log(data.data);
-    // for ( let i = 0; i < data.data.joinedUserStatus.length; i++) { 
-    //   console.log(data.data.joinedUserStatus[i].user.username);
-    //   if (data.data.joinedUserStatus[i].user.username === username) {
-    //     console.log("found:", data.data.joinedUserStatus[i].user.username);
-    //     if (data.data.joinedUserStatus[i].banned !== null) {
-    //       setPopupMessage("You are banned from this channel");
-    //       setActionSuccess(false);
-    //       return;
-    //     } 
-    //   }
-    // }
+  
+    try {
+      const data = await axios.get(`chat/${name}`);
+      setCurrentChannel(data.data);
+      setChatStatus(data.data.status);
+      const adminForm : SetPasswordDto = { name : data.data.name, password : "" };
+      await axios({
+          method: 'post',
+          url: "chat/join",
+          data: adminForm,
+          headers: {'content-type': 'application/json'}
+        });
+    } catch (e:any) {
+      if ( e.response.data.message === 'You have been banned from this channel' )
+      {
+        setPopupMessage(e.response.data.message);
+        return ;
+      }
+    }
 
     setCheckPwd(1);
   }
+
 
   const leave = async (e: SyntheticEvent, channelId: number) =>
   {

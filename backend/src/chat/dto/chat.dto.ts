@@ -28,7 +28,7 @@ export class SetPasswordDto
     @IsString()
     name: string;
 
-    @IsNotEmpty()
+    // @IsNotEmpty()
     @IsOptional()
     @IsString()
     password: string;

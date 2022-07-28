@@ -22,17 +22,17 @@ const SignIn = () =>
             {
               if (data.tfaEnabled === false)
                 setRedirect(true);
+                myWindow?.close();
+                clearInterval(interval);
             }
           }
-          catch (e) {
-            setError(true);
-            setRedirectTFA(true);
+          catch (e:any) {
+            if (e.response.status === 401){
+              setRedirectTFA(true);
+              myWindow?.close();
+              clearInterval(interval);
+            }
           }
-          // else
-          myWindow?.close();
-          clearInterval(interval);
-          return () => clearInterval(interval);
-          // }
         }
       }, 1000);
    
@@ -50,10 +50,12 @@ const SignIn = () =>
               setRedirect(true);
           }
         }
-        catch (e) {
-          setError(true);
-          setRedirectTFA(true);
-        }
+        catch (e:any) {
+          if (e.response.status === 401)
+            setRedirectTFA(true);
+          else
+            setRedirect(true);
+          }
       }
     }
   }
