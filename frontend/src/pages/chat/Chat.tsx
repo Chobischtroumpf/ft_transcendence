@@ -16,9 +16,10 @@ type Props = {
     channelName: string,
     messages: MessageI[],
     onlineUsers: string[],
+    banned: string,
 };
 
-const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
+const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Props) =>
 {
   const [newMessage, setNewMessage] = useState('');
   const [infoMsg, setInfoMsg] = useState(joinMsg);
@@ -116,10 +117,13 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers}: Props) =>
           const {data} = await axios.get('user');
           setMyName(data.username);
       }) ()
-      if (socket === null)
-          setRedirect(true);
+      if (socket === null || banned === "banned")
+      {
+        socket?.emit('unBanToServer', myName);
+        setRedirect(true);
+      }
       setInfoMsg(joinMsg);
-  }, [joinMsg, socket]);
+  }, [joinMsg, socket, banned]);
 
   const findUser = (username: string) =>
   {

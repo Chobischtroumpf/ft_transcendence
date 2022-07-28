@@ -1,7 +1,5 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { User } from 'src/decorators/user.decorator';
-import { UserEntity } from 'src/user/entities/user.entity';
 import { MatchDto } from './dto/match.dto';
 import { MatchService } from './match.service';
 

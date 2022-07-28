@@ -6,7 +6,6 @@ import { NewUserDto } from './dto/new-user.dto';
 import { UserEntity, UserStatus } from './entities/user.entity';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
-import { number } from '@hapi/joi';
 import { Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -26,7 +25,7 @@ export class UserService
         try {
           user = await this.userRepository.save(user);
         } catch (e) {
-          throw new ConflictException('Username must be unique'); //probably other possible errors
+          throw new ConflictException('Username must be unique');
         }
         return user;
     }
@@ -84,18 +83,14 @@ export class UserService
 
     async setTfaSecret(secret: string, user: UserEntity)
     {
-      // user.tfaSecret = secret;	
       return this.userRepository.update(user.id, {tfaSecret: secret});
     }
 
     async generateTfaSecret(user: UserEntity)
     {
       const secret = authenticator.generateSecret();
-
       const otpauthUrl = authenticator.keyuri(user.username, process.env.APP_NAME, secret);
-
       await this.setTfaSecret(secret, user);
-
       return {
         secret,
         otpauthUrl
@@ -161,7 +156,6 @@ export class UserService
       friendRemove.friends = await this.getFriends(id);
       friendRemove.friends = friendRemove.friends.filter((friend) => friend.id !== user.id);
       await this.userRepository.save(friendRemove);
-
       user.friends = await this.getFriends(user.id);
       user.friends = user.friends.filter((friend) => {return friend.id !== id});
       return await this.userRepository.save(user);
@@ -180,7 +174,6 @@ export class UserService
                 );  `,
           [id],
         );
-        //return await this.userRepository.createQueryBuilder('user').leftJoinAndSelect('user.friends', 'user').getMany();
     }
 
     async getRequestedByUsers(id): Promise<UserEntity[]>

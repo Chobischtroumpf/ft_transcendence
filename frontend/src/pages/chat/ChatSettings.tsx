@@ -1,9 +1,8 @@
 import axios from "axios";
 import { Navigate, useLocation } from "react-router";
 import React, { useEffect, useState } from "react";
-import { AiOutlineUserAdd, AiOutlineUserDelete } from 'react-icons/ai';
+import { AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { GoMute, GoUnmute } from 'react-icons/go';
-import { GrAddCircle } from 'react-icons/gr';
 import { RiRotateLockFill, RiAdminLine } from 'react-icons/ri';
 import { GiPadlock, GiPadlockOpen } from 'react-icons/gi';
 import Popup from 'reactjs-popup';
@@ -60,7 +59,7 @@ const ChatSettings = ({socket}:Props) =>{
 			</h1>
 			{ currentChatStatus == "private" && <AddUser chatName={chatName}/>}
 			{ 1 && <AdminUser chatName={chatName}/>}
-			{ (1 || 2) && (<BanUser chatName={chatName}/>)}
+			{ (1 || 2) && (<BanUser chatName={chatName} socket={socket}/>)}
 			{ (1 || 2) && (<UnbanUser chatName={chatName}/>)}
 			{ 1 && 3 && (<AddPassword chatName={chatName}/>)}
 			{ 1 && 3 && (<ModifyPassword chatName={chatName}/>)}
@@ -224,7 +223,12 @@ const AdminUser = (chatName:prop) => {
 	</h2>)
 }
 
-const BanUser = (chatName:prop) => {
+type Props2 = {
+	socket: Socket | null,
+	chatName: string | null,
+}
+
+const BanUser = ({chatName, socket}: Props2) => {
 	const [state, setState] = useState(false); 
 	const handleOpen = () => {setState(true); onModalOpen();}
 	const handleClose = () => {setState(false);}
@@ -235,7 +239,7 @@ const BanUser = (chatName:prop) => {
 	const onModalOpen = async() => {
 	try {
 		setPopupMessage("");
-		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
+		const {data} = await axios.get(`chat/getusers/${chatName}`);
 		setUserList(data);
 		} catch (e) {
 			// console.log("here")
@@ -244,14 +248,15 @@ const BanUser = (chatName:prop) => {
 
 	const handleClick = async( userId:number ) => {
 		try {
-			const name = chatName.chatName!;
+			const name = chatName!;
 			const adminForm : JoinedUserStatusDto = { name : name, targetId : userId }
 			const data = await axios({
 					method: 'patch',
 					url: "chat/ban",
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
-				})
+				});
+				socket?.emit('isBannedToServer', userId);
 				setPopupMessage("User successfully banned");
 				setActionSuccess(true);
 				handleClose();
@@ -347,7 +352,7 @@ const UnbanUser = (chatName:prop) => {
 	<h2>
 		Unban user : &nbsp;&nbsp;
 		<Popup trigger={<button>
-			<GrAddCircle /></button>}
+			<AiOutlineUsergroupAdd /></button>}
 			on='click'
 			open={state}
 			onClose={handleClose}

@@ -74,7 +74,7 @@ export class ChatUtilsService
     
     userIsOwner(userStatus: JoinedUserStatus) {
         if (userStatus.owner === false)
-        throw new HttpException('You dont have access, you are not owner of this channel', HttpStatus.FORBIDDEN);
+            throw new HttpException('You dont have access, you are not owner of this channel', HttpStatus.FORBIDDEN);
     }
     
     channelIsPrivate(channel: ChannelEntity, user: UserEntity) {
@@ -85,10 +85,10 @@ export class ChatUtilsService
     checkIfPassword(password: string) {
         if (!password)
             throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Please insert a password'}, HttpStatus.BAD_REQUEST);
-        }
+    }
         
-        checkClientIsMember(user: UserEntity, channel: ChannelEntity) {
-            if (this.clientIsMember(user, channel) === false)
+    checkClientIsMember(user: UserEntity, channel: ChannelEntity) {
+        if (this.clientIsMember(user, channel) === false)
             throw new HttpException('You are not member of this channel', HttpStatus.FORBIDDEN);
     }
     
