@@ -87,6 +87,20 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   ///////// CHAT PART /////////////
 
+  @SubscribeMessage('isBannedToServer')
+  async isBanned(@ConnectedSocket() client: Socket, @MessageBody() id: number)
+  {
+    try
+    {
+      const user = client.data.user;
+      const bannedUser = await this.userService.getUserById_2(id);
+      for (var i = 0; i < this._sockets.length; i++)
+        if (this._sockets[i].data.user.username === bannedUser.username)
+          this._sockets[i].emit('isBannedToClient', "banned");
+    }
+    catch { throw new WsException('Something went wrong'); }
+  }
+
   @SubscribeMessage('getChannelsToServer')
   async getChannels(@ConnectedSocket() client: Socket, @MessageBody() page: number)
   {
