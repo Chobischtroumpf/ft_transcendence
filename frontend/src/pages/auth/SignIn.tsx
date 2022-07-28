@@ -18,16 +18,16 @@ const SignIn = () =>
         if (getCookie("access_token") !== null) {   
           try {
             const {data} = await axios.get('user');
-            if (data.tfaEnabled !== undefined)
+            if (data.tfaEnabled === false)
             {
-              if (data.tfaEnabled === false)
-                setRedirect(true);
-                myWindow?.close();
-                clearInterval(interval);
+              setRedirect(true);
+              myWindow?.close();
+              clearInterval(interval);
             }
           }
           catch (e:any) {
-            if (e.response.status === 401){
+            if (e.response.status === 400)
+            {
               setRedirectTFA(true);
               myWindow?.close();
               clearInterval(interval);
@@ -35,29 +35,27 @@ const SignIn = () =>
           }
         }
       }, 1000);
-   
-      // return () => clearInterval(interval);
     }
 
   useEffect(() => {
-    async () => {
-      if (getCookie("access_token") !== null) {   
-        try {
-          const {data} = await axios.get('user');
-          if (data.tfaEnabled !== undefined)
-          {
-            if (data.tfaEnabled === false)
-              setRedirect(true);
-          }
-        }
-        catch (e:any) {
-          if (e.response.status === 401)
-            setRedirectTFA(true);
-          else
-            setRedirect(true);
-          }
-      }
-    }
+    // async () => {
+    //   if (getCookie("access_token") !== null) {   
+    //     try {
+    //       const {data} = await axios.get('user');
+    //       if (data.tfaEnabled !== undefined)
+    //       {
+    //         if (data.tfaEnabled === false)
+    //           setRedirect(true);
+    //       }
+    //     }
+    //     catch (e:any) {
+    //       if (e.response.status === 401)
+    //         setRedirectTFA(true);
+    //       else
+    //         setRedirect(true);
+    //       }
+    //   }
+    // }
   }
     , []);
 

@@ -7,7 +7,7 @@ import { User } from "../../models/user";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import chatImage from '../../assets/chat2.png';
-import './Chat.css' 
+import './chat.css' 
 
 
 type Props = {

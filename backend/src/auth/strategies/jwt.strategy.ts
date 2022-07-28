@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request, Response } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
@@ -32,7 +32,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       if (!user.tfaEnabled || payload.tfaOK) {
         return user
       } else {
-        throw new UnauthorizedException();
+        throw new BadRequestException();
       }
     } else {
       throw new UnauthorizedException();
