@@ -45,15 +45,13 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
     e.preventDefault();
     try {
         const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
+        console.log(data);
         await axios.post(`/user/block/${data.id}`);
         setBlockuser('');
         getBlockedUsers().then(data => {
           setMyBlockedUsers(data);
         });
     } catch (error) {
-      // console.log(error);
-      // if error.response.status === 500 {
-
     }
   }
 
@@ -62,6 +60,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
     e.preventDefault();
     try {
         const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
+        console.log(data);
         await axios.post(`/user/unblock/${data.id}`);
         setBlockuser('');
         getBlockedUsers().then(data => {

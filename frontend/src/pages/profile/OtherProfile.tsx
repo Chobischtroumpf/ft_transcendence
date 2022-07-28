@@ -89,7 +89,11 @@ export default class OtherProfile extends Component<Props, State> {
                   {
                     (
                       async () => {
-                        const {data} = await axios.post(`user/friend/${this.state.user.id}`);
+                        try {
+                          await axios.post(`user/friend/${this.state.user.id}`);
+                        } catch (e) {
+                          console.log(e);
+                        }
                       }
                     )();
                     this.setState({showAddFriend: false});

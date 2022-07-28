@@ -6,6 +6,7 @@ import { NewUserDto } from './dto/new-user.dto';
 import { UserEntity, UserStatus } from './entities/user.entity';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
+import { number } from '@hapi/joi';
 import { Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -25,7 +26,7 @@ export class UserService
         try {
           user = await this.userRepository.save(user);
         } catch (e) {
-          throw new ConflictException('Username must be unique');
+          throw new ConflictException('Username must be unique'); //probably other possible errors
         }
         return user;
     }
@@ -83,14 +84,18 @@ export class UserService
 
     async setTfaSecret(secret: string, user: UserEntity)
     {
+      // user.tfaSecret = secret;	
       return this.userRepository.update(user.id, {tfaSecret: secret});
     }
 
     async generateTfaSecret(user: UserEntity)
     {
       const secret = authenticator.generateSecret();
+
       const otpauthUrl = authenticator.keyuri(user.username, process.env.APP_NAME, secret);
+
       await this.setTfaSecret(secret, user);
+
       return {
         secret,
         otpauthUrl
@@ -136,6 +141,8 @@ export class UserService
 
     async requestFriend(user: UserEntity, id: number)
     {
+      if (user.id == id)
+        throw new HttpException('You cannot add yourself as a friend', HttpStatus.BAD_REQUEST);
       const friend = await this.getUserById(id);
       if (!friend)
         throw new NotFoundException('User not found');
@@ -156,6 +163,7 @@ export class UserService
       friendRemove.friends = await this.getFriends(id);
       friendRemove.friends = friendRemove.friends.filter((friend) => friend.id !== user.id);
       await this.userRepository.save(friendRemove);
+
       user.friends = await this.getFriends(user.id);
       user.friends = user.friends.filter((friend) => {return friend.id !== id});
       return await this.userRepository.save(user);
@@ -174,6 +182,7 @@ export class UserService
                 );  `,
           [id],
         );
+        //return await this.userRepository.createQueryBuilder('user').leftJoinAndSelect('user.friends', 'user').getMany();
     }
 
     async getRequestedByUsers(id): Promise<UserEntity[]>
@@ -199,11 +208,16 @@ export class UserService
 
     async blockUser(user: UserEntity, id: number)
     {
+      if (user.id === id)
+        throw new HttpException({status: HttpStatus.FORBIDDEN, message: 'you cannot block yourself'}, HttpStatus.FORBIDDEN);
+
       const toBlock = await this.getUserById(id);
       if (!toBlock)
         throw new NotFoundException('User not found');
-      if (this.isblocked_true(toBlock, user))
-      throw new HttpException({status: HttpStatus.FORBIDDEN, message: 'you have already blocked this user'}, HttpStatus.FORBIDDEN);
+      
+      const is_true = await this.isblocked_true(toBlock, user) 
+      if (is_true)
+        throw new HttpException({status: HttpStatus.FORBIDDEN, message: 'you have already blocked this user'}, HttpStatus.FORBIDDEN);
       user.blockedUsers = await this.getBlockedUsers(user.id);
       user.blockedUsers.push(toBlock);
       return await this.userRepository.save(user);
@@ -245,7 +259,9 @@ export class UserService
       
       for (const x of friend.blockedUsers)
         if (x.id === friend.id)
-            return true;
+        {
+          return true;
+        }
       return false;
     }
 

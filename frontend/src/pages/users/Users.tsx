@@ -17,8 +17,9 @@ const Users = () =>
   const [place, setPlace] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [actionSuccess, setActionSuccess] = useState(false);
+  const [myBlockedUsers, setMyBlockedUsers] = useState<User[]>([]);
+  const [friends, setFriends] = useState<User[]>([]);
 
-  const handleClick = (e: SyntheticEvent) => 
 
   useEffect(() => {
     setTimeout(async() => {
@@ -30,7 +31,63 @@ const Users = () =>
         console.log(error);
       }
     }, 40);
+    getBlockedUsers().then((blockedUsers) => {
+      setMyBlockedUsers(blockedUsers);
+    }, (error) => {
+      console.log(error);
+      // console.log(error);
+    });
+    getFriends().then((friends) => {
+      setFriends(friends);
+    }, (error) => {
+      console.log(error);
+    });
+
   }, [page]);
+
+  const findUser = (username: string) =>
+  {
+    console.log(myBlockedUsers);
+    for (let i = 0; i < myBlockedUsers.length; i++)
+    {
+      if (myBlockedUsers[i].username === username)
+        return true;
+    }
+    return false;
+  }
+
+  const isFriend = (username: string) =>
+  {
+    try {
+      for (let i = 0; i < friends.length; i++)
+      {
+        if (friends[i].username === username)
+          return false;
+      }
+      return true;
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+  const getBlockedUsers = async () =>
+  {
+    try {
+      const {data} = await axios.get(`/user/get/blocked`);
+      return data;
+    } catch (error) {
+    }
+  }
+
+  const getFriends = async () =>
+  {
+    try {
+      const {data} = await axios.get(`/user/friend`);
+      return data;
+    } catch (error) {
+    }
+  }
+
 
   const join = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -73,7 +130,6 @@ const Users = () =>
               </thead>
               <tbody>
               {users.map((user: User) => {
-                console.log('user', user);
                   return (
                     <tr key={user.id}>
                       <td>{user.id}</td>
@@ -87,21 +143,85 @@ const Users = () =>
                       <td>{user.wins}</td>
                       <td>{user.losses}</td>
                       <td>{user.rank}</td>
-                      {/* <td><button  className="btn btn-light" onClick={
+                      {(findUser(user.username)) ? (<td><button  className="btn btn-light" onClick={
+                        async () => {
+                          try {
+                            const {data} = await axios.get(`/user/get/user?username=${user.username}`);
+                            await axios.post(`/user/unblock/${data.id}`);
+                            setPopupMessage(`${user.username} unblocked`);
+                            setActionSuccess(true);
+                            getBlockedUsers().then(data => {
+                            setMyBlockedUsers(data);
+                          });
+                          } catch (error) {
+                            setActionSuccess(false);
+                            setPopupMessage(`${user.username} is not blocked`);
+                            console.log(error);
+                          }
+                        }
+                      }>unblock user</button> </td>) : 
+                      (<td><button  className="btn btn-light" onClick={
                         async () => {
                           setPopupMessage("");
                           try {
                             await axios.post(`/user/block/${user.id}`);
                             setPopupMessage('User blocked');
                             setActionSuccess(true);
+                            getBlockedUsers().then(data => {
+                              setMyBlockedUsers(data);
+                            });  
                           }
                           catch (e:any) {
                             setPopupMessage(e.response.data.message);
                             setActionSuccess(false);
                           }
                         }
-                      }>block user</button> </td> */}
-                    </tr>  
+                      }>block user</button> </td>)}
+                      {(isFriend(user.username)) ?(<td>
+                      <button className="btn btn-light" onClick={
+                        async () => {
+                          setPopupMessage("");
+                          try {
+                            await axios.post(`/user/friend/${user.id}`);
+                            setPopupMessage('Friend added');
+                            setActionSuccess(true);
+                            getFriends().then((friends) => {
+                              setFriends(friends);
+                            }, (error) => {
+                              console.log(error);
+                            });
+                        
+                          }
+                          catch (e:any) {
+                            setPopupMessage(e.response.data.message);
+                            setActionSuccess(false);
+                          }
+                        }
+                        }>add friend</button> </td>) : 
+                        (<td>
+                          <button className="btn btn-light" onClick={
+                            async () => {
+                              setPopupMessage("");
+                              try {
+                                await axios.delete(`/user/friend/${user.id}`);
+                                setPopupMessage('friend removed');
+                                setActionSuccess(true);
+                                getFriends().then((friends) => {
+                                  setFriends(friends);
+                                }, (error) => {
+                                  console.log(error);
+                                });
+                            
+                              }
+                              catch (e:any) {
+                                setPopupMessage(e.response.data.message);
+                                setActionSuccess(false);
+                              }
+                            }
+                          }>remove friend</button>
+                         </td>)
+                         }
+                    </tr>
                   )
                 })}
               </tbody>
@@ -118,7 +238,7 @@ const Users = () =>
         </nav>
         </Card.Body>
         </Card>
-        {/* {(popupMessage != "") && <ModalMessage message={popupMessage} success={actionSuccess} />} */}
+        {(popupMessage != "") && <ModalMessage message={popupMessage} success={actionSuccess} />}
       </Wrapper>
     // </>
   );
