@@ -145,6 +145,7 @@ const Users = () =>
                       <td>{user.rank}</td>
                       {(findUser(user.username)) ? (<td><button  className="btn btn-light" onClick={
                         async () => {
+                          setPopupMessage("");
                           try {
                             const {data} = await axios.get(`/user/get/user?username=${user.username}`);
                             await axios.post(`/user/unblock/${data.id}`);
@@ -165,7 +166,7 @@ const Users = () =>
                           setPopupMessage("");
                           try {
                             await axios.post(`/user/block/${user.id}`);
-                            setPopupMessage('User blocked');
+                            setPopupMessage(`${user.username} blocked`);
                             setActionSuccess(true);
                             getBlockedUsers().then(data => {
                               setMyBlockedUsers(data);
