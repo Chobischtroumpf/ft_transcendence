@@ -16,26 +16,48 @@ const SignIn = () =>
       let myWindow = window.open('http://localhost:3000/auth/42');
       const interval = setInterval(async () => {
         if (getCookie("access_token") !== null) {   
-          const {data} = await axios.get('user');
-          if (data.tfaEnabled !== undefined)
-          {
-            if (data.tfaEnabled === false)
-              setRedirect(true);
-            else
-              setRedirectTFA(true);
-            myWindow?.close();
-            clearInterval(interval);
-            return () => clearInterval(interval);
+          try {
+            const {data} = await axios.get('user');
+            if (data.tfaEnabled !== undefined)
+            {
+              if (data.tfaEnabled === false)
+                setRedirect(true);
+            }
           }
+          catch (e) {
+            setError(true);
+            setRedirectTFA(true);
+          }
+          // else
+          myWindow?.close();
+          clearInterval(interval);
+          return () => clearInterval(interval);
+          // }
         }
       }, 1000);
    
       // return () => clearInterval(interval);
     }
 
-    useEffect(() => {
+  useEffect(() => {
+    async () => {
+      if (getCookie("access_token") !== null) {   
+        try {
+          const {data} = await axios.get('user');
+          if (data.tfaEnabled !== undefined)
+          {
+            if (data.tfaEnabled === false)
+              setRedirect(true);
+          }
+        }
+        catch (e) {
+          setError(true);
+          setRedirectTFA(true);
+        }
+      }
     }
-    , [redirect, redirectTFA]);
+  }
+    , []);
 
   function getCookie(name: string): string | null {
     const nameLenPlus = (name.length + 1);

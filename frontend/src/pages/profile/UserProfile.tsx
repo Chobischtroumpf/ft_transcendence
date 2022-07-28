@@ -180,6 +180,13 @@ export default class UserProfile extends Component<Props, State> {
               )
             )
             }
+            <div className="ladder_rank">
+              <div className="ladder_rank-item">
+                <h2 className="title">Ladder Rank</h2>
+                <p>{this.state.user.rank} </p>
+              </div>
+            </div>
+
           </div>
           <div className="history-friends-container">
             <div className="game-history">
