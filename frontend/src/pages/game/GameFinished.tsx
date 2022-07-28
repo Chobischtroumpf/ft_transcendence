@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Wrapper from "../../components/Wrapper";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Card } from 'react-bootstrap';

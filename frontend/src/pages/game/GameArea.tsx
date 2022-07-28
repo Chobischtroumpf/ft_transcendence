@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";

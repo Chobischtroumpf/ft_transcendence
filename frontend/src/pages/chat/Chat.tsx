@@ -9,7 +9,6 @@ import axios from "axios";
 import chatImage from '../../assets/chat2.png';
 import './Chat.css' 
 
-
 type Props = {
     socket: Socket | null,
     joinMsg: string,
@@ -74,7 +73,6 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
   {
     try {
       const {data} = await axios.get(`/user/get/blocked`);
-      // console.log(data);
       return data;
     } catch (error) {
     }
@@ -107,7 +105,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
       getBlockedUsers().then((blockedUsers) => {
         setMyBlockedUsers(blockedUsers);
       }, (error) => {
-        // console.log(error);
+        
       });
   }, []);
 

@@ -17,8 +17,6 @@ type Props = {
 	  socket: Socket | null,
 }
 
-// 1 = owner 2 = admin 3 = password=true 4 = channel=private
-
 const ChatSettings = ({socket}:Props) =>{
 	const queryParams = new URLSearchParams(useLocation().search);
 	const chatName = queryParams.get("ChatSettingsId");
@@ -98,7 +96,6 @@ const AddUser = (chatName:prop) => {
 				return ;
 			}
 			const adminForm : JoinedUserStatusDto = { name : chatName.chatName!, targetId : data.id }
-			console.log("ADD USER");
 			await axios({
 				method: 'post',
 				url: "chat/invite",
@@ -109,7 +106,6 @@ const AddUser = (chatName:prop) => {
 			setActionSuccess(true);
 			handleClose();
 		} catch (e:any) {
-			console.log(e);
 			setPopupMessage(e.response.data.message);
 			setActionSuccess(false);
 			handleClose();
@@ -159,7 +155,7 @@ const AdminUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 
@@ -242,7 +238,7 @@ const BanUser = ({chatName, socket}: Props2) => {
 		const {data} = await axios.get(`chat/getusers/${chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 
@@ -323,7 +319,7 @@ const UnbanUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 
@@ -394,7 +390,6 @@ const AddPassword = (chatName:prop) => {
 	const handleClose = () => {setState(false);}
 	const [popupMessage, setPopupMessage] = useState("");
 	const [actionSuccess, setActionSuccess] = useState(false);
-	// const [newPassword, setNewPassword] = useState('');
 
 	const handleClick = async() => {
 		try {
@@ -570,7 +565,7 @@ const MuteUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 
@@ -648,7 +643,7 @@ const UnmuteUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			// console.log("here")
+			
 		}
 	};
 
