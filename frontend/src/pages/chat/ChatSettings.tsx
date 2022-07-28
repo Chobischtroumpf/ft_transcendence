@@ -1,9 +1,8 @@
 import axios from "axios";
 import { Navigate, useLocation } from "react-router";
 import React, { useEffect, useState } from "react";
-import { AiOutlineUserAdd, AiOutlineUserDelete, } from 'react-icons/ai';
+import { AiOutlineUserAdd, AiOutlineUserDelete, AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { GoMute, GoUnmute } from 'react-icons/go';
-import { GrAddCircle } from 'react-icons/gr';
 import { RiRotateLockFill, RiAdminLine } from 'react-icons/ri';
 import { GiPadlock, GiPadlockOpen } from 'react-icons/gi';
 import Popup from 'reactjs-popup';
@@ -347,7 +346,7 @@ const UnbanUser = (chatName:prop) => {
 	<h2>
 		Unban user : &nbsp;&nbsp;
 		<Popup trigger={<button>
-			<GrAddCircle /></button>}
+			<AiOutlineUsergroupAdd /></button>}
 			on='click'
 			open={state}
 			onClose={handleClose}
