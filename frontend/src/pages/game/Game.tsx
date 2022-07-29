@@ -47,8 +47,9 @@ const Game = ({socket, games, invites}: Props) =>
 
     const options = async (e: SyntheticEvent) => {
         e.preventDefault();
-        const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${invitedUser}`);
-        const resp = await axios.get('/user');
+        try {
+            const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${invitedUser}`);
+            const resp = await axios.get('/user');
         if (data === '' || data.username === resp.data.username)
         {
             window.alert(`User: (${invitedUser}) doesn't exists or you invited yourself, try again!`);
@@ -57,7 +58,9 @@ const Game = ({socket, games, invites}: Props) =>
         }
         const id = data.id;
         socket?.emit('addInviteToServer', {id, paddleSize, paddleSpeed, ballSpeed});
-        setPlace("queue");
+        setPlace("queue");} catch {
+            window.alert(`There was an error when getting users`);
+        }
     }
 
     const queue = async (e: SyntheticEvent) => {

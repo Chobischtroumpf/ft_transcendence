@@ -53,8 +53,8 @@ export default class OtherProfile extends Component<Props, State> {
   }
 
   async getMatchHistory() {
-    const data = await axios.get(`/match/${this.state.user.id}`)
     try {
+      const data = await axios.get(`/match/${this.state.user.id}`)
       return(data.data);
     } catch (e) {
       return <Navigate to={'/error500'} />;
@@ -89,7 +89,7 @@ export default class OtherProfile extends Component<Props, State> {
                         try {
                           await axios.post(`user/friend/${this.state.user.id}`);
                         } catch (e) {
-                          console.log(e);
+                          window.alert(`There was an error while adding friend`);
                         }
                       }
                     )();

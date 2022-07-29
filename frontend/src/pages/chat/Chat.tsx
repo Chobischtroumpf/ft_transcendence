@@ -7,7 +7,8 @@ import { User } from "../../models/user";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import chatImage from '../../assets/chat2.png';
-import './Chat.css' 
+import ModalMessage from "./ModalMessage";
+import './chat.css' 
 
 type Props = {
     socket: Socket | null,
@@ -28,20 +29,28 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
   const [myName, setMyName] = useState('');
   const [blockUser, setBlockuser] = useState('');
   const [myBlockedUsers, setMyBlockedUsers] = useState<User[]>([]);
+	const [popupMessage, setPopupMessage] = useState("");
   var oldURL = window.location.href;
 
   const pongGame = async (e: SyntheticEvent) =>
   {
+      setPopupMessage("");
+
       e.preventDefault();
+      try{
       const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${name}`);
       const id = data.id;
       socket?.emit('addInviteToServer', {id, paddleSize: 40, paddleSpeed: 6, ballSpeed: 4});
-      setGame(true);
+      setGame(true);}
+      catch (e) {
+        setPopupMessage("There was an error");
+      }
   }
 
   const blockUserFunc = async (e: SyntheticEvent) =>
   {
     e.preventDefault();
+    setPopupMessage("");
     try {
         const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
         console.log(data);
@@ -51,12 +60,14 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
           setMyBlockedUsers(data);
         });
     } catch (error) {
+      setPopupMessage("There was an error");
     }
   }
 
   const unblockUserFunc = async (e: SyntheticEvent) =>
   {
     e.preventDefault();
+    setPopupMessage("");
     try {
         const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
         console.log(data);
@@ -66,15 +77,18 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
           setMyBlockedUsers(data);
         });
         } catch (error) {
+          setPopupMessage("There was an error");
     }
   }
 
   const getBlockedUsers = async () =>
   {
+    setPopupMessage("");
     try {
       const {data} = await axios.get(`/user/get/blocked`);
       return data;
     } catch (error) {
+      setPopupMessage("There was an error");
     }
   }
 
@@ -110,9 +124,13 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
   }, []);
 
   useEffect(() => {
+    setPopupMessage("");
       (async () => {
-          const {data} = await axios.get('user');
-          setMyName(data.username);
+        try {
+            const {data} = await axios.get('/user');
+            setMyName(data.username);} catch {
+              setPopupMessage("There was an error");
+            }
       }) ()
       if (socket === null || banned === "banned")
       {
@@ -243,6 +261,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
           </form>
         </div>
     </div >
+    {popupMessage != "" && <ModalMessage message={popupMessage} success={false}/>}
     </Wrapper>
   );
 }

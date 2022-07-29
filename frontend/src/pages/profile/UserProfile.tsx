@@ -54,8 +54,8 @@ export default class UserProfile extends Component<Props, State> {
   }
 
   async getMatchHistory() {
-    const data = await axios.get(`/match/${this.state.user.id}`);
     try {
+      const data = await axios.get(`/match/${this.state.user.id}`);
       return(data.data);
     } catch (e) {
       this.setState({error: true});
@@ -63,8 +63,8 @@ export default class UserProfile extends Component<Props, State> {
   }
 
   async getUser() {
-    const data = await axios.get(`/user`)
     try {
+      const data = await axios.get(`/user`)
       return(data.data);
     } catch (e) {
       this.setState({error: true});
@@ -74,16 +74,16 @@ export default class UserProfile extends Component<Props, State> {
   async directMessage(friendId : number, userId : number){
 
     try{
-      const {data} = await axios.post(`/chat/direct`, {id: friendId});
-      // this.setState({redirect: true});
-      let channelName = await axios.get(`/chat/direct/${friendId}`);
-      this.setState({chatName: channelName.data});
+      await axios.post(`/chat/direct`, {id: friendId});
     }
-    catch(e) {
-      // this.setState({redirect: true});
-      let channelName = await axios.get(`/chat/direct/${friendId}`);
-      this.setState({chatName: channelName.data});
+    catch {
     }
+    try {
+      let channelName = await axios.get(`/chat/direct/${friendId}`);
+      this.setState({chatName: channelName.data});}
+    catch {
+      window.alert(`There was an error`);
+    } 
   }
 
   render() {   

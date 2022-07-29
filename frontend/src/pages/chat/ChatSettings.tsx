@@ -23,11 +23,18 @@ const ChatSettings = ({socket}:Props) =>{
     const [redirect, setRedirect] = useState(false);
 	const [redirectToChat, setRedirectToChat] = useState(false);
 	const [currentChatStatus, setCurrentChatStatus] = useState("");
+	const [popupMessage, setPopupMessage] = useState("");
+
 
 	useEffect(() => {
+		setPopupMessage("");
 		const chatStatus = async () => {
+		try {
 		  const data = await axios.get(`chat/${chatName}`);
 			return data.data.status;
+		} catch {
+			setPopupMessage("There was an error");
+		}
 		}
 		chatStatus().then(Status => {
 			setCurrentChatStatus(Status);
@@ -69,6 +76,7 @@ const ChatSettings = ({socket}:Props) =>{
 			      socket?.emit('joinToServer', { name: chatName });
 				  setRedirectToChat(true);
 		}}>Return</button>
+	{ popupMessage != "" && <ModalMessage message={popupMessage} success={false} /> }
     </Wrapper>
     );
 }
@@ -155,7 +163,8 @@ const AdminUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			
+			setPopupMessage("There was an error");
+			setActionSuccess(false);
 		}
 	};
 
@@ -319,7 +328,8 @@ const UnbanUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			
+			setPopupMessage("There was an error");
+			setActionSuccess(false);			
 		}
 	};
 
@@ -565,7 +575,8 @@ const MuteUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			
+			setPopupMessage("There was an error");
+			setActionSuccess(false);			
 		}
 	};
 
@@ -643,7 +654,8 @@ const UnmuteUser = (chatName:prop) => {
 		const {data} = await axios.get(`chat/getusers/${chatName.chatName}`);
 		setUserList(data);
 		} catch (e) {
-			
+			setPopupMessage("There was an error");
+			setActionSuccess(false);
 		}
 	};
 

@@ -28,7 +28,7 @@ const Users = () =>
       setUsers(data.data);
       setLastPage(data.meta.last_page);
       } catch (error) {
-        console.log(error);
+        window.alert(`There was an error`);
       }
     }, 40);
     getBlockedUsers().then((blockedUsers) => {
@@ -157,7 +157,6 @@ const Users = () =>
                           } catch (error) {
                             setActionSuccess(false);
                             setPopupMessage(`${user.username} is not blocked`);
-                            console.log(error);
                           }
                         }
                       }>unblock user</button> </td>) : 
@@ -189,7 +188,6 @@ const Users = () =>
                             getFriends().then((friends) => {
                               setFriends(friends);
                             }, (error) => {
-                              console.log(error);
                             });
                         
                           }
@@ -210,7 +208,6 @@ const Users = () =>
                                 getFriends().then((friends) => {
                                   setFriends(friends);
                                 }, (error) => {
-                                  console.log(error);
                                 });
                             
                               }
