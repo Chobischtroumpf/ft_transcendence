@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/decorators/user.decorator';
 import { UserEntity } from './entities/user.entity';
+import { tfaCodeDto } from './dto/new-user.dto';
 
 export const storage = {
   storage: diskStorage({
@@ -58,9 +59,9 @@ export class UserController
 
   @Post('tfa/turn-on')
   @HttpCode(200)
-  async turnOnTfa(@User() user, @Body() { tfaCode }, @Res({passthrough: true}) res)
+  async turnOnTfa(@User() user, @Body() data: tfaCodeDto, @Res({passthrough: true}) res)
   {
-    const isCodeValid = this.userService.isTfaCodeValid(tfaCode, user);
+    const isCodeValid = this.userService.isTfaCodeValid(data.tfaCode, user);
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
@@ -73,7 +74,7 @@ export class UserController
   @Post('tfa/turn-off')
   @HttpCode(200)
   @UseGuards(JwtGuard)
-  async turnOffTfa(@User() user, @Body() { tfaCode })
+  async turnOffTfa(@User() user, @Body() data: tfaCodeDto)
   {
     await this.userService.turnOffTfa(user.id);
   }
