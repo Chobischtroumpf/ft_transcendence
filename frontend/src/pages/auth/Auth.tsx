@@ -4,7 +4,7 @@ import { Navigate } from "react-router";
 import background from "../../assets/the_pong.png";
 import './Auth.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Card } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 const SignIn = () =>
 {
@@ -30,11 +30,9 @@ const SignIn = () =>
   }
 
   return(
-    <Card bg="dark">
-    <Card.Img src={background} height={400} />
-    <Card.Body>
-    <div className="col-md-12 text-center">
-    <form onSubmit={submit}>
+ 
+    <div className="tfa-container" style={{backgroundImage: `url(${background})`}}>
+    <form className="tfa-form" onSubmit={submit}>
     <input
           style={{width: '250px'}}
           className="username input"
@@ -45,12 +43,13 @@ const SignIn = () =>
           onChange={handleChange}
         />
         <br />
-        <Button style={{ width: '250px', height: '100px', backgroundColor: 'white', color: 'black', border: '2px solid black' }}
-        type="submit"><h1><b><mark>sendCode</mark></b></h1></Button>
+        <Button className="btn btn-light" type="submit">
+          <h1>
+            <b>sendCode</b>
+          </h1>
+        </Button>
     </form>
     </div>
-    </Card.Body>
-    </Card>
   );
 }
 

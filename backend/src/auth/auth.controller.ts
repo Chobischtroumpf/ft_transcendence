@@ -30,7 +30,7 @@ export class AuthController {
 	async ftAuthReturn(@User() user42, @Res({passthrough: true}) res)
 	{
 		const { user, jwt } = await this.authService.treatFtOauth(user42);
-        res.cookie('42_token', jwt, {sameSite: "strict"});
+        res.cookie('access_token', jwt);
 		return ;
 	}
 
@@ -45,7 +45,7 @@ export class AuthController {
     	}
 		const jwt = this.authService.treatTfa(user.id, true);
 		res.clearCookie('access_token');
-		res.cookie('access_token', jwt, {sameSite: "strict"});
+		res.cookie('access_token', jwt);
 		return user;
   	}
 }

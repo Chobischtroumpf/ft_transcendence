@@ -30,7 +30,7 @@ const Game = ({socket, games, invites}: Props) =>
 
     const spectatorJoin = async (e: SyntheticEvent) => {
       e.preventDefault();
-      socket?.emit('newSpectatorToServer', name );
+      socket?.emit('newSpectatorToServer', {name} );
       setPlace("queue");
     }
 
@@ -50,15 +50,17 @@ const Game = ({socket, games, invites}: Props) =>
         try {
             const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${invitedUser}`);
             const resp = await axios.get('/user');
-        if (data === '' || data.username === resp.data.username)
-        {
-            window.alert(`User: (${invitedUser}) doesn't exists or you invited yourself, try again!`);
-            setPlace(null);
-            return ;
-        }
-        const id = data.id;
-        socket?.emit('addInviteToServer', {id, paddleSize, paddleSpeed, ballSpeed});
-        setPlace("queue");} catch {
+            if (data === '' || data.username === resp.data.username)
+            {
+                window.alert(`User: (${invitedUser}) doesn't exists or you invited yourself, try again!`);
+                setPlace(null);
+                return ;
+            }
+            const id = data.id;
+            console.log(id);
+            socket?.emit('addInviteToServer', {id, paddleSize, paddleSpeed, ballSpeed});
+            setPlace("queue");
+        } catch {
             window.alert(`There was an error when getting users`);
         }
     }
@@ -81,7 +83,7 @@ const Game = ({socket, games, invites}: Props) =>
 
     if (place === "join")
     {
-        socket?.emit('acceptInviteToServer', inviter);
+        socket?.emit('acceptInviteToServer', {inviter});
         return <Navigate to={'/gamewaitingroom'} />;
     }
     

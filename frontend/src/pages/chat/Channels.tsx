@@ -30,7 +30,9 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   const [checkPwd, setCheckPwd ] = useState(0);
 
   useEffect(() => {
-    socket?.emit('getChannelsToServer', page);
+    socket?.connect();
+    socket?.emit('getChannelsToServer', {page});
+    console.log("getChannelsToServer", socket);
     getUser().then((username) => {
       setUsername(username);
       setGotUsername(true);
@@ -60,7 +62,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
       await axios.post('chat/protected', { name, password });
     else if (status === ChannelStatus.private)
       await axios.post('chat/private', { name });
-    socket?.emit('getChannelsToServer', page);
+    socket?.emit('getChannelsToServer', {page});
     setPopupMessage("Channel " + name + " successfully created");
     setActionSuccess(true);}
     catch (e:any) {
@@ -102,7 +104,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
     try {
       await axios.delete(`chat/leave/${channelId}`);
-      socket?.emit('getChannelsToServer', page);
+      socket?.emit('getChannelsToServer', {page});
       setPopupMessage("Channel successfully left");
       setActionSuccess(true);
     }
@@ -119,7 +121,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 
     try {
       await axios.delete(`chat/delete/${channelId}`);
-      socket?.emit('getChannelsToServer', page);
+      socket?.emit('getChannelsToServer', {page});
       setPopupMessage("Channel successfully deleted");
       setActionSuccess(true);
     }
@@ -282,7 +284,7 @@ function ModalPwd({chatName, socket}:prop) {
             data: adminForm,
             headers: {'content-type': 'application/json'}
           });
-        socket?.emit('joinToServer', adminForm);
+        socket?.emit('joinToServer', {adminForm});
         setGoodPwd(1);
       } catch (e) {
         setGoodPwd(2);

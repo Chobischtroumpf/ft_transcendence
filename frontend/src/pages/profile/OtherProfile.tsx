@@ -160,10 +160,51 @@ export default class OtherProfile extends Component<Props, State> {
           <div className="gameHistory">
             <div className="gameHistory-item">
               <h2 className="title">Game History</h2>
-              {/* {(user.gameHistory.size() > 0) ? ( */}
-              {/* ) : ( */}
+              {(this.state.matchHistory.length > 0) ? (
+              <div className="gameHistory-list">
+              {this.state.matchHistory.map(match => {
+                    return (
+                      <div key={match.id} className="game-history-item">
+                        <div className="gameHistory-item-left">
+                          {(match.winner.id === match.homePlayer.id) ?
+                          (
+                            <div className="positive">
+                              <h5>{match.homePlayer.username}</h5>
+                              <p>{match.homeScore}</p>
+                            </div>
+                          ) :
+                          (
+                            <div className="negative">
+                              <h5>{match.homePlayer.username}</h5>
+                              <p>{match.homeScore}</p>
+                            </div>
+                          )
+                          }
+                        </div>
+                        <div className="gameHistory-item-right">
+                          {(match.winner.id === match.awayPlayer.id) ?
+                            (
+                              <div className="positive">
+                                <h5>{match.awayPlayer.username}</h5>
+                                <p>{match.awayScore}</p>
+                              </div>
+                            ) :
+                            (
+                              <div className="negative">
+                                <h5>{match.awayPlayer.username}</h5>
+                                <p>{match.awayScore}</p>
+                              </div>
+                            )
+                          }
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
               <p className="">{this.state.user.username} has not played any games yet.</p>
-              {/* ) */}
+              )
+            }
             </div>
           </div>
         </div>
