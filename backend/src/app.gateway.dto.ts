@@ -29,3 +29,9 @@ export class sender2Dto {
     @IsString()
     sender2: string;
 }
+
+export class roomDto {
+    @IsNotEmpty()
+    @IsString()
+    room: string;
+}

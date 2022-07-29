@@ -11,7 +11,7 @@ import { GameService } from './game/game.service';
 import { CreateMessageToChatDto, InvitePlayerOptions, SetPasswordDto } from './chat/dto/chat.dto';
 import { ChatService } from './chat/service/chat.service';
 import { ChatUtilsService } from './chat/service/chatUtils.service';
-import { nameDto, pageDto, sender2Dto, userIdDto, userNameDto } from './app.gateway.dto';
+import { nameDto, pageDto, roomDto, sender2Dto, userIdDto, userNameDto } from './app.gateway.dto';
 
 
 @WebSocketGateway({cors: { origin: `http://localhost:3000`, credentials: true }})
@@ -267,13 +267,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage('leaveGameToServer')
-  async leaveGame(@ConnectedSocket() client: Socket, @MessageBody() room: string)
+  async leaveGame(@ConnectedSocket() client: Socket, @MessageBody() data: roomDto)
   {
     try
     {
       // find the game
       const user = client.data.user;
-      const game = this.games.find(e => e.name === room);
+      const game = this.games.find(e => e.name === data.room);
       if (game.winner !== undefined)
         return ;
       if (game.players[0].player.username === user.username)
@@ -334,14 +334,14 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage('newSpectatorToServer')
-  async addSpectator(@ConnectedSocket() client: Socket, @MessageBody() room: string)
+  async addSpectator(@ConnectedSocket() client: Socket, @MessageBody() data: roomDto)
   {
     try
     {
       const user = client.data.user;
       // user joins to game as a spectator
-      client.join(room);
-      this.wss.to(room).emit('newSpectatorToClient', { username: user.username, room: room });
+      client.join(data.room);
+      this.wss.to(data.room).emit('newSpectatorToClient', { username: user.username, room: data.room });
     }
     catch { throw new WsException('Something went wrong'); }
   }
