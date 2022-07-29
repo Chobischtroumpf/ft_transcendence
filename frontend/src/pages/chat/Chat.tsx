@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import axios from "axios";
 import chatImage from '../../assets/chat2.png';
 import ModalMessage from "./ModalMessage";
-import './chat.css' 
+import './Chat.css' 
 
 type Props = {
     socket: Socket | null,
