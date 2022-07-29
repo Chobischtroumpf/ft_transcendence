@@ -37,7 +37,7 @@ function App() {
   const [banned, setBanned] = useState('');
 
   useEffect(() => {
-    const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
+    const newSocket = io(`0.0.0.0:3000`, {withCredentials: true, transports: ['websocket']});
     newSocket.on('joinToClient', (data) => {
       setJoinMsg(data.msg);
       setChannelName(data.channel);
