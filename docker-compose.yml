@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
     command: npm run start:debug    
     env_file: 
-      - ./backend/src/common/envs/development.env
+      - backend/src/common/envs/development.env
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -53,25 +53,6 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
 networks:
-    nestjs-network:
-      driver: bridge
+  nestjs-network:        
 volumes:
-    pgdata:
-
-# version: "3"
-
-# services:
-#   postgres:
-#     container_name: postgres_2
-#     image: postgres:latest
-#     ports:
-#       - "5432:5432"
-#     env_file:
-#       - ./backend/src/common/envs/development.env
-#     restart: always
-#     networks:
-#       - postgres
-
-# networks:
-#   postgres:
-#     driver: bridge
+  pgdata:  
