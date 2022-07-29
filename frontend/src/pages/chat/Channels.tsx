@@ -4,7 +4,7 @@ import Wrapper from "../../components/Wrapper";
 import { Channel, ChannelStatus } from "../../models/channel";
 import { Socket } from 'socket.io-client';
 import { Navigate } from "react-router";
-import ModalMessage from "./ModalMessage"
+import ModalMessage from "./ModalMessage";
 import { Button, Card, Form, Table } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import { SetPasswordDto } from "./chatSettings.dto";
@@ -26,7 +26,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
 	const [actionSuccess, setActionSuccess] = useState(false);
   const [username, setUsername] = useState('');
   const [gotUsername, setGotUsername] = useState(false);
-  const [chatStatus, setChatStatus] = useState("");
   const [currentChannel, setCurrentChannel] = useState<any>("");
   const [checkPwd, setCheckPwd ] = useState(0);
 
@@ -46,7 +45,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
         let temp = await axios.get('/user');
         return temp.data.username;
       }catch (e) {
-        
       }
   }
 
@@ -80,7 +78,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     try {
       const data = await axios.get(`chat/${name}`);
       setCurrentChannel(data.data);
-      setChatStatus(data.data.status);
       const adminForm : SetPasswordDto = { name : data.data.name, password : "" };
       await axios({
           method: 'post',

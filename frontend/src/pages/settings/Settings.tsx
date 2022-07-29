@@ -26,8 +26,8 @@ const Settings = () => {
   
   useEffect(() => {
   (async () => {
-    const { data } = await axios.get("user");
     try {
+      const { data } = await axios.get("user");
       setUser(data);
       setGotUser(true);
     } catch (e) {
@@ -40,12 +40,15 @@ const Settings = () => {
 
   const handleTfaSubmit = async(event: any) => {
     event.preventDefault();
+    try {
     const data = await axios({
       method: 'post',
       url: "/user/tfa/secret/",
       responseType: 'arraybuffer'
     });
-    setTfaImage('data:image/jpeg;base64,' + encode(data.data));
+    setTfaImage('data:image/jpeg;base64,' + encode(data.data));} catch {
+      window.alert("There was an error");
+    }
   }
 
   const handleUsernameSubmit = async(event: any) => {
@@ -53,7 +56,7 @@ const Settings = () => {
     if (!username && user)
       setUsername(user.username);
       try {
-      const { data } = await axios.post("/user/username", { username: username });
+        await axios.post("/user/username", { username: username });
     }
     catch (e) {
       setError(true);
@@ -69,7 +72,7 @@ const Settings = () => {
       formData.append("picture", picturefile, picturefile.name);    
     }
     try {
-      const { data } = await axios.post("/user/picture", formData, { headers: {'content-type': 'multipart/form-data'}} );
+      await axios.post("/user/picture", formData, { headers: {'content-type': 'multipart/form-data'}} );
     }
     catch (e) {
       <Navigate to={'/error500'} />
@@ -79,10 +82,10 @@ const Settings = () => {
   const handleTfaTurnOn = async(event: any) => {
     event.preventDefault();
     try {
-      const { data } = await axios.post("/user/tfa/turn-on", { tfaCode: tfaCode });
+      await axios.post("/user/tfa/turn-on", { tfaCode: tfaCode });
     }
     catch (e) {
-
+      window.alert(`There was an error`);
     }
   }
 
@@ -94,7 +97,7 @@ const Settings = () => {
       setUser(data);
     }
     catch (e) {
-
+      window.alert(`There was an error`);
     }
   }
 

@@ -16,3 +16,9 @@ export class tfaDto {
     @IsBoolean()
     tfa: boolean;
 }
+
+export class tfaCodeDto {
+    @IsNotEmpty()
+    @IsString()
+    tfaCode: string;
+}

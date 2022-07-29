@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, Post, Res, UnauthorizedException, UseG
 import { InjectRepository } from '@nestjs/typeorm';
 import { Response } from 'express';
 import { User } from 'src/decorators/user.decorator';
+import { tfaCodeDto, tfaDto } from 'src/user/dto/new-user.dto';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
@@ -29,22 +30,22 @@ export class AuthController {
 	async ftAuthReturn(@User() user42, @Res({passthrough: true}) res)
 	{
 		const { user, jwt } = await this.authService.treatFtOauth(user42);
-        res.cookie('access_token', jwt);
+        res.cookie('42_token', jwt, {sameSite: "strict"});
 		return ;
 	}
 
 	@Post('tfa')
 	@HttpCode(200)
 	@UseGuards(TfaGuard)
-	async authenticate(@User() user, @Body() { tfaCode }, @Res({passthrough: true}) res: Response)
+	async authenticate(@User() user, @Body() data: tfaCodeDto, @Res({passthrough: true}) res: Response)
 	{
-		const isCodeValid = this.userService.isTfaCodeValid(tfaCode, user);
+		const isCodeValid = this.userService.isTfaCodeValid(data.tfaCode, user);
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
     	}
 		const jwt = this.authService.treatTfa(user.id, true);
 		res.clearCookie('access_token');
-		res.cookie('access_token', jwt);
+		res.cookie('access_token', jwt, {sameSite: "strict"});
 		return user;
   	}
 }
