@@ -30,7 +30,7 @@ const Game = ({socket, games, invites}: Props) =>
 
     const spectatorJoin = async (e: SyntheticEvent) => {
       e.preventDefault();
-      socket?.emit('newSpectatorToServer', {name} );
+      socket?.emit('newSpectatorToServer', { room: name } );
       setPlace("queue");
     }
 
@@ -83,7 +83,7 @@ const Game = ({socket, games, invites}: Props) =>
 
     if (place === "join")
     {
-        socket?.emit('acceptInviteToServer', {inviter});
+        socket?.emit('acceptInviteToServer', { sender2: inviter });
         return <Navigate to={'/gamewaitingroom'} />;
     }
     

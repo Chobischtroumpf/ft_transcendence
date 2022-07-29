@@ -27,14 +27,14 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
             var url_string = oldURL;
             var url = new URL(url_string);
             const temp = url.searchParams.get('gamename');
-            socket?.emit('leaveGameToServer', {temp});
+            socket?.emit('leaveGameToServer', { room: temp });
         };
         const intervalId = setInterval(() => {
             if(window.location.href != oldURL){
                 var url_string = oldURL;
                 var url = new URL(url_string);
                 const temp = url.searchParams.get('gamename');
-                socket?.emit('leaveGameToServer', {temp});
+                socket?.emit('leaveGameToServer', { room: temp });
                 clearInterval(intervalId);
             }
         }, 1000);

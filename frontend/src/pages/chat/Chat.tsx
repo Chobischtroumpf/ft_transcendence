@@ -105,14 +105,14 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
         var url_string = oldURL;
         var url = new URL(url_string);
         const temp = url.searchParams.get('chatId');
-        socket?.emit('leaveChannelToServer', {temp});
+        socket?.emit('leaveChannelToServer', { name: temp });
       };
       const intervalId = setInterval(() => {
         if(window.location.href != oldURL){
               var url_string = oldURL;
               var url = new URL(url_string);
               const temp = url.searchParams.get('chatId');
-              socket?.emit('leaveChannelToServer', {temp});
+              socket?.emit('leaveChannelToServer', { name: temp });
               clearInterval(intervalId);
           }
       }, 1000);
@@ -134,7 +134,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
       }) ()
       if (socket === null || banned === "banned")
       {
-        socket?.emit('unBanToServer', {myName});
+        socket?.emit('unBanToServer', { username: myName });
         setRedirect(true);
       }
       setInfoMsg(joinMsg);

@@ -261,7 +261,7 @@ const BanUser = ({chatName, socket}: Props2) => {
 					data: adminForm,
 					headers: {'content-type': 'application/json'}
 				});
-				socket?.emit('isBannedToServer', {userId});
+				socket?.emit('isBannedToServer', { id: userId });
 				setPopupMessage("User successfully banned");
 				setActionSuccess(true);
 				handleClose();
