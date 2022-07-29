@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/decorators/user.decorator';
 import { UserEntity } from './entities/user.entity';
+import { UsernameDto } from './dto/user.dto';
 import { tfaCodeDto } from './dto/new-user.dto';
 
 export const storage = {
@@ -76,6 +77,13 @@ export class UserController
   @UseGuards(JwtGuard)
   async turnOffTfa(@User() user, @Body() data: tfaCodeDto)
   {
+    if (!user.tfa_enabled) {
+      throw new UnauthorizedException('TFA is not enabled');
+    }
+    const isCodeValid = this.userService.isTfaCodeValid(data.tfaCode, user);
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
     await this.userService.turnOffTfa(user.id);
   }
   
@@ -109,9 +117,9 @@ export class UserController
   }
   
   @Post('/username')
-  async updateUsername(@User() user, @Body() { username })
+  async updateUsername(@User() user, @Body() data: UsernameDto)
   {
-    return this.userService.updateUsername(user, username);
+    return this.userService.updateUsername(user, data.username);
   }
   
   @Post('friend/:id')
