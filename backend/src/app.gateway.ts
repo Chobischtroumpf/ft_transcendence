@@ -11,6 +11,7 @@ import { GameService } from './game/game.service';
 import { CreateMessageToChatDto, InvitePlayerOptions, SetPasswordDto } from './chat/dto/chat.dto';
 import { ChatService } from './chat/service/chat.service';
 import { ChatUtilsService } from './chat/service/chatUtils.service';
+import { nameDto, pageDto, sender2Dto, userIdDto, userNameDto } from './app.gateway.dto';
 
 
 @WebSocketGateway({cors: { origin: `http://localhost:3000`, credentials: true }})
@@ -87,12 +88,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   ///////// CHAT PART /////////////
 
   @SubscribeMessage('unBanToServer')
-  async unBan(@ConnectedSocket() client: Socket, @MessageBody() username: string)
+  async unBan(@ConnectedSocket() client: Socket, @MessageBody() data: userNameDto)
   {
     try
     {
       const user = client.data.user;
-      const bannedUser = await this.userService.getUserByName(username);
+      const bannedUser = await this.userService.getUserByName(data.username);
       for (var i = 0; i < this._sockets.length; i++)
         if (this._sockets[i].data.user.username === bannedUser.username)
           this._sockets[i].emit('isBannedToClient', '');
@@ -101,12 +102,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage('isBannedToServer')
-  async isBanned(@ConnectedSocket() client: Socket, @MessageBody() id: number)
+  async isBanned(@ConnectedSocket() client: Socket, @MessageBody() data: userIdDto)
   {
     try
     {
       const user = client.data.user;
-      const bannedUser = await this.userService.getUserById_2(id);
+      const bannedUser = await this.userService.getUserById_2(data.id);
       for (var i = 0; i < this._sockets.length; i++)
         if (this._sockets[i].data.user.username === bannedUser.username)
           this._sockets[i].emit('isBannedToClient', "banned");
@@ -115,34 +116,34 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage('getChannelsToServer')
-  async getChannels(@ConnectedSocket() client: Socket, @MessageBody() page: number)
+  async getChannels(@ConnectedSocket() client: Socket, @MessageBody() data: pageDto)
   {
     try
     {
       const user = client.data.user;
-      const result = await this.chatUtilService.paginate(page);
+      const result = await this.chatUtilService.paginate(data.page);
       this.wss.emit('getChannelsToClient', result);
     }
     catch { throw new WsException('Something went wrong'); }
   }
 
   @SubscribeMessage('leaveChannelToServer')
-  async leave(@ConnectedSocket() client: Socket, @MessageBody() name: string)
+  async leave(@ConnectedSocket() client: Socket, @MessageBody() data: nameDto)
   {
     try
     {
       const user = client.data.user;
-      const channel = await this.chatUtilService.getChannelByName(name);
-      client.leave(name);
+      const channel = await this.chatUtilService.getChannelByName(data.name);
+      client.leave(data.name);
       const chatUsers = [];
       for (const socket of this._sockets)
       {
-        if (socket.rooms.has(name))
+        if (socket.rooms.has(data.name))
         {
           chatUsers.push(socket.data.user.username);
         }
       }
-      this.wss.to(name).emit('leaveToClient', { msg: `${user.username} left from the channel`, onlineUsers: chatUsers })
+      this.wss.to(data.name).emit('leaveToClient', { msg: `${user.username} left from the channel`, onlineUsers: chatUsers })
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -171,15 +172,15 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage('leaveToServer')
-  async leaveChannel(@ConnectedSocket() client: Socket, @MessageBody() name: string)
+  async leaveChannel(@ConnectedSocket() client: Socket, @MessageBody() data: nameDto)
   {
     try
     {
       const user = client.data.user;
-      const channel = await this.chatUtilService.getChannelByName(name);
+      const channel = await this.chatUtilService.getChannelByName(data.name);
       await this.chatService.leaveChannel(channel.id, user);
-      client.leave(name);
-      this.wss.to(name).emit('leaveToClient', `${user.username} left from the channel`);
+      client.leave(data.name);
+      this.wss.to(data.name).emit('leaveToClient', `${user.username} left from the channel`);
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -237,14 +238,14 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage('acceptInviteToServer')
-  async acceptInvite(@ConnectedSocket() client: Socket, @MessageBody() sender2: string)
+  async acceptInvite(@ConnectedSocket() client: Socket, @MessageBody() data: sender2Dto)
   {
     try
     {
       const invitedUser = client.data.user;
-      const sender = await this.userService.getUserByName(sender2);
+      const sender = await this.userService.getUserByName(data.sender2);
       const index = this.invites.findIndex(function (Invite) {
-        return Invite.sender === sender2 && Invite.invitedUser === invitedUser.username;
+        return Invite.sender === data.sender2 && Invite.invitedUser === invitedUser.username;
       });
       if (index === -1)
       {
