@@ -38,7 +38,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
 
       e.preventDefault();
       try{
-      const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${name}`);
+      const {data} = await axios.get(`/user/get/user?username=${name}`);
       const id = data.id;
       socket?.emit('addInviteToServer', {id, paddleSize: 40, paddleSpeed: 6, ballSpeed: 4});
       setGame(true);}

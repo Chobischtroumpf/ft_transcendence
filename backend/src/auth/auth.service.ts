@@ -79,7 +79,7 @@ export class AuthService
     
     async logOut(response: Response, user: UserEntity)
     {
-        response.clearCookie('access_token');
+        response.clearCookie('access_token', {sameSite: 'none', secure: true, expires: new Date(Date.now() + 1000)});
         response.sendStatus(200);
         user.status = UserStatus.offline;
         await this.userRepository.save(user);

@@ -16,7 +16,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs/`);
     ConfigModule.forRoot({envFilePath, isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      // url: process.env.DATABASE_URL,
+      url: process.env.DATABASE_URL,
       host: 'localhost',
       port: 5432,
       username: process.env.POSTGRES_USER,

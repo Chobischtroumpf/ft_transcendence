@@ -68,8 +68,7 @@ export class UserController
     }
     await this.userService.turnOnTfa(user);
     const jwt = this.authService.treatTfa(user.id, true);
-		res.clearCookie('access_token');
-		res.cookie('access_token', jwt);
+		res.cookie('access_token', jwt, {sameSite: 'lax' ,secure: true, expires: new Date(Date.now() + 604800000)});
   }
 
   @Post('tfa/turn-off')

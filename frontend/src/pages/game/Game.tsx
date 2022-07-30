@@ -48,7 +48,7 @@ const Game = ({socket, games, invites}: Props) =>
     const options = async (e: SyntheticEvent) => {
         e.preventDefault();
         try {
-            const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${invitedUser}`);
+            const {data} = await axios.get(`/user/get/user?username=${invitedUser}`);
             const resp = await axios.get('/user');
             if (data === '' || data.username === resp.data.username)
             {

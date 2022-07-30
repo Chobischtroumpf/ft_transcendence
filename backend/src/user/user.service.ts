@@ -116,7 +116,8 @@ export class UserService
 
     async turnOffTfa(id: number) {
       return this.userRepository.update(id, {
-        tfaEnabled: false
+        tfaEnabled: false,
+        tfaSecret: null
       });
     }
 
