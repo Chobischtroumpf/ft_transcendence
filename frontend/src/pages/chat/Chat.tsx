@@ -38,7 +38,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
 
       e.preventDefault();
       try{
-      const {data} = await axios.get(`/user/get/user?username=${name}`);
+      const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${name}`);
       const id = data.id;
       socket?.emit('addInviteToServer', {id, paddleSize: 40, paddleSpeed: 6, ballSpeed: 4});
       setGame(true);}
@@ -190,13 +190,6 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
                   <form onSubmit={pongGame}>
                     {onlineUser} <button onClick={e => setName(onlineUser)} type="submit" >Invite to game</button>
                   </form>
-                  {findUser(onlineUser) ?
-                  (<form onSubmit={unblockUserFunc}>
-                    <button onClick={e => setBlockuser(onlineUser)} type="submit" >Unblock</button>
-                  </form>) : (
-                  <form onSubmit={blockUserFunc}>
-                    <button onClick={e => setBlockuser(onlineUser)} type="submit" >Block</button>
-                  </form>)}
                 </h6>
               </li>
               );

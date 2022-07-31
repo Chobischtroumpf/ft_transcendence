@@ -5,26 +5,12 @@ import { User, UserLevel, UserStatus } from "../models/user";
 
 const Nav = () =>
 {
-    const [user, setUser] = useState(new User(0, '', '', false, 'default.png', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
-
-    useEffect(() => {
-        (
-            async () => {
-
-                try {
-                    const {data} = await axios.get('user');
-                    setUser(data);
-                }
-                catch (e) {
-                    console.log(e);
-                }
-            }
-        )();
-    }, []);
-
     const logout = async () => {
         await axios.post('user/logout', {});
-        window.location.reload();
+        setTimeout(() => {
+            window.location.reload();
+        }, 80);
+        
     }
 
     return (

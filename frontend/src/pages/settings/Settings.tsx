@@ -96,10 +96,8 @@ const Settings = () => {
       const { data } = await axios.get("user");
       setUser(data);
     }
-    catch (e:any) {
-      if (e.response.status === 400) {
-      window.alert(`wrong code`);
-      }
+    catch (e) {
+      window.alert(`There was an error`);
     }
   }
 
