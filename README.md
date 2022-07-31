@@ -30,8 +30,8 @@ If you want to see database, take a new terminal window and use next commands :
 docker container ls (to see list of docker containers)
 docker exec -it <first_3_charachters_from_postgrescontainer_id> /bin/bash
 (now you are inside container)
-psql postgres3 postgres1;
-\c postgres3; (connecting to database postgres3)
+psql <database> <user>;
+\c <database>; (connecting to database)
 \dt (to see all the tables from database)
 SELECT * FROM public.<table_name>; (to see data from that table)
 ```
