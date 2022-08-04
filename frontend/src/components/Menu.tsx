@@ -9,8 +9,8 @@ export const Menu = (props: any) =>
   const [user, setUser] = React.useState<User>(new User(0, '', '', false, '', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
 
   async function getUser() {
-    const response = await axios.get("/user");
     try{
+      const response = await axios.get("/user");
       return response.data;
     } catch (e) {
       return <Navigate to={'/error500'} />;
@@ -21,7 +21,6 @@ export const Menu = (props: any) =>
     getUser().then(user => {
       setUser(user);
     } , error => {
-
     });
   },[]);
 

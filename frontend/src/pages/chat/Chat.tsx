@@ -53,14 +53,13 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
     setPopupMessage("");
     try {
         const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
-        console.log(data);
         await axios.post(`/user/block/${data.id}`);
         setBlockuser('');
         getBlockedUsers().then(data => {
           setMyBlockedUsers(data);
         });
-    } catch (error) {
-      setPopupMessage("There was an error");
+    } catch (error: any) {
+      setPopupMessage(error.response.data.message);
     }
   }
 
@@ -70,7 +69,6 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
     setPopupMessage("");
     try {
         const {data} = await axios.get(`/user/get/user?username=${blockUser}`);
-        console.log(data);
         await axios.post(`/user/unblock/${data.id}`);
         setBlockuser('');
         getBlockedUsers().then(data => {
@@ -182,17 +180,34 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
               </li>
               );
             }
+            else if (!findUser(onlineUser))
+            {
+              return (
+                <div key={index}>
+                  <li style={{ listStyleType : 'none' }} key={index}>
+                    <h6 style={{ padding: '1px', color: 'green' }}>
+                      <form onSubmit={pongGame}>
+                        {onlineUser} <button onClick={e => setName(onlineUser)} type="submit" >Invite to game</button>
+                      </form>
+                      <form onSubmit={blockUserFunc}>
+                        <button onClick={e => setBlockuser(onlineUser)} type="submit" >block user</button>
+                      </form>
+                    </h6>
+                  </li>
+                </div>
+              );
+            }
             else
             {
               return (
-              <li style={{ listStyleType : 'none' }} key={index}>
-                <h6 style={{ padding: '1px', color: 'green' }}>
-                  <form onSubmit={pongGame}>
-                    {onlineUser} <button onClick={e => setName(onlineUser)} type="submit" >Invite to game</button>
-                  </form>
-                </h6>
-              </li>
-              );
+                <li style={{ listStyleType : 'none' }} key={index}>
+                  <h6 style={{ padding: '1px', color: 'green' }}>
+                    <form onSubmit={unblockUserFunc}>
+                      {onlineUser} <button onClick={e => setBlockuser(onlineUser)} type="submit" >unblock user</button>
+                    </form>
+                  </h6>
+                </li>
+              )
             }
           }
           )}

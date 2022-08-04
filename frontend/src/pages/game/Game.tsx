@@ -57,7 +57,6 @@ const Game = ({socket, games, invites}: Props) =>
                 return ;
             }
             const id = data.id;
-            console.log(id);
             socket?.emit('addInviteToServer', {id, paddleSize, paddleSpeed, ballSpeed});
             setPlace("queue");
         } catch {

@@ -43,19 +43,19 @@ services:
       - nestjs-network
     restart: unless-stopped
          
-  frontend:
-    container_name: frontend
-    build:
-      context: ./frontend
-      dockerfile: ./dockerfile
-    volumes:
-      - '.:/frontend/app'
-      - '/frontend/app/node_modules'
-    ports:
-      - 3001:3000
-    environment:
-      - CHOKIDAR_USEPOLLING=$CHOKIDAR_USEPOLLING
-      - WDS_SOCKET_PORT=$WDS_SOCKET_PORT
+  # frontend:
+  #   container_name: frontend
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: ./dockerfile
+  #   volumes:
+  #     - '.:/frontend/app'
+  #     - '/frontend/app/node_modules'
+  #   ports:
+  #     - 3001:3000
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=$CHOKIDAR_USEPOLLING
+  #     - WDS_SOCKET_PORT=$WDS_SOCKET_PORT
 
 networks:
   nestjs-network:        

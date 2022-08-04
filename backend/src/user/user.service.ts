@@ -215,7 +215,7 @@ export class UserService
       if (!toBlock)
         throw new NotFoundException('User not found');
       
-      const is_true = await this.isblocked_true(toBlock, user) 
+      const is_true = await this.isblocked_true(user, toBlock); 
       if (is_true)
         throw new HttpException({status: HttpStatus.FORBIDDEN, message: 'you have already blocked this user'}, HttpStatus.FORBIDDEN);
       user.blockedUsers = await this.getBlockedUsers(user.id);

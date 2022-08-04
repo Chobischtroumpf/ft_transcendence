@@ -92,19 +92,6 @@ export class ChatUtilsService
             throw new HttpException('You are not member of this channel', HttpStatus.FORBIDDEN);
     }
     
-    async getDirectChannelName(friendId: number, userId: number)
-    {
-        var channelName = "direct_with_" + friendId + "_" + userId;
-        var channel = await this.chatRepository.findOne({where: {name: channelName}});
-        if (channel)
-            return channelName;
-        var channelName = "direct_with_" + userId + "_" + friendId;
-        var channel = await this.chatRepository.findOne({where: {name: channelName}});
-        if (channel)
-            return channelName;
-        throw new HttpException({status: HttpStatus.BAD_REQUEST, error: 'Channel does not exist'}, HttpStatus.BAD_REQUEST);
-    }
-
     async paginate(page: number = 1): Promise<any>
     {
         const take = 15;
