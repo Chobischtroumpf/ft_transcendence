@@ -60,4 +60,4 @@ services:
 networks:
   nestjs-network:        
 volumes:
-  pgdata:  
+  pgdata:
