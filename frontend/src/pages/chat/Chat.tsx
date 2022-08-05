@@ -151,7 +151,8 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
 
   if (redirect === true)
   {
-      return <Navigate to={'/channels'} />;
+    console.log("redirect");
+    return <Navigate to={'/channels'} />;
   }
 
   if (game === true)

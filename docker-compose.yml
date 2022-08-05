@@ -9,8 +9,8 @@ services:
       dockerfile: ./dockerfile
       target: $NODE_ENV
     volumes:
-      - .:/backend/app/
-      - /backend/app/node_modules        
+      - '.:/backend/app/'
+      - '/backend/app/node_modules'
     depends_on:
       - postgres
     environment:
@@ -19,12 +19,12 @@ services:
       PORT: $PORT
     ports:
       - "3000:3000" # for communication
-      - "9229:9229" # for debugging      
+      - "9229:9229" # for debugging
     networks:
       - nestjs-network
     restart: unless-stopped
     command: npm run start:prod
-    env_file: 
+    env_file:
       - .env
 
   postgres:
@@ -42,22 +42,22 @@ services:
     networks:
       - nestjs-network
     restart: unless-stopped
-         
-  # frontend:
-  #   container_name: frontend
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: ./dockerfile
-  #   volumes:
-  #     - '.:/frontend/app'
-  #     - '/frontend/app/node_modules'
-  #   ports:
-  #     - 3001:3000
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=$CHOKIDAR_USEPOLLING
-  #     - WDS_SOCKET_PORT=$WDS_SOCKET_PORT
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: ./dockerfile
+    volumes:
+      - '.:/frontend/app'
+      - '/frontend/app/node_modules'
+    ports:
+      - 3001:3000
+    environment:
+      - CHOKIDAR_USEPOLLING=$CHOKIDAR_USEPOLLING
+      - WDS_SOCKET_PORT=$WDS_SOCKET_PORT
 
 networks:
-  nestjs-network:        
+  nestjs-network:
 volumes:
   pgdata:

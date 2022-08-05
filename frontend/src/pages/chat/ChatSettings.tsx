@@ -15,15 +15,17 @@ import { Socket } from "socket.io-client";
 
 type Props = {
 	  socket: Socket | null,
+	  banned: string,
 }
 
-const ChatSettings = ({socket}:Props) =>{
+const ChatSettings = ({socket, banned}:Props) =>{
 	const queryParams = new URLSearchParams(useLocation().search);
 	const chatName = queryParams.get("ChatSettingsId");
     const [redirect, setRedirect] = useState(false);
 	const [redirectToChat, setRedirectToChat] = useState(false);
 	const [currentChatStatus, setCurrentChatStatus] = useState("");
 	const [popupMessage, setPopupMessage] = useState("");
+	const [myName, setMyName] = useState('');
 
 
 	useEffect(() => {
@@ -39,10 +41,23 @@ const ChatSettings = ({socket}:Props) =>{
 		chatStatus().then(Status => {
 			setCurrentChatStatus(Status);
 		});
-
-		if (socket === null)
-			setRedirect(true);
 	}, [])
+
+	useEffect(() => {
+		setPopupMessage("");
+		  (async () => {
+			try {
+				const {data} = await axios.get('/user');
+				setMyName(data.username);} catch {
+				  setPopupMessage("There was an error");
+				}
+		  }) ()
+		  if (socket === null || banned === "banned")
+		  {
+			socket?.emit('unBanToServer', { username: myName });
+			setRedirect(true);
+		  }
+	  }, [socket, banned]);
 
     if (redirect === true)
     {

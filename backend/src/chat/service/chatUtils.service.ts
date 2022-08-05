@@ -150,7 +150,7 @@ export class ChatUtilsService
         this.checkClientIsMember(friend, channel);
         const friendUserStatus = await this.getJoinedUserStatus(friend, channel);
         if (friendUserStatus.owner === true)
-            throw new HttpException('You have no access to mute owner', HttpStatus.FORBIDDEN);
+            throw new HttpException('You have no access to choose owner', HttpStatus.FORBIDDEN);
         return friendUserStatus;
     }
 
