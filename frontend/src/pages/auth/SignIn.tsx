@@ -5,8 +5,13 @@ import background from "../../assets/the_pong.png";
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
 import './SignIn.css';
+import { Socket } from "socket.io-client";
 
-const SignIn = () =>
+type Props = {
+  socket: Socket | null,
+};
+
+const SignIn = ({socket}: Props) =>
 {
     const [redirectTFA, setRedirectTFA] = useState(false);
     const [redirect, setRedirect] = useState(false);
@@ -39,6 +44,8 @@ const SignIn = () =>
     }
 
   useEffect(() => {
+    if (socket !== null)
+      socket.disconnect();
   }, []);
 
   function getCookie(name: string): string | null {

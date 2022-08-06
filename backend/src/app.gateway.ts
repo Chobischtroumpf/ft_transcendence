@@ -63,8 +63,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      const user_temp = await this.authService.getUserFromSocket(client);
-      this.userService.updateStatus(user_temp, UserStatus.offline);
+      this.userService.updateStatus(user, UserStatus.offline);
       this.logger.log(`client disconnected: ${client.id}`);
       const index2 = this.queue.findIndex(e => e.id === user.id);
       this.queue.splice(index2, 1);
@@ -415,13 +414,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     setTimeout(() => {
       this.wss.to(game.name).emit('gameEndToClient', '');
       this.wss.to(game.name).emit('gameStartsToClient', null);
-    }, 9000);
+    }, 2000);
     // players leaves from gameroom and game has been deleted from game array
     setTimeout(() => {
       this.wss.to(game.name).socketsLeave(game.name);
       const index = this.games.findIndex(e => e.id === game.id);
       this.games.splice(index, 1);
-    }, 10000);
+    }, 3000);
     
   }
 

@@ -107,7 +107,7 @@ function App() {
           <Route path="/profile"  element={<Profile socket={socket} key={2}/>}></Route>
           <Route path="/profile/settings" element={<Settings/>}></Route>
           <Route path="/users" element={<Users />}></Route>
-          <Route path="/signin" element={<SingIn />}></Route>
+          <Route path="/signin" element={<SingIn socket={socket}/>}></Route>
           <Route path="/auth/tfa" element={<Auth />}></Route>
           <Route path="/channels" element={<Channels socket={socket} channels={channels} lastPage={lastPage} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages} onlineUsers={onlineUsers} banned={banned}/>}></Route>

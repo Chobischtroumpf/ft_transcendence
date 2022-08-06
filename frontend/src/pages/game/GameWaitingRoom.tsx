@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Navigate } from "react-router";
 import { Socket } from "socket.io-client";
 import Wrapper from "../../components/Wrapper";
@@ -15,12 +15,30 @@ type Props = {
 const GameWaitingRoom = ({ gameStart, spectator, socket }: Props) =>
 {
     const [place, setPlace] = useState<string | null>(null);
+    var oldURL = window.location.href;
 
     const submit = async (e: SyntheticEvent) => {
         e.preventDefault();
         socket?.emit('leaveQueueToServer');
         setPlace("leave");
     }
+
+    useEffect(() => {
+        if (socket === null)
+            setPlace("leave");
+        else
+        {
+            window.onbeforeunload = function() {
+                socket?.emit('leaveQueueToServer');
+            };
+            const intervalId = setInterval(() => {
+                if(window.location.href != oldURL){
+                    socket?.emit('leaveQueueToServer');
+                    clearInterval(intervalId);
+                }
+            }, 1000);
+        }
+    }, []);
 
     if (place === "leave") {
         return <Navigate to={'/game'} />;

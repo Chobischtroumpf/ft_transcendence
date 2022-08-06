@@ -156,7 +156,7 @@ export class GameService
 
     movePlayerDown(player: Player)
     {
-        if (player.y > 0)
+        if (player.y > 5)
             player.y -= player.paddle.speed;
         return player;
     }
