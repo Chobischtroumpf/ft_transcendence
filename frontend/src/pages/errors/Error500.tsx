@@ -6,7 +6,7 @@ import errorPng from "../../assets/Error500.png"
 const Error500 = () => (
   <div>
     <img src={errorPng}/>
-    <Link to="/">Go Home</Link>
+    <Link to="/profile">Go Home</Link>
   </div>
 );
 

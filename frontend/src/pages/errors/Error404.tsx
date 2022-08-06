@@ -6,7 +6,7 @@ import errorPng from "../../assets/Error404.png"
 const Error404 = () => (
   <div>
     <img src={errorPng}/>
-      <Link to="/">Go Home</Link>
+      <Link to="/profile">Go Home</Link>
   </div>
 );
 
