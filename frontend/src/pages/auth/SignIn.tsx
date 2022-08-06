@@ -44,8 +44,8 @@ const SignIn = ({socket}: Props) =>
     }
 
   useEffect(() => {
-    if (socket !== null)
-      socket.disconnect();
+    // if (socket !== null)
+    //   socket.disconnect();
   }, []);
 
   function getCookie(name: string): string | null {
