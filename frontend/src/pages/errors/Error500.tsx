@@ -4,11 +4,10 @@ import Wrapper from "../../components/Wrapper";
 import errorPng from "../../assets/Error500.png"
 
 const Error500 = () => (
-	<Wrapper>
   <div>
     <img src={errorPng}/>
     <Link to="/">Go Home</Link>
-  </div></Wrapper>
+  </div>
 );
 
 export default Error500;

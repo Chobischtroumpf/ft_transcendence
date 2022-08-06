@@ -49,7 +49,7 @@ const GameWaitingRoom = ({ gameStart, spectator, socket }: Props) =>
         return(
             <Wrapper>
                 <Card>
-                    <Card.Img src={waitingImage} />
+                    <Card.Img src={waitingImage} style={{height: '320px'}} />
                     <Card.ImgOverlay>
                     <div className="col-md-12 text-center">
                         <form onSubmit={submit}>

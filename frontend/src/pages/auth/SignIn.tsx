@@ -62,7 +62,7 @@ const SignIn = ({socket}: Props) =>
   }
   
   if (redirect) {
-    return <Navigate to={'/'} />
+    return <Navigate to={'/profile'} />
   }
 
   if (redirectTFA) {

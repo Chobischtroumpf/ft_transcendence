@@ -26,7 +26,7 @@ const Wrapper = (props: any) =>
 
     if (redirect)
     {
-        return <Navigate to={'/signin'} />;
+        return <Navigate to={'/'} />;
     }
 
     return (

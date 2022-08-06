@@ -22,7 +22,7 @@ const SignIn = () =>
     }
 
   if (redirect) {
-    return <Navigate to={'/'} />
+    return <Navigate to={'/profile'} />
   }
 
   const handleChange = (event: any) => {

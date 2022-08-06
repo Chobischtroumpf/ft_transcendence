@@ -95,7 +95,7 @@ const Game = ({socket, games, invites}: Props) =>
         return(
             <Wrapper>
                 <Card bg="light">
-                    <Card.Img src={pongImage} />
+                    <Card.Img src={pongImage} style={{height: '320px'}} />
                     <Card.Body>
                     <div className="col-md-12 text-center">
                         <form onSubmit={back}>
@@ -138,7 +138,7 @@ const Game = ({socket, games, invites}: Props) =>
         return(
             <Wrapper>
                 <Card bg="light" className="mb-3" style={{ color: '#000' }}>
-                    <Card.Img src={pongImage} />
+                    <Card.Img src={pongImage} style={{height: '320px'}} />
                         <Form>
                             <Stack direction="horizontal" gap={4}>
                                 <div>
@@ -228,7 +228,7 @@ const Game = ({socket, games, invites}: Props) =>
     return(
         <Wrapper>
             <Card bg="light">
-                <Card.Img src={pongImage} />
+                <Card.Img src={pongImage} style={{height: '320px'}} />
                 <Card.Body>
                     <Stack direction="horizontal" gap={2}>
                     <div>

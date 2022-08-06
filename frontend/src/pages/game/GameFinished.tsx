@@ -13,7 +13,7 @@ const GameFinished = ({winner}: Props) =>
 {
 
     if (winner === '') {
-        return <Navigate to={'/'} />
+        return <Navigate to={'/profile'} />
     }
 
     return(
