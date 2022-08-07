@@ -77,7 +77,7 @@ export class UserController
   @UseGuards(JwtGuard)
   async turnOffTfa(@User() user, @Body() data: tfaCodeDto)
   {
-    if (!user.tfa_enabled) {
+    if (!user.tfaEnabled) {
       throw new UnauthorizedException('TFA is not enabled');
     }
     const isCodeValid = this.userService.isTfaCodeValid(data.tfaCode, user);
