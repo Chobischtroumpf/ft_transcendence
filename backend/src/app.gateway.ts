@@ -464,7 +464,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     setTimeout(() => {
       pause = false;
     }, 5000);
-    game.ball = this.gameService.setRandomBallDirection(game, Math.floor(Math.random() * 2) + 1);
+    game.ball.vy = 0;
+    game.ball.vx = 1;
+    // game.ball = this.gameService.setRandomBallDirection(game, Math.floor(Math.random() * 2) + 1);
     this.games.push(game);
     // create game loop with 60fps
     game.intervalId = setInterval(async () => 
