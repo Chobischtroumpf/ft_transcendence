@@ -190,9 +190,9 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
                       <form onSubmit={pongGame}>
                         {onlineUser} <button onClick={e => setName(onlineUser)} type="submit" >Invite to game</button>
                       </form>
-                      <form onSubmit={blockUserFunc}>
+                      {/* <form onSubmit={blockUserFunc}>
                         <button onClick={e => setBlockuser(onlineUser)} type="submit" >block user</button>
-                      </form>
+                      </form> */}
                     </h6>
                   </li>
                 </div>
