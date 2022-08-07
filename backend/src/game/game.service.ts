@@ -149,14 +149,14 @@ export class GameService
 
     movePlayerUp(player: Player)
     {
-        if (player.y < this.defaultCanvas.h - player.paddle.h)
+        if (player.y < this.defaultCanvas.h - player.paddle.h - 5)
             player.y += player.paddle.speed;
         return player;
     }
 
     movePlayerDown(player: Player)
     {
-        if (player.y > 5)
+        if (player.y > 0)
             player.y -= player.paddle.speed;
         return player;
     }
