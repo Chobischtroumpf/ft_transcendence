@@ -105,7 +105,7 @@ function App() {
           <Route path="/game" element={<Game socket={socket} games={games} invites={invites} />}></Route>
           {/* <Route path="/" element={<Profile socket={socket}/>}></Route> */}
           <Route path="/profile"  element={<Profile socket={socket} key={2}/>}></Route>
-          <Route path="/profile/settings" element={<Settings/>}></Route>
+          <Route path="/profile/settings" element={<Settings socket={socket}/>}></Route>
           <Route path="/users" element={<Users />}></Route>
           <Route path="/" element={<SingIn socket={socket}/>}></Route>
           <Route path="/auth/tfa" element={<Auth />}></Route>

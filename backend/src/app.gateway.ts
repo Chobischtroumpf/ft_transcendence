@@ -62,9 +62,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   {
     try
     {
-      const user2 = await this.authService.getUserFromSocket(client);
+      // const user2 = await this.authService.getUserFromSocket(client);
       const user = client.data.user;
-      this.userService.updateStatus(user2, UserStatus.offline);
+      this.userService.updateStatus(user, UserStatus.offline);
       this.logger.log(`client disconnected: ${client.id}`);
       const index2 = this.queue.findIndex(e => e.id === user.id);
       this.queue.splice(index2, 1);
@@ -83,6 +83,28 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       client.disconnect();
     }
     catch (e) { this.error(client, e, true); }
+  }
+
+  ///////// USER PART /////////////
+
+  @SubscribeMessage('changeUsernameToServer')
+  async changeUsername(@ConnectedSocket() client: Socket, @MessageBody() data: userNameDto)
+  {
+    try
+    {
+      const user = client.data.user;
+      const index = this.invites.findIndex(function (Invite) {
+        return Invite.invitedUser === user.username;
+      });
+      if (index !== -1)
+      {
+        for (var i = 0; i < this._sockets.length; i++)
+          if (this._sockets[i].data.user.username === this.invites[index].invitedUser)
+            this.invites[index].invitedUser = data.username;
+      }
+      client.data.user.username = data.username;
+    }
+    catch { throw new WsException('Something went wrong'); }
   }
 
   ///////// CHAT PART /////////////
@@ -156,7 +178,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       
       const user = client.data.user;
       await this.chatService.joinChannel(channelData, user);
-      const user2 = await this.authService.getUserFromSocket(client);
+      // const user2 = await this.authService.getUserFromSocket(client);
       client.join(channelData.name);
       const chatUsers = [];
       for (const socket of this._sockets)
@@ -167,7 +189,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         }
       }
       const allMessages = await this.chatService.getMessagesFromChannel(channelData.name, user);
-      this.wss.to(channelData.name).emit('joinToClient', { msg: `${user2.username} joined to channel`, channel: channelData.name, messages: allMessages, onlineUsers: chatUsers });
+      this.wss.to(channelData.name).emit('joinToClient', { msg: `${user.username} joined to channel`, channel: channelData.name, messages: allMessages, onlineUsers: chatUsers });
     }
     catch { throw new HttpException('user is banned', HttpStatus.BAD_REQUEST); }
   }

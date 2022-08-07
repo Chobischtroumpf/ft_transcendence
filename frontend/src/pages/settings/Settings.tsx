@@ -5,13 +5,18 @@ import Wrapper from "../../components/Wrapper";
 import { encode } from "base64-arraybuffer";
 import { User } from "../../models/user";
 import './Settings.css'
+import { Socket } from "socket.io-client";
 
 
 export interface tfaDto {
   tfa: boolean;
 }
 
-const Settings = () => {  
+type Props = {
+  socket: Socket | null,
+};
+
+const Settings = ({socket}: Props) => {  
 
   const [user, setUser] = useState<User>();
   var [username, setUsername] = useState<string>('');
@@ -56,6 +61,7 @@ const Settings = () => {
     if (!username && user)
       setUsername(user.username);
       try {
+        socket?.emit('changeUsernameToServer', { username: username });
         await axios.post("/user/username", { username: username });
     }
     catch (e) {
