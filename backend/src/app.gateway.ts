@@ -62,9 +62,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   {
     try
     {
-      // const user2 = await this.authService.getUserFromSocket(client);
+      const user2 = await this.authService.getUserFromSocket(client);
       const user = client.data.user;
-      this.userService.updateStatus(user, UserStatus.offline);
+      this.userService.updateStatus(user2, UserStatus.offline);
       this.logger.log(`client disconnected: ${client.id}`);
       const index2 = this.queue.findIndex(e => e.id === user.id);
       this.queue.splice(index2, 1);
