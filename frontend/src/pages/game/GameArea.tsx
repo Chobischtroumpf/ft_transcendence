@@ -78,7 +78,7 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
                     <div className="col-md-12 text-center">
                         <svg
                             id="aliens-go-home-canvas"
-                            preserveAspectRatio="xMaxYMax none"
+                            // preserveAspectRatio="xMaxYMax none"
                             style={style}
                             width="400px"
                             height="200px"

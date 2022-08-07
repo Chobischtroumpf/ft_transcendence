@@ -111,7 +111,7 @@ export class GameService
             else if (game.ball.x > this.defaultCanvas.w - 20)
                 return this.goal(1, game);
         }
-        else if (game.ball.y > this.defaultCanvas.h - 5 || game.ball.y < 5)
+        else if (game.ball.y > this.defaultCanvas.h - 7 || game.ball.y < 3)
         {
             game.sounds.wall = true;
             game.ball = this.changeBallDirection(game.ball);
@@ -149,14 +149,14 @@ export class GameService
 
     movePlayerUp(player: Player)
     {
-        if (player.y < this.defaultCanvas.h - player.paddle.h - 5)
+        if (player.y < this.defaultCanvas.h - player.paddle.h - 7)
             player.y += player.paddle.speed;
         return player;
     }
 
     movePlayerDown(player: Player)
     {
-        if (player.y > 0)
+        if (player.y > 3)
             player.y -= player.paddle.speed;
         return player;
     }
@@ -173,7 +173,7 @@ export class GameService
         const player: Player = {
             player: user,
             x: 20,
-            y: this.defaultCanvas.h / 2 - gameOptions.paddleSize / 2,
+            y: this.defaultCanvas.h / 2,// - gameOptions.paddleSize / 2,
             paddle: this.initPaddle(gameOptions),
             color: 'red',
             score: 0
@@ -186,7 +186,7 @@ export class GameService
         const player: Player = {
             player: user,
             x: this.defaultCanvas.w - 30,
-            y: this.defaultCanvas.h / 2 - gameOptions.paddleSize / 2,
+            y: this.defaultCanvas.h / 2,// - gameOptions.paddleSize / 2,
             paddle: this.initPaddle(gameOptions),
             color: 'blue',
             score: 0
