@@ -278,8 +278,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const gameOptions = this.invites[index].gameOptions;
       // remove invited user from invites
       for (var i = 0; i < this._sockets.length; i++)
+      {
         if (this._sockets[i].data.user.username === invitedUser.username)
-          this._sockets[i].emit('updateInviteToClient', { username: sender.username, id: sender.id });
+        {
+          this._sockets[i].emit('addUpdatedInviteToClient', index);
+          break ;
+        }
+      }
       this.invites.splice(index, 1);
       const player1: Player = { player: sender };
       const player2: Player = { player: invitedUser };
@@ -505,7 +510,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
           pause = true;
           setTimeout(() => {
             pause = false;
-            game.ball = this.gameService.setRandomBallDirection(game, Math.floor(Math.random() * 2) + 1);
+            game.ball.vy = 0;
+            game.ball.vx = 1;
+            // game.ball = this.gameService.setRandomBallDirection(game, Math.floor(Math.random() * 2) + 1);
           }, 1000);
           if (game.finished === true)
             this.endGame(game);

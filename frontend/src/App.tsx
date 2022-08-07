@@ -58,8 +58,7 @@ function App() {
       setBanned(data);
     });
     newSocket.on('addUpdatedInviteToClient', (data) => {
-      invites.splice(data, 1);
-      setInvites(invites);
+      setInvites((invites) => invites.filter((_, index) => index !== data));
     });
     newSocket.on('updateInviteToClient', (data) => {
       const index = invites.findIndex(function (Invite) {
