@@ -323,6 +323,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
+      let index = this.games.findIndex(e => e.players[0].player.id === user.id);
+      let index2 = this.games.findIndex(e => e.players[1].player.id === user.id);
+      if (index !== -1 || index2 !== -1)
+      {
+        return ;
+      }
       // user joins to queue
       this.queue.push(user);
       // add players to game until there queue has only 0 or 1 users
@@ -347,15 +353,18 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const index = this.queue.findIndex(e => e.id === user.id);
       if (index !== -1)
         this.queue.splice(index, 1);
-      const index3 = this.invites.findIndex(function (Invite) {
-        return Invite.sender === user.username;
-      });
-      if (index3 !== -1)
+      if (index === -1)
       {
-        for (var i = 0; i < this._sockets.length; i++)
-          if (this._sockets[i].data.user.username === this.invites[index3].invitedUser)
-            this._sockets[i].emit('addUpdatedInviteToClient', index3);
-        this.invites.splice(index3, 1);
+        const index3 = this.invites.findIndex(function (Invite) {
+          return Invite.sender === user.username;
+        });
+        if (index3 !== -1)
+        {
+          for (var i = 0; i < this._sockets.length; i++)
+            if (this._sockets[i].data.user.username === this.invites[index3].invitedUser)
+              this._sockets[i].emit('addUpdatedInviteToClient', index3);
+          this.invites.splice(index3, 1);
+        }
       }
     }
     catch { throw new WsException('Something went wrong'); }
