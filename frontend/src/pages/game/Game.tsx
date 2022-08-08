@@ -12,9 +12,10 @@ type Props = {
     socket: Socket | null,
     games: gameNames[],
     invites: any[],
+    gameWinner: string,
 };
 
-const Game = ({socket, games, invites}: Props) =>
+const Game = ({socket, games, invites, gameWinner}: Props) =>
 {
     const [place, setPlace] = useState<string | null>(null);
     const [paddleSize, setPaddleSize] = useState(40);
@@ -84,7 +85,8 @@ const Game = ({socket, games, invites}: Props) =>
 
     const Join = async (e: SyntheticEvent) => {
         e.preventDefault();
-        setPlace("join");
+        if (gameWinner === '')
+            setPlace("join");
     }
 
     if (place === "join")
