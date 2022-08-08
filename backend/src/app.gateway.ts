@@ -329,11 +329,11 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       // {
       //   return ;
       // }
-      // const index3 = this.queue.findIndex(e => e.id === user.id);
-      // if (index3 !== -1)
-      // {
-      //   return ;
-      // }
+      const index3 = this.queue.findIndex(e => e.id === user.id);
+      if (index3 !== -1)
+      {
+        return ;
+      }
       // user joins to queue
       this.queue.push(user);
       // add players to game until there queue has only 0 or 1 users
