@@ -78,14 +78,14 @@ const ChatSettings = ({socket, banned}:Props) =>{
 				</u> 
 			</h1>
 			{ currentChatStatus == "private" && <AddUser chatName={chatName}/>}
-			{ 1 && <AdminUser chatName={chatName}/>}
-			{ (1 || 2) && (<BanUser chatName={chatName} socket={socket}/>)}
-			{ (1 || 2) && (<UnbanUser chatName={chatName}/>)}
-			{ 1 && 3 && (<AddPassword chatName={chatName}/>)}
-			{ 1 && 3 && (<ModifyPassword chatName={chatName}/>)}
-			{ 1 && 3 && (<RemovePassword chatName={chatName}/>)}
-			{ (1 || 2) && (<MuteUser chatName={chatName}/>)}
-			{ (1 || 2) && (<UnmuteUser chatName={chatName}/>)}
+			{ <AdminUser chatName={chatName}/>}
+			{ (<BanUser chatName={chatName} socket={socket}/>)}
+			{ (<UnbanUser chatName={chatName}/>)}
+			{ currentChatStatus !== "private" && (<AddPassword chatName={chatName}/>)}
+			{ currentChatStatus !== "private" && (<ModifyPassword chatName={chatName}/>)}
+			{ currentChatStatus !== "private" && (<RemovePassword chatName={chatName}/>)}
+			{ (<MuteUser chatName={chatName}/>)}
+			{ (<UnmuteUser chatName={chatName}/>)}
 		</div>
 		<button className='back-button' onClick={() => {
 			      socket?.emit('joinToServer', { name: chatName });

@@ -458,13 +458,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     setTimeout(() => {
       this.wss.to(game.name).emit('gameEndToClient', '');
       this.wss.to(game.name).emit('gameStartsToClient', null);
-    }, 2000);
     // players leaves from gameroom and game has been deleted from game array
-    setTimeout(() => {
+    // setTimeout(() => {
       this.wss.to(game.name).socketsLeave(game.name);
       const index = this.games.findIndex(e => e.id === game.id);
       this.games.splice(index, 1);
-    }, 3000);
+    }, 2000);
     
   }
 

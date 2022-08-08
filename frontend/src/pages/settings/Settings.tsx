@@ -58,11 +58,12 @@ const Settings = ({socket}: Props) => {
 
   const handleUsernameSubmit = async(event: any) => {
     event.preventDefault();
-    if (!username && user)
-      setUsername(user.username);
-      try {
-        socket?.emit('changeUsernameToServer', { username: username });
-        await axios.post("/user/username", { username: username });
+    if (!username || user?.username === username){
+      return;
+    }
+    try {
+      socket?.emit('changeUsernameToServer', { username: username });
+      await axios.post("/user/username", { username: username });
     }
     catch (e) {
       setError(true);

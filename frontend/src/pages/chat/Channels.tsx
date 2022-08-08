@@ -21,7 +21,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   const [page, setPage] = useState(1);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState(ChannelStatus.public);
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
 	const [popupMessage, setPopupMessage] = useState("");
 	const [actionSuccess, setActionSuccess] = useState(false);
   const [username, setUsername] = useState('');
@@ -30,8 +30,10 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   const [checkPwd, setCheckPwd ] = useState(0);
 
   useEffect(() => {
-    socket?.connect();
-    socket?.emit('getChannelsToServer', { page });
+    if (socket) {
+      socket.connect();
+      socket.emit('getChannelsToServer', { page });
+    }
     getUser().then((username) => {
       setUsername(username);
       setGotUsername(true);
@@ -55,11 +57,13 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     setPopupMessage("");
 
     try {
-    if (status === ChannelStatus.public)
-      await axios.post('chat/public', { name });
-    else if (status === ChannelStatus.protected)
-      await axios.post('chat/protected', { name, password });
-    else if (status === ChannelStatus.private)
+    if (isPrivate === false){
+      if (password)
+        await axios.post('chat/protected', { name, password });
+      else
+        await axios.post('chat/public', { name });
+    }
+    else if (isPrivate === true)
       await axios.post('chat/private', { name });
     socket?.emit('getChannelsToServer', { page });
     setPopupMessage("Channel " + name + " successfully created");
@@ -183,9 +187,7 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                   <Form.Label>Password</Form.Label>
                   <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
                 </Form.Group>
-                <input type={"radio"} name="radio" onChange={e => setStatus(ChannelStatus.public)}/> public <br/>
-                <input type={"radio"} name="radio" onChange={e => setStatus(ChannelStatus.protected)}/> protected <br/>
-                <input type={"radio"} name="radio" onChange={e => setStatus(ChannelStatus.private)}/> private <br/><br />
+                <input type={"checkbox"} name="radio" onClick={(e:any) => {setIsPrivate(e.target.checked)}}/> private <br/><br />
                 <Button variant="primary" type="submit">
                   Create
                 </Button>
@@ -216,7 +218,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
                           <td>{channel.id}</td>
                           <td>{channel.name}</td>
                           <td>{channel.status}</td>
-                          {/* {(console.log(channel.owner))} */}
                           <td>
                             <form onSubmit={e => join(e, channel)}>
                               <button onClick={e => setName(channel.name)} type="submit">Join</button>

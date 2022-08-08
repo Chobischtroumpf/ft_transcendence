@@ -72,7 +72,6 @@ function App() {
       setInvites(invites => [...invites, data]);
     });
     newSocket.on('leaveQueueToClient', (data) => {
-      console.log(data);
     });
     newSocket.on('gameEndToClient', (data) => {
       setGameWinner(data);
