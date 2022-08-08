@@ -67,15 +67,21 @@ const Game = ({socket, games, invites, gameWinner}: Props) =>
 
     const queue = async (e: SyntheticEvent) => {
         e.preventDefault();
-        socket?.emit('JoinQueueToServer');
-        var temp: boolean = true;
-        for (var i = 0; i < games.length; i++)
+        if (gameWinner === '')
         {
-            if (name === games[i].name)
-                temp = false;
+            setPlace("join");
+            socket?.emit('JoinQueueToServer');
         }
-        if (temp === true)
-            setPlace("queue");
+        //     setPlace("join");
+        // socket?.emit('JoinQueueToServer');
+        // var temp: boolean = true;
+        // for (var i = 0; i < games.length; i++)
+        // {
+        //     if (name === games[i].name)
+        //         temp = false;
+        // }
+        // if (temp === true)
+        //     setPlace("queue");
     }
 
     const back = async (e: SyntheticEvent) => {

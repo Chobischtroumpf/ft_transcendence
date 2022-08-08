@@ -323,17 +323,17 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     try
     {
       const user = client.data.user;
-      let index = this.games.findIndex(e => e.players[0].player.id === user.id);
-      let index2 = this.games.findIndex(e => e.players[1].player.id === user.id);
-      if (index !== -1 || index2 !== -1)
-      {
-        return ;
-      }
-      const index3 = this.queue.findIndex(e => e.id === user.id);
-      if (index3 !== -1)
-      {
-        return ;
-      }
+      // let index = this.games.findIndex(e => e.players[0].player.id === user.id);
+      // let index2 = this.games.findIndex(e => e.players[1].player.id === user.id);
+      // if (index !== -1 || index2 !== -1)
+      // {
+      //   return ;
+      // }
+      // const index3 = this.queue.findIndex(e => e.id === user.id);
+      // if (index3 !== -1)
+      // {
+      //   return ;
+      // }
       // user joins to queue
       this.queue.push(user);
       // add players to game until there queue has only 0 or 1 users
