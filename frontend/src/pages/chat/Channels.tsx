@@ -16,6 +16,10 @@ type Props = {
   lastPage: number,
 };
 
+const validName = new RegExp(
+  '([A-Z]|[a-z]|[0-9]|[-_]){1,20}',
+);
+
 const Channels = ({socket, channels, lastPage}: Props) =>
 {
   const [page, setPage] = useState(1);
@@ -55,6 +59,11 @@ const Channels = ({socket, channels, lastPage}: Props) =>
   {
     e.preventDefault();
     setPopupMessage("");
+
+    if (!validName.test(name)) {
+      window.alert("Invalid format for channel name");
+      return;
+    }
 
     try {
     if (isPrivate === false){

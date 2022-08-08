@@ -148,7 +148,6 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
     return false;
   }
 
-
   if (redirect === true)
   {
     return <Navigate to={'/channels'} />;
@@ -158,7 +157,7 @@ const Chat = ({socket, joinMsg, channelName, messages, onlineUsers, banned}: Pro
   {
       return <Navigate to={'/gamewaitingroom'} />;
   }
-  
+
   return (
     <Wrapper>
       <div className="chat_name">

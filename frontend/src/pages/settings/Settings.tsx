@@ -62,11 +62,16 @@ const Settings = ({socket}: Props) => {
       return;
     }
     try {
-      socket?.emit('changeUsernameToServer', { username: username });
       await axios.post("/user/username", { username: username });
+      socket?.emit('changeUsernameToServer', { username: username });
     }
-    catch (e) {
-      setError(true);
+    catch (e:any) {
+      if (e.response.status === 401 ) {
+        window.alert("Username already taken");
+      }
+      else {
+        setError(true);
+      }
     }
     setUsername('');
     setShouldUpdate(true);

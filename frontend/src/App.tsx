@@ -17,6 +17,7 @@ import GameFinished from './pages/game/GameFinished';
 import GameWaitingRoom from './pages/game/GameWaitingRoom';
 import Error404 from './pages/errors/Error404';
 import Error500 from './pages/errors/Error500';
+import ModalMessage from "./pages/chat/ModalMessage";
 
 export const TodoContext = React.createContext<any>(null);
 
@@ -35,6 +36,7 @@ function App() {
   const [lastPage, setLastPage] = useState(0);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [banned, setBanned] = useState('');
+  const [popupMessage, setPopupMessage] = useState("");
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
@@ -68,7 +70,9 @@ function App() {
       setInvites(invites);
     });
     newSocket.on('addInviteToClient', (data) => {
-      window.alert(`${data.username} invited you to play pong! Good luck!`);
+      setPopupMessage('');
+      setPopupMessage(`${data.username} invited you to play pong! Good luck!`);
+
       setInvites(invites => [...invites, data]);
     });
     newSocket.on('leaveQueueToClient', (data) => {
@@ -117,6 +121,7 @@ function App() {
           <Route path="*" element={<Error404></Error404>}></Route>
         </Routes>
       </BrowserRouter>
+      {(popupMessage !== '') && (<ModalMessage message={popupMessage} success={true}/>)}
     </div>
   );
 }
