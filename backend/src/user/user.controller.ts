@@ -119,7 +119,11 @@ export class UserController
   @Post('/username')
   async updateUsername(@User() user, @Body() data: UsernameDto)
   {
-    return this.userService.updateUsername(user, data.username);
+    const retval = await this.userService.updateUsername(user, data.username);
+    if (retval == false) {
+      throw new UnauthorizedException('Username already used');
+    }
+    return retval;
   }
   
   @Post('friend/:id')

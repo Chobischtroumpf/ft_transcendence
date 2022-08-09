@@ -37,7 +37,7 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
                 socket?.emit('leaveGameToServer', { room: temp });
                 clearInterval(intervalId);
             }
-        }, 1000);
+        }, 200);
     }, []);
 
     window.addEventListener("keydown", function(event) {

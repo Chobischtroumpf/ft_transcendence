@@ -128,8 +128,14 @@ export class UserService
       })
     }
 
-    updateUsername(user: UserEntity, username: string)
+    async updateUsername(user: UserEntity, username: string): Promise<any | false>
     {
+      const users: UserEntity[] = await this.userRepository.find();
+      for (var temp of users)
+      {
+        if (temp.username == username)
+          return false;
+      }
       return this.userRepository.update(user.id, {username: username});
     }
 
