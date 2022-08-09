@@ -33,7 +33,7 @@ const Wrapper = (props: any) =>
         <>
             <Nav/>
 
-            <div className="container-fluid">
+            <div className="container-fluid" style={{zIndex:'-1'}}>
             <div className="row">
                 <Menu setParentState={props.setParentState} />
 

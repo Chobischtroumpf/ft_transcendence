@@ -192,7 +192,7 @@ const Game = ({socket, games, invites, gameWinner}: Props) =>
                                         textAlign: "center",
                                         fontWeight: "bold",
                                         fontFamily: "Optima, sans-serif"
-                                    }} placeholder="invitedUser" onChange={e => setInvitedUser(e.target.value)} />
+                                    }} placeholder="invitedUser" onChange={e => setInvitedUser(e.target.value)} onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}/>
                                 </div>
                             </Stack>
                         </Form>

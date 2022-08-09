@@ -488,6 +488,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       if (gameName.name !== game.name)
         gameNames.push(gameName);
     }
+    const index = this.games.findIndex(e => e.id === game.id);
+    this.games.splice(index, 1);
     this.wss.emit('getGamesToClient', gameNames);
     // this.wss.to(game.name).emit('gameStartsToClient', null);
     setTimeout(() => {
@@ -496,8 +498,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     // players leaves from gameroom and game has been deleted from game array
     // setTimeout(() => {
       this.wss.to(game.name).socketsLeave(game.name);
-      const index = this.games.findIndex(e => e.id === game.id);
-      this.games.splice(index, 1);
+      
     }, 2000);
     
   }

@@ -17,7 +17,7 @@ type Props = {
 };
 
 const validName = new RegExp(
-  '^[a-zA-Z0-9-_]*$'
+  '^[a-zA-Z0-9-_]{1,20}$'
 );
 
 const Channels = ({socket, channels, lastPage}: Props) =>

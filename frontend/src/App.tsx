@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 import Users from './pages/users/Users';
 import SignIn from './pages/auth/SignIn';
 import Auth from './pages/auth/Auth';
@@ -61,18 +63,18 @@ function App() {
       setBanned(data);
     });
     newSocket.on('addUpdatedInviteToClient', (data) => {
-      setInvites((invites) => invites.filter((_, index) => index !== data));
+      setInvites((invites:any) => invites.filter((_:any, index:any) => index !== data));
     });
     newSocket.on('updateInviteToClient', (data) => {
-      const index = invites.findIndex(function (Invite) {
+      const index = invites.findIndex(function (Invite:any) {
         return Invite.sender === data.username;
       });
       invites.splice(index, 1);
       setInvites(invites);
     });
     newSocket.on('addInviteToClient', (data) => {
-      setInviteUser(data.username);
-      setInvites(invites => [...invites, data]);
+      NotificationManager.success(`${data.username} invited you to a game, good luck`, 'Invite', 5000);
+      setInvites((invites: any) => [...invites, data]);
     });
     newSocket.on('leaveQueueToClient', (data) => {
     });
@@ -99,14 +101,6 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    if (inviteUser !== '') {
-      setPopupMessage("")
-      setPopupMessage(`You have been invited to a game by ${inviteUser}`);
-      setInviteUser("");
-    }
-  } ,[inviteUser]);
-
   return (
     <div className="App">
       <BrowserRouter>
@@ -128,7 +122,7 @@ function App() {
           <Route path="*" element={<Error404></Error404>}></Route>
         </Routes>
       </BrowserRouter>
-      {popupMessage !== "" && (<ModalMessage message={popupMessage} success={true}/>)}
+      <NotificationContainer />
     </div>
   );
 }

@@ -17,7 +17,7 @@ type Props = {
 };
 
 const validName = new RegExp(
-  '^[a-zA-Z0-9-_]*$'
+  '^[a-zA-Z0-9-_]{1,20}$'
 );
 
 const Settings = ({socket}: Props) => {  
