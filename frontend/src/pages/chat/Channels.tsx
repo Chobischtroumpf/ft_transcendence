@@ -17,7 +17,7 @@ type Props = {
 };
 
 const validName = new RegExp(
-  '([A-Z]|[a-z]|[0-9]|[-_]){1,20}',
+  '^[a-zA-Z0-9-_]*$'
 );
 
 const Channels = ({socket, channels, lastPage}: Props) =>
@@ -42,7 +42,6 @@ const Channels = ({socket, channels, lastPage}: Props) =>
       setUsername(username);
       setGotUsername(true);
     }, (error) => {
-      
     } 
     );
   }, [page, socket, username]);
@@ -60,6 +59,8 @@ const Channels = ({socket, channels, lastPage}: Props) =>
     e.preventDefault();
     setPopupMessage("");
 
+    console.log(name);
+    console.log(validName.test(name));
     if (!validName.test(name)) {
       window.alert("Invalid format for channel name");
       return;

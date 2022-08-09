@@ -16,6 +16,10 @@ type Props = {
   socket: Socket | null,
 };
 
+const validName = new RegExp(
+  '^[a-zA-Z0-9-_]*$'
+);
+
 const Settings = ({socket}: Props) => {  
 
   const [user, setUser] = useState<User>();
@@ -58,6 +62,13 @@ const Settings = ({socket}: Props) => {
 
   const handleUsernameSubmit = async(event: any) => {
     event.preventDefault();
+
+    console.log(!validName.test(username));
+    if (!validName.test(username)) {
+      window.alert("Invalid format for username: only alphanumeric characters and dashes are allowed");
+      return;
+    }
+    
     if (!username || user?.username === username){
       return;
     }

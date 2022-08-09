@@ -40,6 +40,7 @@ function App() {
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
+    setPopupMessage("");
     newSocket.on('joinToClient', (data) => {
       setJoinMsg(data.msg);
       setChannelName(data.channel);
@@ -70,7 +71,7 @@ function App() {
       setInvites(invites);
     });
     newSocket.on('addInviteToClient', (data) => {
-      setPopupMessage('');
+      // setPopupMessage("");
       setPopupMessage(`${data.username} invited you to play pong! Good luck!`);
 
       setInvites(invites => [...invites, data]);
