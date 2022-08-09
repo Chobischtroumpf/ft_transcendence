@@ -509,6 +509,16 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         if (this._sockets[i].data.user.username === player2.username)
             this._sockets[i].join(room);
     }
+    var j = 0;
+    const gameNames: gameNames[] = [];
+    for (var i = 0; i < this.games.length; i++)
+    {
+      j++;
+      const gameName = {id: i, name: this.games[i].name}
+      gameNames.push(gameName);
+    }
+    gameNames.push({id: j, name: room});
+    this.wss.emit('getGamesToClient', gameNames);
     this.wss.to(room).emit('gameStartsToClient', room);
   }
 
