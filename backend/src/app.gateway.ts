@@ -328,6 +328,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         game.winner = game.players[0];
       else
       {
+        client.emit('newSpectatorToClient', { username: null, room: null });
         client.leave(data.room);
         return ;
       }
@@ -404,7 +405,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const user = client.data.user;
       // user joins to game as a spectator
       client.join(data.room);
-      this.wss.to(data.room).emit('newSpectatorToClient', { username: user.username, room: data.room });
+      // send this only to spectator
+      client.emit('newSpectatorToClient', { username: user.username, room: data.room });
+      // this.wss.to(data.room).emit('newSpectatorToClient', { username: user.username, room: data.room });
     }
     catch { throw new WsException('Something went wrong'); }
   }
@@ -475,6 +478,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       data: matchBody
     });
     this.wss.to(game.name).emit('gameEndToClient', game.winner.player.username);
+    this.wss.to(game.name).emit('newSpectatorToClient', { username: null, room: null });
     // this.wss.to(game.name).emit('gameStartsToClient', null);
     setTimeout(() => {
       this.wss.to(game.name).emit('gameEndToClient', '');
