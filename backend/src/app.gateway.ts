@@ -51,6 +51,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     {
       const user = await this.authService.getUserFromSocket(client);
       client.data.user = user;
+      client.data.room = null;
       this._sockets.push(client);
       this.userService.updateStatus(user, UserStatus.online);
       this.logger.log(`client connected:    ${client.id}`);
@@ -66,7 +67,10 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const user = client.data.user;
       const channels = await this.chatService.getChannelsFromUser(user.id);
       for (const channel of channels)
-        client.leave(channel.name);
+      {
+        if (client.data.room === channel.name)
+          this.leave(client, { name: channel.name });
+      }
       let index4 = this.games.findIndex(e => e.players[0].player.id === user.id);
       let index5 = this.games.findIndex(e => e.players[1].player.id === user.id);
       if (index4 !== -1)
@@ -168,6 +172,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const user = client.data.user;
       const channel = await this.chatUtilService.getChannelByName(data.name);
       client.leave(data.name);
+      client.data.room = null;
       const chatUsers = [];
       for (const socket of this._sockets)
       {
@@ -191,6 +196,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       await this.chatService.joinChannel(channelData, user);
       // const user2 = await this.authService.getUserFromSocket(client);
       client.join(channelData.name);
+      client.data.room = channelData.name;
       const chatUsers = [];
       for (const socket of this._sockets)
       {
@@ -214,6 +220,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       const channel = await this.chatUtilService.getChannelByName(data.name);
       await this.chatService.leaveChannel(channel.id, user);
       client.leave(data.name);
+      client.data.room = null;
       this.wss.to(data.name).emit('leaveToClient', `${user.username} left from the channel`);
     }
     catch { throw new WsException('Something went wrong'); }
