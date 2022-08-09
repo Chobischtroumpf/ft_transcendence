@@ -479,6 +479,14 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     });
     this.wss.to(game.name).emit('gameEndToClient', game.winner.player.username);
     this.wss.to(game.name).emit('newSpectatorToClient', { username: null, room: null });
+    const gameNames: gameNames[] = [];
+    for (var i = 0; i < this.games.length; i++)
+    {
+      const gameName = {id: i, name: this.games[i].name}
+      if (gameName.name !== game.name)
+        gameNames.push(gameName);
+    }
+    this.wss.emit('getGamesToClient', gameNames);
     // this.wss.to(game.name).emit('gameStartsToClient', null);
     setTimeout(() => {
       this.wss.to(game.name).emit('gameEndToClient', '');
