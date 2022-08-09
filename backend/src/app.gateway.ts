@@ -327,7 +327,10 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       else if (game.players[1].player.username === user.username)
         game.winner = game.players[0];
       else
+      {
+        client.leave(data.room);
         return ;
+      }
       // end game and leave
       game.sounds.win === true;
       this.endGame(game);
