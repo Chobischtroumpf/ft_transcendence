@@ -477,6 +477,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       method: 'POST',
       data: matchBody
     });
+    this.userService.updateStatus(game.players[0].player, UserStatus.online);
+    this.userService.updateStatus(game.players[1].player, UserStatus.online);
     this.wss.to(game.name).emit('gameEndToClient', game.winner.player.username);
     this.wss.to(game.name).emit('newSpectatorToClient', { username: null, room: null });
     const gameNames: gameNames[] = [];
@@ -509,7 +511,19 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         if (this._sockets[i].data.user.username === player2.username)
             this._sockets[i].join(room);
     }
+    var j = 0;
+    const gameNames: gameNames[] = [];
+    for (var i = 0; i < this.games.length; i++)
+    {
+      j++;
+      const gameName = {id: i, name: this.games[i].name}
+      gameNames.push(gameName);
+    }
+    gameNames.push({id: j, name: room});
+    this.wss.emit('getGamesToClient', gameNames);
     this.wss.to(room).emit('gameStartsToClient', room);
+    this.userService.updateStatus(player1, UserStatus.playing);
+    this.userService.updateStatus(player2, UserStatus.playing);
   }
 
   startGame(player1: Player, player2: Player, gameOptions: GameOptions)
