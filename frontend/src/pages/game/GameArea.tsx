@@ -30,7 +30,7 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
             socket?.emit('leaveGameToServer', { room: temp });
         };
         const intervalId = setInterval(() => {
-            if(window.location.href != oldURL){
+            if(window.location.href !== oldURL){
                 var url_string = oldURL;
                 var url = new URL(url_string);
                 const temp = url.searchParams.get('gamename');
@@ -58,7 +58,9 @@ const GameArea = ({socket, gameUpdate, gameWinner }: Props) =>
 
     useEffect(() => {
         if (socket === null)
+        {
             setRedirect(true);
+        }
     }, [socket]);
 
     if (redirect === true)

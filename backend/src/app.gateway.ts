@@ -64,12 +64,23 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     {
       const user2 = await this.authService.getUserFromSocket(client);
       const user = client.data.user;
+      const channels = await this.chatService.getChannelsFromUser(user.id);
+      for (const channel of channels)
+        client.leave(channel.name);
+      let index4 = this.games.findIndex(e => e.players[0].player.id === user.id);
+      let index5 = this.games.findIndex(e => e.players[1].player.id === user.id);
+      if (index4 !== -1)
+        this.leaveGame(client, { room: this.games[index4].name });
+      if (index5 !== -1)
+        this.leaveGame(client, { room: this.games[index5].name });
       this.userService.updateStatus(user2, UserStatus.offline);
       this.logger.log(`client disconnected: ${client.id}`);
       const index2 = this.queue.findIndex(e => e.id === user.id);
-      this.queue.splice(index2, 1);
+      if (index2 !== -1)
+        this.queue.splice(index2, 1);
       const index = this._sockets.findIndex(e => e.id === client.id);
-      this._sockets.splice(index, 1);
+      if (index !== -1)
+        this._sockets.splice(index, 1);
       const index3 = this.invites.findIndex(function (Invite) {
         return Invite.sender === user.username;
       });
