@@ -15,15 +15,17 @@ import { Socket } from "socket.io-client";
 
 type Props = {
 	  socket: Socket | null,
+	  banned: string,
 }
 
-const ChatSettings = ({socket}:Props) =>{
+const ChatSettings = ({socket, banned}:Props) =>{
 	const queryParams = new URLSearchParams(useLocation().search);
 	const chatName = queryParams.get("ChatSettingsId");
     const [redirect, setRedirect] = useState(false);
 	const [redirectToChat, setRedirectToChat] = useState(false);
 	const [currentChatStatus, setCurrentChatStatus] = useState("");
 	const [popupMessage, setPopupMessage] = useState("");
+	const [myName, setMyName] = useState('');
 
 
 	useEffect(() => {
@@ -39,10 +41,23 @@ const ChatSettings = ({socket}:Props) =>{
 		chatStatus().then(Status => {
 			setCurrentChatStatus(Status);
 		});
-
-		if (socket === null)
-			setRedirect(true);
 	}, [])
+
+	useEffect(() => {
+		setPopupMessage("");
+		  (async () => {
+			try {
+				const {data} = await axios.get('/user');
+				setMyName(data.username);} catch {
+				  setPopupMessage("There was an error");
+				}
+		  }) ()
+		  if (socket === null || banned === "banned")
+		  {
+			socket?.emit('unBanToServer', { username: myName });
+			setRedirect(true);
+		  }
+	  }, [socket, banned]);
 
     if (redirect === true)
     {
@@ -63,14 +78,14 @@ const ChatSettings = ({socket}:Props) =>{
 				</u> 
 			</h1>
 			{ currentChatStatus == "private" && <AddUser chatName={chatName}/>}
-			{ 1 && <AdminUser chatName={chatName}/>}
-			{ (1 || 2) && (<BanUser chatName={chatName} socket={socket}/>)}
-			{ (1 || 2) && (<UnbanUser chatName={chatName}/>)}
-			{ 1 && 3 && (<AddPassword chatName={chatName}/>)}
-			{ 1 && 3 && (<ModifyPassword chatName={chatName}/>)}
-			{ 1 && 3 && (<RemovePassword chatName={chatName}/>)}
-			{ (1 || 2) && (<MuteUser chatName={chatName}/>)}
-			{ (1 || 2) && (<UnmuteUser chatName={chatName}/>)}
+			{ <AdminUser chatName={chatName}/>}
+			{ (<BanUser chatName={chatName} socket={socket}/>)}
+			{ (<UnbanUser chatName={chatName}/>)}
+			{ currentChatStatus !== "private" && (<AddPassword chatName={chatName}/>)}
+			{ currentChatStatus !== "private" && (<ModifyPassword chatName={chatName}/>)}
+			{ currentChatStatus !== "private" && (<RemovePassword chatName={chatName}/>)}
+			{ (<MuteUser chatName={chatName}/>)}
+			{ (<UnmuteUser chatName={chatName}/>)}
 		</div>
 		<button className='back-button' onClick={() => {
 			      socket?.emit('joinToServer', { name: chatName });

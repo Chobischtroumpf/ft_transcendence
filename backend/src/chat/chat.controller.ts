@@ -128,10 +128,16 @@ export class ChatController
         return this.chatService.removePassword(name, user);
     }
 
-    @Post('/direct')
-    async createDirectChannel(@Body('id', ParseIntPipe) id: number, @User() user)
+    @Post('/createdirect/:id')
+    async createDirectChannel(@Param('id', ParseIntPipe) id: number, @User() user)
     {
         return this.chatService.createDirectChannel(user, await this.userService.getUserById(id));
+    }
+
+    @Get('/direct/:id')
+    async getDirectChannel(@Param('id', ParseIntPipe) id: number , @User() user)
+    {
+        return this.chatService.getDirectChannelName(id, user.id);
     }
 
     @Post('/createmessage')

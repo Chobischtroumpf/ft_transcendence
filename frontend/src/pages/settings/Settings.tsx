@@ -5,13 +5,18 @@ import Wrapper from "../../components/Wrapper";
 import { encode } from "base64-arraybuffer";
 import { User } from "../../models/user";
 import './Settings.css'
+import { Socket } from "socket.io-client";
 
 
 export interface tfaDto {
   tfa: boolean;
 }
 
-const Settings = () => {  
+type Props = {
+  socket: Socket | null,
+};
+
+const Settings = ({socket}: Props) => {  
 
   const [user, setUser] = useState<User>();
   var [username, setUsername] = useState<string>('');
@@ -53,13 +58,20 @@ const Settings = () => {
 
   const handleUsernameSubmit = async(event: any) => {
     event.preventDefault();
-    if (!username && user)
-      setUsername(user.username);
-      try {
-        await axios.post("/user/username", { username: username });
+    if (!username || user?.username === username){
+      return;
     }
-    catch (e) {
-      setError(true);
+    try {
+      await axios.post("/user/username", { username: username });
+      socket?.emit('changeUsernameToServer', { username: username });
+    }
+    catch (e:any) {
+      if (e.response.status === 401 ) {
+        window.alert("Username already taken");
+      }
+      else {
+        setError(true);
+      }
     }
     setUsername('');
     setShouldUpdate(true);
@@ -96,10 +108,8 @@ const Settings = () => {
       const { data } = await axios.get("user");
       setUser(data);
     }
-    catch (e:any) {
-      if (e.response.status === 400) {
-      window.alert(`wrong code`);
-      }
+    catch (e) {
+      window.alert(`There was an error`);
     }
   }
 

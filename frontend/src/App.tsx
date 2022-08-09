@@ -17,6 +17,7 @@ import GameFinished from './pages/game/GameFinished';
 import GameWaitingRoom from './pages/game/GameWaitingRoom';
 import Error404 from './pages/errors/Error404';
 import Error500 from './pages/errors/Error500';
+import ModalMessage from "./pages/chat/ModalMessage";
 
 export const TodoContext = React.createContext<any>(null);
 
@@ -35,6 +36,7 @@ function App() {
   const [lastPage, setLastPage] = useState(0);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [banned, setBanned] = useState('');
+  const [popupMessage, setPopupMessage] = useState("");
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
@@ -58,8 +60,7 @@ function App() {
       setBanned(data);
     });
     newSocket.on('addUpdatedInviteToClient', (data) => {
-      invites.splice(data, 1);
-      setInvites(invites);
+      setInvites((invites) => invites.filter((_, index) => index !== data));
     });
     newSocket.on('updateInviteToClient', (data) => {
       const index = invites.findIndex(function (Invite) {
@@ -69,11 +70,12 @@ function App() {
       setInvites(invites);
     });
     newSocket.on('addInviteToClient', (data) => {
-      window.alert(`${data.username} invited you to play pong! Good luck!`);
+      setPopupMessage('');
+      setPopupMessage(`${data.username} invited you to play pong! Good luck!`);
+
       setInvites(invites => [...invites, data]);
     });
     newSocket.on('leaveQueueToClient', (data) => {
-      console.log(data);
     });
     newSocket.on('gameEndToClient', (data) => {
       setGameWinner(data);
@@ -102,16 +104,16 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/game" element={<Game socket={socket} games={games} invites={invites} />}></Route>
-          <Route path="/" element={<Profile socket={socket}/>}></Route>
+          <Route path="/game" element={<Game socket={socket} games={games} invites={invites} gameWinner={gameWinner} />}></Route>
+          {/* <Route path="/" element={<Profile socket={socket}/>}></Route> */}
           <Route path="/profile"  element={<Profile socket={socket} key={2}/>}></Route>
-          <Route path="/profile/settings" element={<Settings/>}></Route>
+          <Route path="/profile/settings" element={<Settings socket={socket}/>}></Route>
           <Route path="/users" element={<Users />}></Route>
-          <Route path="/signin" element={<SingIn />}></Route>
+          <Route path="/" element={<SingIn socket={socket}/>}></Route>
           <Route path="/auth/tfa" element={<Auth />}></Route>
           <Route path="/channels" element={<Channels socket={socket} channels={channels} lastPage={lastPage} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages} onlineUsers={onlineUsers} banned={banned}/>}></Route>
-          <Route path="chat/chatSettings" element={<ChatSettings socket={socket}/>}></Route>
+          <Route path="chat/chatSettings" element={<ChatSettings socket={socket} banned={banned}/>}></Route>
           <Route path="/gamearea" element={<GameArea socket={socket} gameUpdate={gameUpdate} gameWinner={gameWinner} />}></Route>
           <Route path='/gamefinished' element={<GameFinished winner={gameWinner} />}></Route>
           <Route path="/gamewaitingroom" element={<GameWaitingRoom gameStart={gameStart} spectator={spectator} socket={socket}/>}></Route>
@@ -119,6 +121,7 @@ function App() {
           <Route path="*" element={<Error404></Error404>}></Route>
         </Routes>
       </BrowserRouter>
+      {(popupMessage !== '') && (<ModalMessage message={popupMessage} success={true}/>)}
     </div>
   );
 }

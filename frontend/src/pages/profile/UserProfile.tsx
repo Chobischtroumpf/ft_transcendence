@@ -74,27 +74,25 @@ export default class UserProfile extends Component<Props, State> {
   async directMessage(friendId : number, userId : number){
 
     try{
-      await axios.post(`/chat/direct`, {id: friendId});
+      await axios.post(`/chat/createdirect/${friendId}`);
     }
     catch {
     }
     try {
       let channelName = await axios.get(`/chat/direct/${friendId}`);
       this.setState({chatName: channelName.data});}
+
     catch {
       window.alert(`There was an error`);
     } 
   }
 
+  
   render() {   
-    if (this.state.chatName != '')
-    {
-      this.setState({redirect: true});
-    }
     if (this.state.error) {
       return <Navigate to={'/error500'} />;
     }
-    if(this.state.redirect)
+    if(this.state.chatName != '')
     {
       this.state.socket?.emit('joinToServer', {name: this.state.chatName});
         // this.state.socket?.emit('joinToServer', { `direct_with_${this.state.user.id}_${this.state.whichFriend} `});

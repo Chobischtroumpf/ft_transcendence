@@ -16,7 +16,7 @@ const Wrapper = (props: any) =>
         (
             async () => {
                 try {
-                    const {data} = await axios.get('user');
+                    await axios.get('user');
                 } catch (e) {
                     setRedirect(true);
                 }
@@ -26,7 +26,7 @@ const Wrapper = (props: any) =>
 
     if (redirect)
     {
-        return <Navigate to={'/signin'} />;
+        return <Navigate to={'/'} />;
     }
 
     return (

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Wrapper from "../../components/Wrapper";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Card } from 'react-bootstrap';
@@ -12,8 +12,8 @@ type Props = {
 const GameFinished = ({winner}: Props) =>
 {
 
-    if (winner === '') {
-        return <Navigate to={'/'} />
+    if (winner === "") {
+        return <Navigate to={'/profile'} />
     }
 
     return(

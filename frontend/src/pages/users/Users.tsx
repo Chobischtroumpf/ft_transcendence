@@ -34,20 +34,16 @@ const Users = () =>
     getBlockedUsers().then((blockedUsers) => {
       setMyBlockedUsers(blockedUsers);
     }, (error) => {
-      console.log(error);
-      // console.log(error);
     });
     getFriends().then((friends) => {
       setFriends(friends);
     }, (error) => {
-      console.log(error);
     });
 
   }, [page]);
 
   const findUser = (username: string) =>
   {
-    console.log(myBlockedUsers);
     for (let i = 0; i < myBlockedUsers.length; i++)
     {
       if (myBlockedUsers[i].username === username)
@@ -67,7 +63,6 @@ const Users = () =>
       return true;
     }
     catch (error) {
-      console.log(error);
     }
   }
   const getBlockedUsers = async () =>

@@ -1,30 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { User, UserLevel, UserStatus } from "../models/user";
+import { Link, Navigate } from "react-router-dom";
 
 const Nav = () =>
 {
-    const [user, setUser] = useState(new User(0, '', '', false, 'default.png', UserStatus.offline, UserLevel.beginner, 0, 0, 0));
-
-    useEffect(() => {
-        (
-            async () => {
-
-                try {
-                    const {data} = await axios.get('user');
-                    setUser(data);
-                }
-                catch (e) {
-                    console.log(e);
-                }
-            }
-        )();
-    }, []);
-
     const logout = async () => {
         await axios.post('user/logout', {});
-        window.location.reload();
     }
 
     return (
@@ -32,7 +13,7 @@ const Nav = () =>
             <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/">Ft_transcendence</a>
             <div className="navbar-nav">
                 <div className="nav-item text-nowrap">
-                <Link to={'/signin'} className="nav-link px-3" onClick={logout}>Sign out</Link>
+                <Link to={'/'} className="nav-link px-3" onClick={logout}>Sign out</Link>
                 </div>
             </div>
         </header>

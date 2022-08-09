@@ -4,11 +4,10 @@ import Wrapper from "../../components/Wrapper";
 import errorPng from "../../assets/Error404.png"
 
 const Error404 = () => (
-	<Wrapper>
   <div>
     <img src={errorPng}/>
-    <Link to="/">Go Home</Link>
-  </div></Wrapper>
+      <Link to="/profile">Go Home</Link>
+  </div>
 );
 
 export default Error404;

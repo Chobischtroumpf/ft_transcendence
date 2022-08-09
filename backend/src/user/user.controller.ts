@@ -68,6 +68,7 @@ export class UserController
     }
     await this.userService.turnOnTfa(user);
     const jwt = this.authService.treatTfa(user.id, true);
+		res.clearCookie('access_token', {sameSite: 'lax', expires: new Date(Date.now() + 100)});
 		res.cookie('access_token', jwt, {sameSite: 'lax' ,secure: true, expires: new Date(Date.now() + 604800000)});
   }
 
@@ -76,7 +77,7 @@ export class UserController
   @UseGuards(JwtGuard)
   async turnOffTfa(@User() user, @Body() data: tfaCodeDto)
   {
-    if (!user.tfa_enabled) {
+    if (!user.tfaEnabled) {
       throw new UnauthorizedException('TFA is not enabled');
     }
     const isCodeValid = this.userService.isTfaCodeValid(data.tfaCode, user);
@@ -118,7 +119,11 @@ export class UserController
   @Post('/username')
   async updateUsername(@User() user, @Body() data: UsernameDto)
   {
-    return this.userService.updateUsername(user, data.username);
+    const retval = await this.userService.updateUsername(user, data.username);
+    if (retval == false) {
+      throw new UnauthorizedException('Username already used');
+    }
+    return retval;
   }
   
   @Post('friend/:id')

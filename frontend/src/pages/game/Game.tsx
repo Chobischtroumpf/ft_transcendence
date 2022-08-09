@@ -12,9 +12,10 @@ type Props = {
     socket: Socket | null,
     games: gameNames[],
     invites: any[],
+    gameWinner: string,
 };
 
-const Game = ({socket, games, invites}: Props) =>
+const Game = ({socket, games, invites, gameWinner}: Props) =>
 {
     const [place, setPlace] = useState<string | null>(null);
     const [paddleSize, setPaddleSize] = useState(40);
@@ -48,7 +49,7 @@ const Game = ({socket, games, invites}: Props) =>
     const options = async (e: SyntheticEvent) => {
         e.preventDefault();
         try {
-            const {data} = await axios.get(`/user/get/user?username=${invitedUser}`);
+            const {data} = await axios.get(`http://localhost:3000/user/get/user?username=${invitedUser}`);
             const resp = await axios.get('/user');
             if (data === '' || data.username === resp.data.username)
             {
@@ -57,7 +58,6 @@ const Game = ({socket, games, invites}: Props) =>
                 return ;
             }
             const id = data.id;
-            console.log(id);
             socket?.emit('addInviteToServer', {id, paddleSize, paddleSpeed, ballSpeed});
             setPlace("queue");
         } catch {
@@ -67,8 +67,21 @@ const Game = ({socket, games, invites}: Props) =>
 
     const queue = async (e: SyntheticEvent) => {
         e.preventDefault();
-        socket?.emit('JoinQueueToServer');
-        setPlace("queue");
+        if (gameWinner === '')
+        {
+            setPlace("join");
+            socket?.emit('JoinQueueToServer');
+        }
+        //     setPlace("join");
+        // socket?.emit('JoinQueueToServer');
+        // var temp: boolean = true;
+        // for (var i = 0; i < games.length; i++)
+        // {
+        //     if (name === games[i].name)
+        //         temp = false;
+        // }
+        // if (temp === true)
+        //     setPlace("queue");
     }
 
     const back = async (e: SyntheticEvent) => {
@@ -78,7 +91,8 @@ const Game = ({socket, games, invites}: Props) =>
 
     const Join = async (e: SyntheticEvent) => {
         e.preventDefault();
-        setPlace("join");
+        if (gameWinner === '')
+            setPlace("join");
     }
 
     if (place === "join")
@@ -96,7 +110,7 @@ const Game = ({socket, games, invites}: Props) =>
         return(
             <Wrapper>
                 <Card bg="light">
-                    <Card.Img src={pongImage} />
+                    <Card.Img src={pongImage} style={{height: '320px'}} />
                     <Card.Body>
                     <div className="col-md-12 text-center">
                         <form onSubmit={back}>
@@ -139,7 +153,7 @@ const Game = ({socket, games, invites}: Props) =>
         return(
             <Wrapper>
                 <Card bg="light" className="mb-3" style={{ color: '#000' }}>
-                    <Card.Img src={pongImage} />
+                    <Card.Img src={pongImage} style={{height: '320px'}} />
                         <Form>
                             <Stack direction="horizontal" gap={4}>
                                 <div>
@@ -229,7 +243,7 @@ const Game = ({socket, games, invites}: Props) =>
     return(
         <Wrapper>
             <Card bg="light">
-                <Card.Img src={pongImage} />
+                <Card.Img src={pongImage} style={{height: '320px'}} />
                 <Card.Body>
                     <Stack direction="horizontal" gap={2}>
                     <div>

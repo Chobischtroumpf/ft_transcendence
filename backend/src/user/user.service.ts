@@ -116,8 +116,7 @@ export class UserService
 
     async turnOffTfa(id: number) {
       return this.userRepository.update(id, {
-        tfaEnabled: false,
-        tfaSecret: null
+        tfaEnabled: false
       });
     }
 
@@ -129,8 +128,14 @@ export class UserService
       })
     }
 
-    updateUsername(user: UserEntity, username: string)
+    async updateUsername(user: UserEntity, username: string): Promise<any | false>
     {
+      const users: UserEntity[] = await this.userRepository.find();
+      for (var temp of users)
+      {
+        if (temp.username == username)
+          return false;
+      }
       return this.userRepository.update(user.id, {username: username});
     }
 
@@ -216,7 +221,7 @@ export class UserService
       if (!toBlock)
         throw new NotFoundException('User not found');
       
-      const is_true = await this.isblocked_true(toBlock, user) 
+      const is_true = await this.isblocked_true(user, toBlock); 
       if (is_true)
         throw new HttpException({status: HttpStatus.FORBIDDEN, message: 'you have already blocked this user'}, HttpStatus.FORBIDDEN);
       user.blockedUsers = await this.getBlockedUsers(user.id);

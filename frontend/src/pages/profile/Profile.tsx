@@ -27,6 +27,9 @@ const Profile = (props: Props) => {
     setGotUser(false);
     setGotOwnUser(false);
 
+    if (props.socket?.connected === false)
+      props.socket.connect();
+
     const query = new URLSearchParams(window.location.search);
     urlParam = query.get('userId');
     
