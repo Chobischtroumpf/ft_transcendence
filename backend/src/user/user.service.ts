@@ -141,8 +141,9 @@ export class UserService
 
     updateStatus(user: UserEntity, status: UserStatus)
     {
-      user.status = status
-      this.userRepository.save(user);
+      this.userRepository.update(user.id, {status: status});
+      // user.status = status
+      // this.userRepository.save(user);
     }
 
     async requestFriend(user: UserEntity, id: number)
