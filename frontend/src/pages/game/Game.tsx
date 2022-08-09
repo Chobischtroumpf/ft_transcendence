@@ -107,9 +107,9 @@ const Game = ({socket, games, invites, gameWinner}: Props) =>
 
     if (place === "matches_list")
     {
-        useEffect(() => {
-            socket?.emit('getGamesToServer');
-        } , [socket]);
+        // useEffect(() => {
+        //     socket?.emit('getGamesToServer');
+        // } , [socket]);
 
         return(
             <Wrapper>

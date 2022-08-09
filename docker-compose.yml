@@ -1,6 +1,5 @@
 version: '3.8'
 services:
-
   backend:
     container_name: backend
     image: backend_transcendence
@@ -26,7 +25,6 @@ services:
     command: npm run start:prod
     env_file:
       - .env
-
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -42,7 +40,6 @@ services:
     networks:
       - nestjs-network
     restart: unless-stopped
-
   frontend:
     container_name: frontend
     build:

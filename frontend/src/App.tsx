@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Users from './pages/users/Users';
-import SingIn from './pages/auth/SignIn';
+import SignIn from './pages/auth/SignIn';
 import Auth from './pages/auth/Auth';
 import Profile from './pages/profile/Profile';
 import Channels from './pages/chat/Channels';
@@ -31,6 +31,7 @@ function App() {
   const [gameUpdate, setGameUpdate] = useState<gameUpdate | null>(null);
   const [spectator, setSpectator] = useState<string | null>(null);
   const [gameWinner, setGameWinner] = useState('');
+  const [inviteUser, setInviteUser] = useState('');
   const [invites, setInvites] = useState<any[]>([]);
   const [channels, setChannels] = useState([]);
   const [lastPage, setLastPage] = useState(0);
@@ -40,7 +41,6 @@ function App() {
 
   useEffect(() => {
     const newSocket = io(`http://localhost:3000`, {withCredentials: true, transports: ['websocket']});
-    setPopupMessage("");
     newSocket.on('joinToClient', (data) => {
       setJoinMsg(data.msg);
       setChannelName(data.channel);
@@ -71,9 +71,7 @@ function App() {
       setInvites(invites);
     });
     newSocket.on('addInviteToClient', (data) => {
-      // setPopupMessage("");
-      setPopupMessage(`${data.username} invited you to play pong! Good luck!`);
-
+      setInviteUser(data.username);
       setInvites(invites => [...invites, data]);
     });
     newSocket.on('leaveQueueToClient', (data) => {
@@ -101,6 +99,14 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (inviteUser !== '') {
+      setPopupMessage("")
+      setPopupMessage(`You have been invited to a game by ${inviteUser}`);
+      setInviteUser("");
+    }
+  } ,[inviteUser]);
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -110,7 +116,7 @@ function App() {
           <Route path="/profile"  element={<Profile socket={socket} key={2}/>}></Route>
           <Route path="/profile/settings" element={<Settings socket={socket}/>}></Route>
           <Route path="/users" element={<Users />}></Route>
-          <Route path="/" element={<SingIn socket={socket}/>}></Route>
+          <Route path="/" element={<SignIn socket={socket}/>}></Route>
           <Route path="/auth/tfa" element={<Auth />}></Route>
           <Route path="/channels" element={<Channels socket={socket} channels={channels} lastPage={lastPage} />}></Route>
           <Route path="/chat" element={<Chat socket={socket} joinMsg={joinMsg} channelName={channelName} messages={messages} onlineUsers={onlineUsers} banned={banned}/>}></Route>
@@ -122,7 +128,7 @@ function App() {
           <Route path="*" element={<Error404></Error404>}></Route>
         </Routes>
       </BrowserRouter>
-      {(popupMessage !== '') && (<ModalMessage message={popupMessage} success={true}/>)}
+      {popupMessage !== "" && (<ModalMessage message={popupMessage} success={true}/>)}
     </div>
   );
 }
