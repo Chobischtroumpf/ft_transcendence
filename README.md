@@ -20,7 +20,7 @@ WDS_SOCKET_PORT=0
 In the same directory to launch, Use the command :
 
 ```
-docker-compose up
+docker-compose up -- build
 ```
 
 When database, backend and frontend are compiled successfully, go to website localhost:3001. Ft_transcendence project works with Intra42 login, so after clicking "Signin", it redirects you to Intra42 login page. After singing in Intra, you will get access to website and will be redirected to profile page.
